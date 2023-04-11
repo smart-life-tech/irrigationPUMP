@@ -39,7 +39,7 @@ float getSpeed()
     if (read)
     {
         velocity = t2 - t1;
-        velocity = velocity / 1000;        // convert millisecond to second
+        velocity = velocity / 1000;        // convert millisecond to second for timig
         velocity = (0.2 / velocity) * 3.6; // km/s
         Serial.print(velocity);
         Serial.println(" Km/hr");
