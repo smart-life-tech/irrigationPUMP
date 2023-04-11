@@ -1,5 +1,5 @@
-int IR1 = 8;
-int IR2 = 9;
+int IR1 = 2;
+int IR2 = 3;
 unsigned long t1 = 0;
 int pwm = 6;
 int in1 = 5;
