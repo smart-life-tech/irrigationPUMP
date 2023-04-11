@@ -44,12 +44,13 @@ float getSpeed()
         Serial.print(velocity);
         Serial.println(" Km/hr");
         delay(500);
-        return velocity;
+        read = false;
     }
     else
     {
         velocity = 0;
     }
+    return velocity;
 }
 void controlMotor(float speed)
 {
