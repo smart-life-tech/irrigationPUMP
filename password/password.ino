@@ -1,5 +1,12 @@
 /*
    to remind you
+   to remind you
+🔴Errors that will inform us
+✔️Stop watering
+✔️15% deviation in collection measures
+✔️Wind greater than 3 Beaufort
+✔️half an hour before the end of watering
+✔️Low battery voltage
   the screen should show us
   1) collection of measures / hour
   2) distance of the remaining measures.
@@ -14,6 +21,16 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include "RTClib.h"
 #include <EEPROM.h>
 #include <EEPROM.h>
+#include <dht.h>
+#define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
+
+dht1wire DHT(DHT22_PIN, dht::DHT11);
+// Constants
+
+// Variables
+float hum;  // Stores humidity value
+float temp; // Stores temperature value
+
 int writeStringToEEPROM(int addrOffset, const String &strToWrite)
 {
   byte len = strToWrite.length();
@@ -36,19 +53,30 @@ int readStringFromEEPROM(int addrOffset, String *strToRead)
   *strToRead = String(data);
   return addrOffset + 1 + newStrLen;
 }
+float vOUT = 0.0;
+float vIN = 0.0;
+float R1 = 30000.0;
+float R2 = 7500.0;
+int value = 0;
+const int RecordTime = 3; // Define Measuring Time (Seconds)
+const int SensorPin = 3;  // Define Interrupt Pin (2 or 3 @ Arduino Uno)
+
+int InterruptCounter;
+float WindSpeed;
+
 unsigned long timeNow;
 int
-eepromOffset = 0,
-str1AddrOffset,
-str2AddrOffset,
-str3AddrOffset,
-str4AddrOffset,
-str5AddrOffset,
-newStr1AddrOffset,
-newStr2AddrOffset,
-newStr3AddrOffset,
-newStr4AddrOffset,
-newStr5AddrOffset;
+    eepromOffset = 0,
+    str1AddrOffset,
+    str2AddrOffset,
+    str3AddrOffset,
+    str4AddrOffset,
+    str5AddrOffset,
+    newStr1AddrOffset,
+    newStr2AddrOffset,
+    newStr3AddrOffset,
+    newStr4AddrOffset,
+    newStr5AddrOffset;
 // Writing
 String inputString = "";
 String phoneNum = "";
@@ -68,7 +96,8 @@ unsigned int rpm2;
 unsigned long timeold2;
 unsigned long prev = 0;
 int mNow, hNow = 0;
-bool count = true;
+bool count, done, dir = true;
+float speed = 0.00;
 const int button[] = {7, 8, 9};
 int countering = 0;
 int counter = 0;
@@ -80,70 +109,7 @@ int green = 7;
 int red = 8;
 String pass = "";
 bool doOnce, doOnce2, doOnce3 = true;
-/*
-   #define gsmdelay 1800
-  #define gsm_delay_small 100
-  #define EEPROM_MAX_ADDR 1023
-  #define BUFFER_SIZE 11
 
-  int trueStepValueVariable = 10;
-  bool isstartAgain = true;
-  int stopTimer = 0;
-  int setStepTimer = 8;
-  int SMS_location_number;
-  int adminNumberSize;
-  int counder2Rpm = 2;
-  int smsMetra = 0;
-  int varButtoni = 0, oldvarButton1 = 8;
-  int varButton2 = 8, oldVarButton2 = 0;
-  int meter = 0;
-  int signalRequestTime = 30000;
-  int gsminitsize;
-  int gsmSignalLevel;
-  //int rpm = -1;
-*/
-float speed = 10.0; // m/h
-
-bool done = false;
-bool dir = true;
-
-/*
-  int countCloseRpm = 0;
-  unsigned int input_pos = 0;
-  unsigned int stepMinMax = 20; // pososto
-  unsigned long elapsedTimeAll = 0;
-  unsigned long stepPerHour = 0;
-  unsigned long trueStepValue = 0;
-  float h = 0, m = 0, s = 0;
-  float stepValue = 8;
-  const char* adminNumbers[] = {"6937843744"};
-  const char* gsmInit[] = { "ATEe", "AT + CHGF = 1", "AT + CLIP = 1", "AT + CRC = 1", "AT + CREG = 1" };
-  boolean isSMS = false;
-  boolean isSendingSms = false;
-  boolean isDialing = false;
-  boolean isUnder_30Min = false;
-  boolean isMinMaxCalc = false;
-  boolean isLockStepManual = false;
-  boolean isOnTimerMinMax = false;
-  boolean issignalok = false;
-  boolean isStop = false;
-  boolean isRunCode = false;
-  boolean isAuthorized = false;
-  bool done = false;
-  byte modeReadButtons = 1;
-
-  String smsSender;
-  String textMessage = "welcome starting...";
-  String authorizedNumbers[3];
-  bool isclockwise;
-  bool isstartAgainRpmCount = 0;
-
-  // this is the Debounce section
-  int buttonState;                    // this set the tag "buttonState", to the current button state from the input pin
-  int lastButtonState = LOW;          // this set the tag "lastButtonState", to the previous button state from the input pin
-  unsigned long lastDebounceTime = 0; // the last time the output pin was toggled
-  unsigned long debounceDelay = 100;  // the debounce time; increase if the output flickers
-*/
 String inputstring = "";
 bool setMet = true;
 int radius = 2;
@@ -166,9 +132,9 @@ boolean ends = true;
 
 float timePerTurn = 0.0;
 unsigned long
-speeding = 0,
-turnStart = 0,
-turnEnd = 0;
+    speeding = 0,
+    turnStart = 0,
+    turnEnd = 0;
 int speedSet = 30;
 int length = 0;
 int pwm = 6;
@@ -494,7 +460,7 @@ void updateSerial()
   inputstring = "";
 }
 void magnet_detect() // This function is called whenever a magnet/interrupt is detected by the arduino
-{ // lcd.clear();
+{                    // lcd.clear();
   if (count)
   {
     turnStart = millis();
@@ -555,12 +521,17 @@ void DisplayPSI() // main display
   // Serial.print(pressure_bar);
   // Serial.println(" bars");
   // this is the lcd section
-
-  sensorValue = analogRead(analogInPin); // FOR THE BATTERY
-  // map it to the range of the analog out:
-  if (sensorValue > 540)
-    sensorValue = 540;
-  outputValue = map(sensorValue, 0, 540, 0, 13);
+  value = analogRead(analogInPin);
+  vOUT = (value * 5.0) / 1024.0;
+  vIN = vOUT / (R2 / (R1 + R2));
+  Serial.print("Input = ");
+  Serial.println(vIN);
+  outputValue = vIN;
+  // sensorValue = analogRead(analogInPin); // FOR THE BATTERY
+  //  map it to the range of the analog out:
+  // if (sensorValue > 540)
+  //  sensorValue = 540;
+  // outputValue = map(sensorValue, 0, 540, 0, 13);
   // outputValue=constrain(outputValue,0,12);
   //   Serial.print("raw battery value : ");
   //   Serial.println(sensorValue);
@@ -571,7 +542,7 @@ void DisplayPSI() // main display
   // lcd.print(" VOLT:");  // this prints whats in between the quotes
   //  lcd.print(outputValue);             // this prints the tag value
   lcd.print(" batt:");
-  int percent = (outputValue / 12.0) * 100.0;
+  int percent = (outputValue)*100.0;
   if (percent != newp)
     lcd.clear();
   newp = percent;
@@ -772,7 +743,7 @@ void passwordStart()
     Serial.println("checking");
     checkCode();
 
-   // delay(500);
+    // delay(500);
   }
 }
 void moveRight()
@@ -783,7 +754,7 @@ void moveRight()
     cursorPos = 0;       // how  we can use every part of the move of joystick code here
   }
   else
-  { // define that for every movement of the joystick change the direction
+  {                        // define that for every movement of the joystick change the direction
     int a = cursorPos + 7; // change the numbers display on lcd for ok button click on joystick take in center and click the passcode will enter.
     lcd.setCursor(a, 1);
     cursorPos = cursorPos + 1;
@@ -844,7 +815,7 @@ void checkCode()
   { // Change '1', '2', '3', '4' on this line!!!!
     lcd.setCursor(4, 1);
     lcd.print("correct");
-   // delay(1000);
+    // delay(1000);
     countering = 100;
   }
   else
@@ -860,4 +831,79 @@ void checkCode()
     countering = 0;
     // setup();
   }
+}
+float getVoltage()
+{
+  value = analogRead(analogInPin);
+  vOUT = (value * 5.0) / 1024.0;
+  vIN = vOUT / (R2 / (R1 + R2));
+  Serial.print("Input = ");
+  Serial.println(vIN);
+  return vIN;
+}
+float getWind()
+{
+  InterruptCounter = 0;
+  attachInterrupt(digitalPinToInterrupt(SensorPin), countup, RISING);
+  delay(1000 * RecordTime);
+  detachInterrupt(digitalPinToInterrupt(SensorPin));
+  WindSpeed = (float)InterruptCounter / (float)RecordTime * 2.4;
+  return WindSpeed;
+}
+
+void countup()
+{
+  InterruptCounter++;
+}
+float getTemp()
+{
+  //int chk = DHT.read22(DHT22_PIN);
+  // Read data and store it to variables hum and temp
+  hum = DHT.getHumidity();
+  temp = DHT.getTemperature();
+  // Print temp and humidity values to serial monitor
+  Serial.print("Humidity: ");
+  Serial.print(hum);
+  Serial.print(" %, Temp: ");
+  Serial.print(temp);
+  Serial.println(" Celsius");
+  return temp;
+}
+
+float getHum()
+{
+  //int chk = DHT.read22(DHT22_PIN);
+  // Read data and store it to variables hum and temp
+  hum = DHT.getHumidity();
+  temp = DHT.getTemperature();
+  // Print temp and humidity values to serial monito
+  return hum;
+}
+float getPsi()
+{
+  // this section monitors the live psi and turns the compressor run bit on or off based off setpoints
+  // int psi = analogRead(0); // this reads the analog input(A0) and scales it
+  // psi = map(psi, 102, 921, 0, 150);             // this maps the raw analog input value to the converted PSI value
+  int psi = analogRead(A0);
+  int sensorVal = analogRead(A0);
+  // Serial.print("Sensor Value: ");
+  // Serial.print(sensorVal);
+
+  float voltage = (sensorVal * 5.0) / 1024.0;
+  // Serial.print("Volts: ");
+  // Serial.print(voltage);
+
+  float pressure_pascal = (3.0 * ((float)voltage - 0.47)) * 1000000.0;
+  float pressure_bar = pressure_pascal / 10e5;
+  // Serial.print("Pressure = ");
+  // Serial.print(pressure_bar);
+  return pressure_bar;
+}
+String getTimeDate(){
+  char buf1[20];
+DateTime now = rtc.now();
+sprintf(buf1, "%02d:%02d:%02d %02d/%02d/%02d",  now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
+Serial.print(F("Date/Time: "));
+Serial.println(buf1);
+return buf1;
 }
