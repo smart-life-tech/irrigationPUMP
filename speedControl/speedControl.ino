@@ -1,3 +1,4 @@
+// in this code two hall sensor will be used and the motor to control speed of the device
 int IR1 = 2;
 int IR2 = 3;
 unsigned long t1 = 0;
