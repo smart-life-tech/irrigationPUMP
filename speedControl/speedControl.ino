@@ -10,7 +10,8 @@ int setSpeed = 10;
 float velocity;
 bool read = false;
 // int vkmh = (100*3600)/1000;
-
+int counter = 0;
+bool clear = true;
 void setup()
 {
     pinMode(IR1, INPUT);
@@ -29,12 +30,25 @@ float getSpeed()
 {
     if (digitalRead(IR1) == 1)
     {
+        if (clear)
+        {
+            counter++;
+            clear = false;
+        }
+    }
+    else
+    {
+        clear = true;
+    }
+    if (counter == 1)
+    {
         t1 = millis();
         read = false;
     }
-    if (digitalRead(IR2) == 1)
+    else if (counter == 2)
     {
         t2 = millis();
+        counter = 0;
         read = true;
     }
     if (read)
