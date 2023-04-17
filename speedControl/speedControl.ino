@@ -6,89 +6,102 @@ int pwm = 6;
 int in1 = 5;
 int in2 = 4;
 unsigned long t2 = 0;
-int setSpeed = 10;
+int setSpeed = 100;
 float velocity;
 bool read = false;
 // int vkmh = (100*3600)/1000;
 int counter = 0;
-bool clear = true;
+bool clear,count1,count2 = true;
 void setup()
 {
-    pinMode(IR1, INPUT);
-    pinMode(IR2, INPUT);
-    pinMode(pwm, OUTPUT);
-    pinMode(in1, OUTPUT);
-    pinMode(in2, OUTPUT);
-    Serial.begin(9600);
+  pinMode(IR1, INPUT_PULLUP);
+  pinMode(IR2, INPUT);
+  pinMode(pwm, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  Serial.begin(9600);
 }
 
 void loop()
 {
-    controlMotor(getSpeed());
+  controlMotor(getSpeed());
 }
 float getSpeed()
 {
-    if (digitalRead(IR1) == 1)
+  if (digitalRead(IR1) == 0)
+  {
+    if (clear)
     {
-        if (clear)
-        {
-            counter++;
-            clear = false;
-        }
+      counter++;
+      Serial.print("counts : ");
+      Serial.println(counter);
+      clear = false;
     }
-    else
-    {
-        clear = true;
+  }
+  else if (digitalRead(IR1) == 1)
+  {
+    clear = true;
+    delay(100);
+  }
+  if (counter == 1)
+  {
+    if (count1) {
+      t1 = millis();
+      Serial.println(t1);
+      read = false;
+      count2 = true;
+      count1 = false;
     }
-    if (counter == 1)
-    {
-        t1 = millis();
-        read = false;
+  }
+  else if (counter == 2)
+  { 
+    if (count2) {
+      t2 = millis();
+      Serial.println(t2);
+      counter = 0;
+      read = true;
+      count1 = true;
+      count2 = false;
     }
-    else if (counter == 2)
-    {
-        t2 = millis();
-        counter = 0;
-        read = true;
-    }
-    if (read)
-    {
-        velocity = t2 - t1;
-        velocity = velocity / 1000;        // convert millisecond to second for timig
-        velocity = (0.2 / velocity) * 3.6; // km/s
-        Serial.print(velocity);
-        Serial.println(" Km/hr");
-        delay(500);
-        read = false;
-    }
-    else
-    {
-        velocity = 0;
-    }
-    return velocity;
+  }
+  if (read)
+  {
+    velocity = t2 - t1;
+    velocity = velocity / 1000;        // convert millisecond to second for timig
+    velocity = (0.2 / velocity) * 3.6; // km/s
+    Serial.print(velocity*1000);
+    Serial.println(" m/hr");
+    delay(500);
+    read = false;
+  }
+  else
+  {
+    velocity = 0;
+  }
+  return velocity;
 }
 void controlMotor(float speed)
 {
-    if (speed > 0)
+  if (speed > 0)
+  {
+    if (speed > setSpeed + 2)
     {
-        if (speed > setSpeed + 2)
-        {
-            // delay(5000);
-            analogWrite(pwm, 255);
-            digitalWrite(in1, HIGH);
-            digitalWrite(in2, LOW);
-        }
-        else if (speed < setSpeed - 2)
-        {
-            analogWrite(pwm, 255);
-            digitalWrite(in1, LOW);
-            digitalWrite(in2, HIGH);
-        }
-        else
-        {
-            analogWrite(pwm, 0);
-            digitalWrite(in1, LOW);
-            digitalWrite(in2, LOW);
-        }
+      // delay(5000);
+      analogWrite(pwm, 255);
+      digitalWrite(in1, HIGH);
+      digitalWrite(in2, LOW);
     }
+    else if (speed < setSpeed - 2)
+    {
+      analogWrite(pwm, 255);
+      digitalWrite(in1, LOW);
+      digitalWrite(in2, HIGH);
+    }
+    else
+    {
+      analogWrite(pwm, 0);
+      digitalWrite(in1, LOW);
+      digitalWrite(in2, LOW);
+    }
+  }
 }
