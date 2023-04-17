@@ -6,7 +6,7 @@ int pwm = 6;
 int in1 = 5;
 int in2 = 4;
 unsigned long t2 = 0;
-int setSpeed = 1500;
+float setSpeed = 1500;
 float velocity;
 bool read = false;
 // int vkmh = (100*3600)/1000;
@@ -19,11 +19,12 @@ void setup()
   pinMode(pwm, OUTPUT);
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
-
+Serial.println("moving forward, more speed");
   analogWrite(pwm, 255);
   digitalWrite(in2, HIGH);
   digitalWrite(in1, LOW);
   delay(5000);
+  Serial.println("moving backward, less speed");
   analogWrite(pwm, 255);
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
@@ -95,18 +96,20 @@ void controlMotor(float speed)
 {
   if (speed > 0)
   {
-    if (speed > setSpeed + 400)
+    if (speed > setSpeed + 200)
     {
       // delay(5000);
+      Serial.println("moving forward, more speed");
       analogWrite(pwm, 255);
-      digitalWrite(in1, HIGH);
-      digitalWrite(in2, LOW);
-    }
-    else if (speed < setSpeed - 400)
-    {
-      analogWrite(pwm, 255);
-      digitalWrite(in1, LOW);
       digitalWrite(in2, HIGH);
+      digitalWrite(in1, LOW);
+    }
+    else if (speed < setSpeed - 200)
+    {
+      Serial.println("moving backward, less speed");
+      analogWrite(pwm, 255);
+      digitalWrite(in2, LOW);
+      digitalWrite(in1, HIGH);
     }
     else
     {
