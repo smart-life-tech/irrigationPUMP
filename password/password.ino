@@ -112,7 +112,7 @@ float setSpeed = 1500.00;
 float velocity = 0.00;
 bool read = false;
 // int vkmh = (100*3600)/1000;
-int counter = 0;
+//int counter = 0;
 bool clear, count1, count2 = true;
 
 volatile byte half_revolutions2;
