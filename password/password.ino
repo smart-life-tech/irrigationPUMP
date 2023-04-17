@@ -1,19 +1,29 @@
 /*
-   to remind you
-   to remind you
+🔴 operating screen
+✔️reel pressure in bars
+✔️volts and watts
+✔️meters per hour m/h
+✔️remaining measures
+✔️remaining meters in time
+✔️time and date
+✔️temperature C H
+
 🔴Errors that will inform us
 ✔️Stop watering
 ✔️15% deviation in collection measures
 ✔️Wind greater than 3 Beaufort
-✔️half an hour before the end of watering
+✔️Half an hour before the end of watering
 ✔️Low battery voltage
-  the screen should show us
-  1) collection of measures / hour
-  2) distance of the remaining measures.
-  3) Indication of time left for the completion of the watering process
-  4) pressure
-  5) Battery voltage indicator
-  and all this in sms
+
+🔴Messages on mobile for information
+✔️Counts collection counters / hour
+✔️Measures left until it ends
+✔️How much time is left for watering until the end
+✔️The water pressure (bar) on the reel
+✔️Battery indicator
+✔️Time and date display
+✔️Temperature & humidity indicator
+✔️Wind speed
 */
 #include <Wire.h>                   // Wire library
 #include <LiquidCrystal_I2C.h>      // Liquid Crystal I2C library
