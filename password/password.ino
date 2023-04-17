@@ -34,7 +34,7 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include <dht.h>
 #define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
 
-dht1wire DHT(DHT22_PIN, dht::DHT11);
+dht1wire DHT(DHT22_PIN, dht::DHT22);
 // Constants
 
 // Variables
