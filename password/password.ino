@@ -186,7 +186,7 @@ void setup()
   // SendMessage();
   // Serial.begin(115200);
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
-  attachInterrupt(0, magnet_detect, FALLING); // Initialize the intterrupt pin (Arduino digital pin 2)
+  //attachInterrupt(0, magnet_detect, FALLING); // Initialize the intterrupt pin (Arduino digital pin 2)
   half_revolutions = 10;
   rpm = 100;
   timeold = 0;
@@ -306,12 +306,12 @@ void loop()
 
   //==============================================================
   // lcd.clear();
-  if (digitalRead(hall1))
+  /*if (digitalRead(hall1))
     count = true;
   if (!digitalRead(hall1))
   {
     magnet_detect();
-  }
+  }*/
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
@@ -889,6 +889,7 @@ void countup()
 float getTemp()
 {
   //int chk = DHT.read22(DHT22_PIN);
+    dht::ReadStatus chk = DHT.read();
   // Read data and store it to variables hum and temp
   hum = DHT.getHumidity();
   temp = DHT.getTemperature();
@@ -904,6 +905,7 @@ float getTemp()
 float getHum()
 {
   //int chk = DHT.read22(DHT22_PIN);
+    dht::ReadStatus chk = DHT.read();
   // Read data and store it to variables hum and temp
   hum = DHT.getHumidity();
   temp = DHT.getTemperature();
