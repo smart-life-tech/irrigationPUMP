@@ -89,7 +89,21 @@ int Hour, Minute, Second = 0;
 String Seconds = "";
 int half_revolutions = 0;
 unsigned int rpm = 0;
+
 unsigned long timeold;
+int IR1 = 2;
+int IR2 = 3;
+unsigned long t1 = 0;
+int pwm = 6;
+int in1 = 5;
+int in2 = 4;
+unsigned long t2 = 0;
+float setSpeed = 1500.00;
+float velocity = 0.00;
+bool read = false;
+// int vkmh = (100*3600)/1000;
+int counter = 0;
+bool clear, count1, count2 = true;
 
 volatile byte half_revolutions2;
 unsigned int rpm2;
@@ -249,6 +263,16 @@ void loop()
   Minute = now.minute();
   Hour = now.hour();
   Second = now.second();
+  controlMotor(getSpeed());
+  Serial.print("get wind vane value");
+  Serial.println(getWind());
+  Serial.print("temp value");
+  Serial.println(getTemp());
+    Serial.print("humidity value");
+  Serial.println(getHum());
+    Serial.print("voltage value");
+  Serial.println(getVoltage());
+
   //================================================================
   if (Serial1.available() > 0)
   {
@@ -338,7 +362,7 @@ void loop()
         half_revolutions2 = 0;
         //speed = (2 * 3.142 * radius * rpm * 60) / 63360; // conversion to meter per hour speed
       }*/
-    if (half_revolutions >= 0)
+  /* if (half_revolutions >= 0)
     {
       length = half_revolutions * metra;
       float timeNow = length / speed;
@@ -385,7 +409,7 @@ void loop()
         lcd.print(mNow + Minute);
         ends = false;
       }
-    }
+    }*/
 
     lcd.setCursor(0, 3);
     lcd.print("T=");       // this prints whats in between the quotes
@@ -906,4 +930,87 @@ sprintf(buf1, "%02d:%02d:%02d %02d/%02d/%02d",  now.hour(), now.minute(), now.se
 Serial.print(F("Date/Time: "));
 Serial.println(buf1);
 return buf1;
+}
+float getSpeed()
+{
+  if (digitalRead(IR1) == 0)
+  {
+    if (clear)
+    {
+      counter++;
+      Serial.print("counts : ");
+      Serial.println(counter);
+      clear = false;
+    }
+  }
+  else if (digitalRead(IR1) == 1)
+  {
+    clear = true;
+    delay(100);
+  }
+  if (counter == 1)
+  {
+    if (count1)
+    {
+      t1 = millis();
+      Serial.println(t1);
+      read = false;
+      count2 = true;
+      count1 = false;
+    }
+  }
+  else if (counter == 2)
+  {
+    if (count2)
+    {
+      t2 = millis();
+      Serial.println(t2);
+      counter = 0;
+      read = true;
+      count1 = true;
+      count2 = false;
+    }
+  }
+  if (read)
+  {
+    velocity = t2 - t1;
+    velocity = velocity / 1000;        // convert millisecond to second for timig
+    velocity = (0.2 / velocity) * 3.6 * 1000; // km/s
+    Serial.print(velocity * 1000);
+    Serial.println(" m/hr");
+    delay(500);
+    read = false;
+  }
+  else
+  {
+    velocity = 0;
+  }
+  return velocity;
+}
+void controlMotor(float speed)
+{
+  if (speed > 0)
+  { Serial.println(speed);
+    if (speed > setSpeed + 400.00 )
+    {
+      // delay(5000);
+      Serial.println("moving forward, more speed");
+      analogWrite(pwm, 255);
+      digitalWrite(in2, HIGH);
+      digitalWrite(in1, LOW);
+    }
+    else if (speed < setSpeed - 300.00)
+    {
+      Serial.println("moving backward, less speed");
+      analogWrite(pwm, 255);
+      digitalWrite(in2, LOW);
+      digitalWrite(in1, HIGH);
+    }
+    else
+    {
+      analogWrite(pwm, 0);
+      digitalWrite(in1, LOW);
+      digitalWrite(in2, LOW);
+    }
+  }
 }
