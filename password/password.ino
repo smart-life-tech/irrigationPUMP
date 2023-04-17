@@ -33,8 +33,8 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include <EEPROM.h>
 #include <dht.h>
 #define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
-
-dht1wire DHT(DHT22_PIN, dht::DHT22);
+dht DHT;
+//dht1wire DHT(DHT22_PIN, dht::DHT22);
 // Constants
 
 // Variables
@@ -109,7 +109,7 @@ float setSpeed = 1500.00;
 float velocity = 0.00;
 bool read = false;
 // int vkmh = (100*3600)/1000;
-//int counter = 0;
+// int counter = 0;
 bool clear, count1, count2 = true;
 
 volatile byte half_revolutions2;
@@ -186,7 +186,7 @@ void setup()
   // SendMessage();
   // Serial.begin(115200);
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
-  //attachInterrupt(0, magnet_detect, FALLING); // Initialize the intterrupt pin (Arduino digital pin 2)
+  // attachInterrupt(0, magnet_detect, FALLING); // Initialize the intterrupt pin (Arduino digital pin 2)
   half_revolutions = 10;
   rpm = 100;
   timeold = 0;
@@ -275,9 +275,9 @@ void loop()
   Serial.println(getWind());
   Serial.print("temp value");
   Serial.println(getTemp());
-    Serial.print("humidity value");
+  Serial.print("humidity value");
   Serial.println(getHum());
-    Serial.print("voltage value");
+  Serial.print("voltage value");
   Serial.println(getVoltage());
 
   //================================================================
@@ -369,54 +369,54 @@ void loop()
         half_revolutions2 = 0;
         //speed = (2 * 3.142 * radius * rpm * 60) / 63360; // conversion to meter per hour speed
       }*/
-  /* if (half_revolutions >= 0)
-    {
-      length = half_revolutions * metra;
-      float timeNow = length / speed;
-      // Serial.print("length ");
-      // Serial.println(length);
-      // Serial.print("speed ");
-      // Serial.println(speed);
-      // Serial.print("time in secs ");
-      // Serial.println(timeNow);
-      //       mNow, hNow = timeConvert(timeNow);
-      // lcd.clear();
-      lcd.setCursor(0, 1);
-      lcd.print("m/h: ");  // this prints whats in between the quotes
-      lcd.print(speed, 0); // this prints the tag value
-      lcd.print(" dis:");  // this prints the tag value
-      lcd.print(half_revolutions * metra, 0);
-      if (speed > speedSet)
+    /* if (half_revolutions >= 0)
       {
-        // reduce the speed of the motor
-        analogWrite(pwm, 255);
-        digitalWrite(in1, HIGH);
-        digitalWrite(in2, LOW);
-      }
-      else if (speed < speedSet)
-      {
-        analogWrite(pwm, 255);
-        digitalWrite(in1, LOW);
-        digitalWrite(in2, HIGH);
-      }
-      else
-      {
-        analogWrite(pwm, 0);
-        digitalWrite(in1, LOW);
-        digitalWrite(in2, LOW);
-      }
-      // line 3
-      if (ends)
-      {
-        lcd.setCursor(0, 2);
-        lcd.print("end time: "); // this prints whats in between the quotes
-        // lcd.print(half_revolutions);            // this prints the tag value
-        lcd.print(hNow + Hour);
-        lcd.print(" : ");
-        lcd.print(mNow + Minute);
-        ends = false;
-      }
-    }*/
+        length = half_revolutions * metra;
+        float timeNow = length / speed;
+        // Serial.print("length ");
+        // Serial.println(length);
+        // Serial.print("speed ");
+        // Serial.println(speed);
+        // Serial.print("time in secs ");
+        // Serial.println(timeNow);
+        //       mNow, hNow = timeConvert(timeNow);
+        // lcd.clear();
+        lcd.setCursor(0, 1);
+        lcd.print("m/h: ");  // this prints whats in between the quotes
+        lcd.print(speed, 0); // this prints the tag value
+        lcd.print(" dis:");  // this prints the tag value
+        lcd.print(half_revolutions * metra, 0);
+        if (speed > speedSet)
+        {
+          // reduce the speed of the motor
+          analogWrite(pwm, 255);
+          digitalWrite(in1, HIGH);
+          digitalWrite(in2, LOW);
+        }
+        else if (speed < speedSet)
+        {
+          analogWrite(pwm, 255);
+          digitalWrite(in1, LOW);
+          digitalWrite(in2, HIGH);
+        }
+        else
+        {
+          analogWrite(pwm, 0);
+          digitalWrite(in1, LOW);
+          digitalWrite(in2, LOW);
+        }
+        // line 3
+        if (ends)
+        {
+          lcd.setCursor(0, 2);
+          lcd.print("end time: "); // this prints whats in between the quotes
+          // lcd.print(half_revolutions);            // this prints the tag value
+          lcd.print(hNow + Hour);
+          lcd.print(" : ");
+          lcd.print(mNow + Minute);
+          ends = false;
+        }
+      }*/
 
     lcd.setCursor(0, 3);
     lcd.print("T=");       // this prints whats in between the quotes
@@ -888,28 +888,50 @@ void countup()
 }
 float getTemp()
 {
-  //int chk = DHT.read22(DHT22_PIN);
-    dht::ReadStatus chk = DHT.read();
+  /* //int chk = DHT.read22(DHT22_PIN);
+     dht::ReadStatus chk = DHT.read();
+   // Read data and store it to variables hum and temp
+   hum = DHT.getHumidity();
+   temp = DHT.getTemperature();
+   // Print temp and humidity values to serial monitor
+   Serial.print("Humidity: ");
+   Serial.print(hum);
+   Serial.print(" %, Temp: ");
+   Serial.print(temp);
+   Serial.println(" Celsius");*/
+  int chk = DHT.read22(DHT22_PIN);
   // Read data and store it to variables hum and temp
-  hum = DHT.getHumidity();
-  temp = DHT.getTemperature();
+  hum = DHT.humidity;
+  temp = DHT.temperature;
   // Print temp and humidity values to serial monitor
   Serial.print("Humidity: ");
   Serial.print(hum);
   Serial.print(" %, Temp: ");
   Serial.print(temp);
   Serial.println(" Celsius");
+  delay(2000); // Delay 2 sec.
   return temp;
 }
 
 float getHum()
 {
-  //int chk = DHT.read22(DHT22_PIN);
-    dht::ReadStatus chk = DHT.read();
+  // int chk = DHT.read22(DHT22_PIN);
+  // dht::ReadStatus chk = DHT.read();
   // Read data and store it to variables hum and temp
-  hum = DHT.getHumidity();
-  temp = DHT.getTemperature();
+  // hum = DHT.getHumidity();
+  // temp = DHT.getTemperature();
   // Print temp and humidity values to serial monito
+  int chk = DHT.read22(DHT22_PIN);
+  // Read data and store it to variables hum and temp
+  hum = DHT.humidity;
+  temp = DHT.temperature;
+  // Print temp and humidity values to serial monitor
+  Serial.print("Humidity: ");
+  Serial.print(hum);
+  Serial.print(" %, Temp: ");
+  Serial.print(temp);
+  Serial.println(" Celsius");
+  delay(2000); // Delay 2 sec.
   return hum;
 }
 float getPsi()
@@ -932,13 +954,14 @@ float getPsi()
   // Serial.print(pressure_bar);
   return pressure_bar;
 }
-String getTimeDate(){
+String getTimeDate()
+{
   char buf1[20];
-DateTime now = rtc.now();
-sprintf(buf1, "%02d:%02d:%02d %02d/%02d/%02d",  now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
-Serial.print(F("Date/Time: "));
-Serial.println(buf1);
-return buf1;
+  DateTime now = rtc.now();
+  sprintf(buf1, "%02d:%02d:%02d %02d/%02d/%02d", now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
+  Serial.print(F("Date/Time: "));
+  Serial.println(buf1);
+  return buf1;
 }
 float getSpeed()
 {
@@ -983,7 +1006,7 @@ float getSpeed()
   if (read)
   {
     velocity = t2 - t1;
-    velocity = velocity / 1000;        // convert millisecond to second for timig
+    velocity = velocity / 1000;               // convert millisecond to second for timig
     velocity = (0.2 / velocity) * 3.6 * 1000; // km/s
     Serial.print(velocity * 1000);
     Serial.println(" m/hr");
@@ -999,8 +1022,9 @@ float getSpeed()
 void controlMotor(float speed)
 {
   if (speed > 0)
-  { Serial.println(speed);
-    if (speed > setSpeed + 400.00 )
+  {
+    Serial.println(speed);
+    if (speed > setSpeed + 400.00)
     {
       // delay(5000);
       Serial.println("moving forward, more speed");
