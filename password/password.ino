@@ -68,7 +68,7 @@ float vIN = 0.0;
 float R1 = 30000.0;
 float R2 = 7500.0;
 int value = 0;
-const int RecordTime = 3; // Define Measuring Time (Seconds)
+const int RecordTime = 2; // Define Measuring Time (Seconds)
 const int SensorPin = 3;  // Define Interrupt Pin (2 or 3 @ Arduino Uno)
 
 int InterruptCounter;
@@ -273,14 +273,14 @@ void loop()
   Hour = now.hour();
   Second = now.second();
   // controlMotor(getSpeed());
-  Serial.print("get wind vane value");
-  Serial.println(getWind());
-  Serial.print("temp value");
-  Serial.println(getTemp());
-  Serial.print("humidity value");
-  Serial.println(getHum());
-  Serial.print("voltage value");
-  Serial.println(getVoltage());
+  /*Serial.print("get wind vane value");
+   Serial.println(getWind());
+   Serial.print("temp value");
+   Serial.println(getTemp());
+   Serial.print("humidity value");
+   Serial.println(getHum());
+   Serial.print("voltage value");
+   Serial.println(getVoltage());*/
 
   //================================================================
   if (Serial1.available() > 0)
@@ -336,8 +336,8 @@ void loop()
         delay(100);
         lcd.clear();
         speedSet = speedSet + 1.0;
-        if (speedSet > 80)
-          speedSet = 80;
+        if (speedSet > 8000)
+          speedSet = 8000;
       }
       else if (!digitalRead(buttonDown))
       {
@@ -359,7 +359,7 @@ void loop()
         ends = true;
         dir = false;
         setMet = false;
-        speeding = false;
+        releasing = false;
         break;
       }
     }
@@ -390,7 +390,6 @@ void loop()
     lcd.print(now.month()); // this prints the tag value
     lcd.print(":");         // this clears the display field so anything left is deleted
     lcd.print(now.year());
-    lcd.println("");
     lcd.setCursor(0, 2);
     lcd.print("W:");
     lcd.print(getWind(), 0);
@@ -401,14 +400,15 @@ void loop()
     lcd.print("V : ");
     lcd.print(getVoltage(), 0);
     lcd.setCursor(0, 3);
-    lcd.print("len");
+    lcd.print("len rem.");
+    delay(1000);
     lcd.print(half_revolutions * metra);
     unsigned long timeNow = millis();
-    if (timeNow - prev > 1000)
+    if (timeNow - prev > 5000)
     {
       prev = timeNow;
       // Serial.println("lcd cleared");
-      lcd.clear();
+      // lcd.clear();
       ends = true;
       // ReadUnreadMessages();
     }
@@ -423,10 +423,10 @@ void loop()
     lcd.setCursor(0, 2);
     lcd.print("for watering start ");
     lcd.setCursor(0, 3);
-    if (getSpeed() > 0)
+    if (speeding > 0)
     {
-      lcd.print("m/h:");        // this prints whats in between the quotes
-      lcd.print(getSpeed(), 0); // this prints the tag value
+      lcd.print("m/h:");      // this prints whats in between the quotes
+      lcd.print(speeding, 0); // this prints the tag value
     }
     lcd.setCursor(8, 3);
     lcd.print(" len:"); // this prints the tag value
@@ -531,17 +531,17 @@ void DisplayPSI() // main display
   // outputValue=constrain(outputValue,0,12);
   //   Serial.print("raw battery value : ");
   //   Serial.println(sensorValue);
-
+  lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("BA:"); // this prints whats in between the quotes
   lcd.print(pressure_bar);
   // lcd.print(" VOLT:");  // this prints whats in between the quotes
   //  lcd.print(outputValue);             // this prints the tag value
   lcd.print("  batt:");
-  int percent = (outputValue)*100.0;
+  int percent = (outputValue / 12.5) * 100.0;
   if (percent != newp)
-    lcd.clear();
-  newp = percent;
+    // lcd.clear();
+    newp = percent;
   lcd.print(percent);
   // Serial.println(percent);
   lcd.print("%");
@@ -841,7 +841,7 @@ float getWind()
 {
   InterruptCounter = 0;
   attachInterrupt(digitalPinToInterrupt(SensorPin), countup, RISING);
-  delay(1000 * RecordTime);
+  delay(500 * RecordTime);
   detachInterrupt(digitalPinToInterrupt(SensorPin));
   WindSpeed = (float)InterruptCounter / (float)RecordTime * 2.4;
   return WindSpeed;
@@ -874,7 +874,7 @@ float getTemp()
   Serial.print(" %, Temp: ");
   Serial.print(temp);
   Serial.println(" Celsius");
-  delay(2000); // Delay 2 sec.
+  // delay(2000); // Delay 2 sec.
   return temp;
 }
 
@@ -896,7 +896,7 @@ float getHum()
   Serial.print(" %, Temp: ");
   Serial.print(temp);
   Serial.println(" Celsius");
-  delay(2000); // Delay 2 sec.
+  // delay(2000); // Delay 2 sec.
   return hum;
 }
 void getSpeeding()
@@ -987,6 +987,7 @@ float getSpeed()
     velocity = velocity / 1000;               // convert millisecond to second for timig
     velocity = (0.2 / velocity) * 3.6 * 1000; // km/s
     Serial.print(velocity * 1000);
+    speeding = velocity * 1000;
     Serial.println(" m/hr");
     delay(500);
     read = false;
