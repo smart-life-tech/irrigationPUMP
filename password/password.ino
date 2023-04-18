@@ -34,13 +34,13 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include <dht.h>
 #define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
 dht DHT;
-//dht1wire DHT(DHT22_PIN, dht::DHT22);
-// Constants
+// dht1wire DHT(DHT22_PIN, dht::DHT22);
+//  Constants
 
 // Variables
 float hum;  // Stores humidity value
 float temp; // Stores temperature value
-
+bool releasing = true;
 int writeStringToEEPROM(int addrOffset, const String &strToWrite)
 {
   byte len = strToWrite.length();
@@ -117,7 +117,8 @@ unsigned int rpm2;
 unsigned long timeold2;
 unsigned long prev = 0;
 int mNow, hNow = 0;
-bool count, done, dir = true;
+bool count, dir = true;
+bool done = false;
 float speed = 0.00;
 const int button[] = {7, 8, 9};
 int countering = 0;
@@ -182,11 +183,12 @@ void setup()
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
   count = true;
+  speedSet = setSpeed;
   Serial.println("Preparing to send SMS");
   // SendMessage();
   // Serial.begin(115200);
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
-  // attachInterrupt(0, magnet_detect, FALLING); // Initialize the intterrupt pin (Arduino digital pin 2)
+  attachInterrupt(0, getSpeeding, FALLING); // Initialize the intterrupt pin (Arduino digital pin 2)
   half_revolutions = 10;
   rpm = 100;
   timeold = 0;
@@ -260,7 +262,7 @@ void setup()
   if (metra == 255)
     metra = 6.0;
   dir = true;
-  half_revolutions = 1;
+  half_revolutions = 0;
   // timeConvert(6);// mins hour
   metra = 0.1524; // 6 inches
 }
@@ -270,7 +272,7 @@ void loop()
   Minute = now.minute();
   Hour = now.hour();
   Second = now.second();
-  controlMotor(getSpeed());
+  // controlMotor(getSpeed());
   Serial.print("get wind vane value");
   Serial.println(getWind());
   Serial.print("temp value");
@@ -351,11 +353,13 @@ void loop()
         length = half_revolutions * metra;
         Serial.print("speed set is :");
         Serial.println(speedSet);
+        setSpeed = speedSet;
         lcd.clear();
         done = true;
         ends = true;
         dir = false;
         setMet = false;
+        speeding = false;
         break;
       }
     }
@@ -363,62 +367,7 @@ void loop()
   if (done)
   {
     DisplayPSI(); // pressure and battery measurement
-    /*  if (half_revolutions2 >= 20) {
-        rpm = 30 * 1000 / (millis() - timeold) * half_revolutions2;
-        timeold = millis();
-        half_revolutions2 = 0;
-        //speed = (2 * 3.142 * radius * rpm * 60) / 63360; // conversion to meter per hour speed
-      }*/
-    /* if (half_revolutions >= 0)
-      {
-        length = half_revolutions * metra;
-        float timeNow = length / speed;
-        // Serial.print("length ");
-        // Serial.println(length);
-        // Serial.print("speed ");
-        // Serial.println(speed);
-        // Serial.print("time in secs ");
-        // Serial.println(timeNow);
-        //       mNow, hNow = timeConvert(timeNow);
-        // lcd.clear();
-        lcd.setCursor(0, 1);
-        lcd.print("m/h: ");  // this prints whats in between the quotes
-        lcd.print(speed, 0); // this prints the tag value
-        lcd.print(" dis:");  // this prints the tag value
-        lcd.print(half_revolutions * metra, 0);
-        if (speed > speedSet)
-        {
-          // reduce the speed of the motor
-          analogWrite(pwm, 255);
-          digitalWrite(in1, HIGH);
-          digitalWrite(in2, LOW);
-        }
-        else if (speed < speedSet)
-        {
-          analogWrite(pwm, 255);
-          digitalWrite(in1, LOW);
-          digitalWrite(in2, HIGH);
-        }
-        else
-        {
-          analogWrite(pwm, 0);
-          digitalWrite(in1, LOW);
-          digitalWrite(in2, LOW);
-        }
-        // line 3
-        if (ends)
-        {
-          lcd.setCursor(0, 2);
-          lcd.print("end time: "); // this prints whats in between the quotes
-          // lcd.print(half_revolutions);            // this prints the tag value
-          lcd.print(hNow + Hour);
-          lcd.print(" : ");
-          lcd.print(mNow + Minute);
-          ends = false;
-        }
-      }*/
-
-    lcd.setCursor(0, 3);
+    lcd.setCursor(0, 1);
     lcd.print("T=");       // this prints whats in between the quotes
     lcd.print(now.hour()); // this prints whats in between the quotes
     lcd.print(":");        // this clears the display field so anything left is deleted
@@ -441,7 +390,19 @@ void loop()
     lcd.print(now.month()); // this prints the tag value
     lcd.print(":");         // this clears the display field so anything left is deleted
     lcd.print(now.year());
-
+    lcd.println("");
+    lcd.setCursor(0, 2);
+    lcd.print("W:");
+    lcd.print(getWind(), 0);
+    lcd.print(" T: ");
+    lcd.print(getTemp()), 0;
+    lcd.print("H: ");
+    lcd.print(getHum(), 0);
+    lcd.print("V : ");
+    lcd.print(getVoltage(), 0);
+    lcd.setCursor(0, 3);
+    lcd.print("len");
+    lcd.print(half_revolutions * metra);
     unsigned long timeNow = millis();
     if (timeNow - prev > 1000)
     {
@@ -462,8 +423,11 @@ void loop()
     lcd.setCursor(0, 2);
     lcd.print("for watering start ");
     lcd.setCursor(0, 3);
-    lcd.print("km/h:");  // this prints whats in between the quotes
-    lcd.print(speed, 0); // this prints the tag value
+    if (getSpeed() > 0)
+    {
+      lcd.print("m/h:");        // this prints whats in between the quotes
+      lcd.print(getSpeed(), 0); // this prints the tag value
+    }
     lcd.setCursor(8, 3);
     lcd.print(" len:"); // this prints the tag value
     lcd.print(half_revolutions * metra, 0);
@@ -558,6 +522,7 @@ void DisplayPSI() // main display
   Serial.print("Input = ");
   Serial.println(vIN);
   outputValue = vIN;
+
   // sensorValue = analogRead(analogInPin); // FOR THE BATTERY
   //  map it to the range of the analog out:
   // if (sensorValue > 540)
@@ -572,7 +537,7 @@ void DisplayPSI() // main display
   lcd.print(pressure_bar);
   // lcd.print(" VOLT:");  // this prints whats in between the quotes
   //  lcd.print(outputValue);             // this prints the tag value
-  lcd.print(" batt:");
+  lcd.print("  batt:");
   int percent = (outputValue)*100.0;
   if (percent != newp)
     lcd.clear();
@@ -934,6 +899,11 @@ float getHum()
   delay(2000); // Delay 2 sec.
   return hum;
 }
+void getSpeeding()
+{
+  float s = getSpeed();
+  controlMotor(s);
+}
 float getPsi()
 {
   // this section monitors the live psi and turns the compressor run bit on or off based off setpoints
@@ -972,6 +942,14 @@ float getSpeed()
       counter++;
       Serial.print("counts : ");
       Serial.println(counter);
+      if (releasing)
+      {
+        half_revolutions++;
+      }
+      else
+      {
+        half_revolutions--;
+      }
       clear = false;
     }
   }
