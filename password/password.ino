@@ -188,7 +188,7 @@ void setup()
   // SendMessage();
   // Serial.begin(115200);
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
-  attachInterrupt(0, getSpeeding, FALLING); // Initialize the intterrupt pin (Arduino digital pin 2)
+  attachInterrupt(0, getSpeeding, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
   half_revolutions = 10;
   rpm = 100;
   timeold = 0;
