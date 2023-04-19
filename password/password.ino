@@ -1,29 +1,29 @@
 /*
-🔴 operating screen
-✔️reel pressure in bars
-✔️volts and watts
-✔️meters per hour m/h
-✔️remaining measures
-✔️remaining meters in time
-✔️time and date
-✔️temperature C H
+  🔴 operating screen
+  ✔️reel pressure in bars
+  ✔️volts and watts
+  ✔️meters per hour m/h
+  ✔️remaining measures
+  ✔️remaining meters in time
+  ✔️time and date
+  ✔️temperature C H
 
-🔴Errors that will inform us
-✔️Stop watering
-✔️15% deviation in collection measures
-✔️Wind greater than 3 Beaufort
-✔️Half an hour before the end of watering
-✔️Low battery voltage
+  🔴Errors that will inform us
+  ✔️Stop watering
+  ✔️15% deviation in collection measures
+  ✔️Wind greater than 3 Beaufort
+  ✔️Half an hour before the end of watering
+  ✔️Low battery voltage
 
-🔴Messages on mobile for information
-✔️Counts collection counters / hour
-✔️Measures left until it ends
-✔️How much time is left for watering until the end
-✔️The water pressure (bar) on the reel
-✔️Battery indicator
-✔️Time and date display
-✔️Temperature & humidity indicator
-✔️Wind speed
+  🔴Messages on mobile for information
+  ✔️Counts collection counters / hour
+  ✔️Measures left until it ends
+  ✔️How much time is left for watering until the end
+  ✔️The water pressure (bar) on the reel
+  ✔️Battery indicator
+  ✔️Time and date display
+  ✔️Temperature & humidity indicator
+  ✔️Wind speed
 */
 #include <Wire.h>                   // Wire library
 #include <LiquidCrystal_I2C.h>      // Liquid Crystal I2C library
@@ -31,7 +31,7 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include "RTClib.h"
 #include <EEPROM.h>
 #include <EEPROM.h>
-#include <dht.h>
+#include "dht.h"
 #define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
 dht DHT;
 // dht1wire DHT(DHT22_PIN, dht::DHT22);
@@ -76,17 +76,17 @@ float WindSpeed;
 
 unsigned long timeNow;
 int
-    eepromOffset = 0,
-    str1AddrOffset,
-    str2AddrOffset,
-    str3AddrOffset,
-    str4AddrOffset,
-    str5AddrOffset,
-    newStr1AddrOffset,
-    newStr2AddrOffset,
-    newStr3AddrOffset,
-    newStr4AddrOffset,
-    newStr5AddrOffset;
+eepromOffset = 0,
+str1AddrOffset,
+str2AddrOffset,
+str3AddrOffset,
+str4AddrOffset,
+str5AddrOffset,
+newStr1AddrOffset,
+newStr2AddrOffset,
+newStr3AddrOffset,
+newStr4AddrOffset,
+newStr5AddrOffset;
 // Writing
 String inputString = "";
 String phoneNum = "";
@@ -154,9 +154,9 @@ boolean ends = true;
 
 float timePerTurn = 0.0;
 unsigned long
-    speeding = 0,
-    turnStart = 0,
-    turnEnd = 0;
+speeding = 0,
+turnStart = 0,
+turnEnd = 0;
 int speedSet = 30;
 int length = 0;
 int pwm = 6;
@@ -274,13 +274,13 @@ void loop()
   Second = now.second();
   // controlMotor(getSpeed());
   /*Serial.print("get wind vane value");
-   Serial.println(getWind());
-   Serial.print("temp value");
-   Serial.println(getTemp());
-   Serial.print("humidity value");
-   Serial.println(getHum());
-   Serial.print("voltage value");
-   Serial.println(getVoltage());*/
+    Serial.println(getWind());
+    Serial.print("temp value");
+    Serial.println(getTemp());
+    Serial.print("humidity value");
+    Serial.println(getHum());
+    Serial.print("voltage value");
+    Serial.println(getVoltage());*/
 
   //================================================================
   if (Serial1.available() > 0)
@@ -310,10 +310,10 @@ void loop()
   // lcd.clear();
   /*if (digitalRead(hall1))
     count = true;
-  if (!digitalRead(hall1))
-  {
+    if (!digitalRead(hall1))
+    {
     magnet_detect();
-  }*/
+    }*/
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
@@ -393,16 +393,16 @@ void loop()
     lcd.setCursor(0, 2);
     lcd.print("W:");
     lcd.print(getWind(), 0);
-    lcd.print(" T: ");
-    lcd.print(getTemp()), 0;
-    lcd.print("H: ");
-    lcd.print(getHum(), 0);
-    lcd.print("V : ");
+    lcd.print(" T:");
+    lcd.print(getTemp(), 2);
+    lcd.print(" H:");
+    lcd.print(getHum(), 2);
+    lcd.print(" V :");
     lcd.print(getVoltage(), 0);
     lcd.setCursor(0, 3);
     lcd.print("len rem.");
-    delay(1000);
     lcd.print(half_revolutions * metra);
+    delay(1000);
     unsigned long timeNow = millis();
     if (timeNow - prev > 5000)
     {
@@ -425,12 +425,12 @@ void loop()
     lcd.setCursor(0, 3);
     if (speeding > 0)
     {
-      lcd.print("m/h:");      // this prints whats in between the quotes
-      lcd.print(speeding, 0); // this prints the tag value
+      lcd.print("km/h:");      // this prints whats in between the quotes
+      lcd.print(speeding/1000, 2); // this prints the tag value
     }
     lcd.setCursor(8, 3);
     lcd.print(" len:"); // this prints the tag value
-    lcd.print(half_revolutions * metra, 0);
+    lcd.print(half_revolutions * metra, 2);
   }
 }
 void updateSerial()
@@ -455,7 +455,7 @@ void updateSerial()
   inputstring = "";
 }
 void magnet_detect() // This function is called whenever a magnet/interrupt is detected by the arduino
-{                    // lcd.clear();
+{ // lcd.clear();
   if (count)
   {
     turnStart = millis();
@@ -750,7 +750,7 @@ void moveRight()
     cursorPos = 0;       // how  we can use every part of the move of joystick code here
   }
   else
-  {                        // define that for every movement of the joystick change the direction
+  { // define that for every movement of the joystick change the direction
     int a = cursorPos + 7; // change the numbers display on lcd for ok button click on joystick take in center and click the passcode will enter.
     lcd.setCursor(a, 1);
     cursorPos = cursorPos + 1;
@@ -825,6 +825,7 @@ void checkCode()
     lcd.print("0000");
     lcd.setCursor(6, 1);
     countering = 0;
+    dig[0] = 0; dig[1] = 0; dig[2] = 0; dig[3] = 0;
     // setup();
   }
 }
@@ -841,7 +842,7 @@ float getWind()
 {
   InterruptCounter = 0;
   attachInterrupt(digitalPinToInterrupt(SensorPin), countup, RISING);
-  delay(500 * RecordTime);
+  delay(50 * RecordTime);
   detachInterrupt(digitalPinToInterrupt(SensorPin));
   WindSpeed = (float)InterruptCounter / (float)RecordTime * 2.4;
   return WindSpeed;
@@ -851,19 +852,19 @@ void countup()
 {
   InterruptCounter++;
 }
-float getTemp()
+int getTemp()
 {
   /* //int chk = DHT.read22(DHT22_PIN);
      dht::ReadStatus chk = DHT.read();
-   // Read data and store it to variables hum and temp
-   hum = DHT.getHumidity();
-   temp = DHT.getTemperature();
-   // Print temp and humidity values to serial monitor
-   Serial.print("Humidity: ");
-   Serial.print(hum);
-   Serial.print(" %, Temp: ");
-   Serial.print(temp);
-   Serial.println(" Celsius");*/
+    // Read data and store it to variables hum and temp
+    hum = DHT.getHumidity();
+    temp = DHT.getTemperature();
+    // Print temp and humidity values to serial monitor
+    Serial.print("Humidity: ");
+    Serial.print(hum);
+    Serial.print(" %, Temp: ");
+    Serial.print(temp);
+    Serial.println(" Celsius");*/
   int chk = DHT.read22(DHT22_PIN);
   // Read data and store it to variables hum and temp
   hum = DHT.humidity;
@@ -878,7 +879,7 @@ float getTemp()
   return temp;
 }
 
-float getHum()
+int getHum()
 {
   // int chk = DHT.read22(DHT22_PIN);
   // dht::ReadStatus chk = DHT.read();
@@ -986,8 +987,8 @@ float getSpeed()
     velocity = t2 - t1;
     velocity = velocity / 1000;               // convert millisecond to second for timig
     velocity = (0.2 / velocity) * 3.6 * 1000; // km/s
-    Serial.print(velocity * 1000);
-    speeding = velocity * 1000;
+    Serial.print(velocity );
+    speeding = velocity;
     Serial.println(" m/hr");
     delay(500);
     read = false;
