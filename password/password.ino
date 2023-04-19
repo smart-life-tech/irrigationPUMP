@@ -394,9 +394,9 @@ void loop()
     lcd.print("W:");
     lcd.print(getWind(), 0);
     lcd.print(" T:");
-    lcd.print(getTemp(), 2);
+    lcd.print(getTemp());
     lcd.print(" H:");
-    lcd.print(getHum(), 2);
+    lcd.print(getHum());
     lcd.print(" V :");
     lcd.print(getVoltage(), 0);
     lcd.setCursor(0, 3);
