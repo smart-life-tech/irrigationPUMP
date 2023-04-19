@@ -419,7 +419,7 @@ void loop()
     if (speeding > 0)
     {
       lcd.print("km/h:");      // this prints whats in between the quotes
-      lcd.print(speeding/1000, 2); // this prints the tag value
+      lcd.print(int(speeding)); // this prints the tag value
     }
     lcd.setCursor(8, 3);
     lcd.print(" len:"); // this prints the tag value
