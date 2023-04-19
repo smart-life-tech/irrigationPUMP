@@ -272,6 +272,7 @@ void loop()
   Minute = now.minute();
   Hour = now.hour();
   Second = now.second();
+  getSpeeding();
   // controlMotor(getSpeed());
   /*Serial.print("get wind vane value");
     Serial.println(getWind());
@@ -306,14 +307,6 @@ void loop()
   }
   // delay(1000);
 
-  //==============================================================
-  // lcd.clear();
-  /*if (digitalRead(hall1))
-    count = true;
-    if (!digitalRead(hall1))
-    {
-    magnet_detect();
-    }*/
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
