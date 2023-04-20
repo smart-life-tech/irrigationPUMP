@@ -865,8 +865,10 @@ float getWind()
       errorWind();
       wind = false;
     }
-  }else{
-    wind=true;
+  }
+  else
+  {
+    wind = true;
   }
   return WindSpeed;
 }
@@ -1015,11 +1017,11 @@ float getSpeed()
     Serial.print(velocity);
     speeding = velocity;
     Serial.println(" m/hr");
-    if ((velocity ) > (0.15 * setSpeed)+setSpeed || (velocity) < setSpeed-(0.15 * setSpeed))
+    if ((velocity) > (0.15 * setSpeed) + setSpeed || (velocity) < setSpeed - (0.15 * setSpeed))
     {
       errorDeviation();
     }
-   int  timeLeft = currentDistance / speeding; // m div  m/s
+    int timeLeft = currentDistance / speeding; // m div  m/s
     Serial.print("time left");
     Serial.println(timeLeft);
     delay(500);
@@ -1127,7 +1129,7 @@ void errorWind()
   Serial1.println("AT+CMGS=\"+306973991989\"\r");
   // Replace x with mobile number
   delay(500);
-  Serial1.println(" wind is less than 3 barefoot"); // SMS Text
+  Serial1.println(" wind is greater than 3 barefoot"); // SMS Text
   delay(200);
   Serial1.println((char)26); // ASCII code of CTRL+Z
   delay(1000);
