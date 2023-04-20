@@ -274,15 +274,8 @@ void loop()
   Hour = now.hour();
   Second = now.second();
   getSpeeding();
+  /*
   // controlMotor(getSpeed());
-  /*Serial.print("get wind vane value");
-    Serial.println(getWind());
-    Serial.print("temp value");
-    Serial.println(getTemp());
-    Serial.print("humidity value");
-    Serial.println(getHum());
-    Serial.print("voltage value");
-    Serial.println(getVoltage());*/
   if (getVoltage() < 11.5)
   {
     if (voltage)
@@ -442,6 +435,7 @@ void loop()
     lcd.print(" len:"); // this prints the tag value
     lcd.print(int(half_revolutions * metra));
   }
+*/
 }
 void updateSerial()
 {
