@@ -440,7 +440,7 @@ void loop()
     }
     lcd.setCursor(8, 3);
     lcd.print(" len:"); // this prints the tag value
-    lcd.print(half_revolutions * metra, 2);
+    lcd.print(int(half_revolutions * metra));
   }
 }
 void updateSerial()
@@ -847,8 +847,8 @@ float getVoltage()
   value = analogRead(analogInPin);
   vOUT = (value * 5.0) / 1024.0;
   vIN = vOUT / (R2 / (R1 + R2));
-  Serial.print("Input = ");
-  Serial.println(vIN);
+  //Serial.print("Input = ");
+  //Serial.println(vIN);
   return vIN;
 }
 float getWind()
