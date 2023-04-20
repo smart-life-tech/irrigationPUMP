@@ -529,8 +529,8 @@ void DisplayPSI() // main display
   value = analogRead(analogInPin);
   vOUT = (value * 5.0) / 1024.0;
   vIN = vOUT / (R2 / (R1 + R2));
-  Serial.print("Input = ");
-  Serial.println(vIN);
+  //Serial.print("Input = ");
+  //Serial.println(vIN);
   outputValue = vIN;
 
   // sensorValue = analogRead(analogInPin); // FOR THE BATTERY
@@ -955,8 +955,8 @@ String getTimeDate()
   char buf1[20];
   DateTime now = rtc.now();
   sprintf(buf1, "%02d:%02d:%02d %02d/%02d/%02d", now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
-  Serial.print(F("Date/Time: "));
-  Serial.println(buf1);
+  //Serial.print(F("Date/Time: "));
+  //Serial.println(buf1);
   return buf1;
 }
 float getSpeed()
@@ -966,8 +966,8 @@ float getSpeed()
     if (clear)
     {
       counter++;
-      Serial.print("counts : ");
-      Serial.println(counter);
+     Serial.print("counts : ");
+     
       if (releasing)
       {
         half_revolutions++;
@@ -978,6 +978,7 @@ float getSpeed()
         if (half_revolutions <= 0)
           half_revolutions = 0;
       }
+      Serial.println(half_revolutions);
       clear = false;
     }
   }
@@ -991,7 +992,7 @@ float getSpeed()
     if (count1)
     {
       t1 = millis();
-      Serial.println(t1);
+     // Serial.println(t1);
       read = false;
       count2 = true;
       count1 = false;
@@ -1002,7 +1003,7 @@ float getSpeed()
     if (count2)
     {
       t2 = millis();
-      Serial.println(t2);
+    //  Serial.println(t2);
       counter = 0;
       read = true;
       count1 = true;
@@ -1014,6 +1015,7 @@ float getSpeed()
     velocity = t2 - t1;
     velocity = velocity / 1000;               // convert millisecond to second for timig
     velocity = (0.2 / velocity) * 3.6 * 1000; // km/s
+    Serial.println("velocity/speed: ");
     Serial.print(velocity);
     speeding = velocity;
     Serial.println(" m/hr");
@@ -1026,7 +1028,7 @@ float getSpeed()
       }
     }
     int timeLeft = currentDistance / speeding; // m div  m/s
-    Serial.print("time left");
+    Serial.print("time left: ");
     Serial.println(timeLeft);
     delay(500);
     read = false;
@@ -1045,14 +1047,14 @@ void controlMotor(float speed)
     if (speed > setSpeed + 400.00)
     {
       // delay(5000);
-      Serial.println("moving forward, more speed");
+     // Serial.println("moving forward, more speed");
       analogWrite(pwm, 255);
       digitalWrite(in2, HIGH);
       digitalWrite(in1, LOW);
     }
     else if (speed < setSpeed - 300.00)
     {
-      Serial.println("moving backward, less speed");
+     // Serial.println("moving backward, less speed");
       analogWrite(pwm, 255);
       digitalWrite(in2, LOW);
       digitalWrite(in1, HIGH);
