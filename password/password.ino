@@ -76,17 +76,17 @@ float WindSpeed;
 
 unsigned long timeNow;
 int
-eepromOffset = 0,
-str1AddrOffset,
-str2AddrOffset,
-str3AddrOffset,
-str4AddrOffset,
-str5AddrOffset,
-newStr1AddrOffset,
-newStr2AddrOffset,
-newStr3AddrOffset,
-newStr4AddrOffset,
-newStr5AddrOffset;
+    eepromOffset = 0,
+    str1AddrOffset,
+    str2AddrOffset,
+    str3AddrOffset,
+    str4AddrOffset,
+    str5AddrOffset,
+    newStr1AddrOffset,
+    newStr2AddrOffset,
+    newStr3AddrOffset,
+    newStr4AddrOffset,
+    newStr5AddrOffset;
 // Writing
 String inputString = "";
 String phoneNum = "";
@@ -154,9 +154,9 @@ boolean ends = true;
 
 float timePerTurn = 0.0;
 unsigned long
-speeding = 0,
-turnStart = 0,
-turnEnd = 0;
+    speeding = 0,
+    turnStart = 0,
+    turnEnd = 0;
 int speedSet = 30;
 int length = 0;
 int pwm = 6;
@@ -168,7 +168,7 @@ int dig[4];
 int upButton = 9;
 int downButton = 8;
 int select = 7;
-
+bool stopWatering = true;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -395,6 +395,14 @@ void loop()
     lcd.setCursor(0, 3);
     lcd.print("len rem.");
     lcd.print(half_revolutions * metra);
+    if (half_revolutions <= 0)
+    {
+      if (stopWatering)
+      {
+        errorStopWatering();
+        stopWatering = false;
+      }
+    }
     delay(1000);
     unsigned long timeNow = millis();
     if (timeNow - prev > 5000)
@@ -418,7 +426,7 @@ void loop()
     lcd.setCursor(0, 3);
     if (speeding > 0)
     {
-      lcd.print("km/h:");      // this prints whats in between the quotes
+      lcd.print("km/h:");       // this prints whats in between the quotes
       lcd.print(int(speeding)); // this prints the tag value
     }
     lcd.setCursor(8, 3);
@@ -448,7 +456,7 @@ void updateSerial()
   inputstring = "";
 }
 void magnet_detect() // This function is called whenever a magnet/interrupt is detected by the arduino
-{ // lcd.clear();
+{                    // lcd.clear();
   if (count)
   {
     turnStart = millis();
@@ -743,7 +751,7 @@ void moveRight()
     cursorPos = 0;       // how  we can use every part of the move of joystick code here
   }
   else
-  { // define that for every movement of the joystick change the direction
+  {                        // define that for every movement of the joystick change the direction
     int a = cursorPos + 7; // change the numbers display on lcd for ok button click on joystick take in center and click the passcode will enter.
     lcd.setCursor(a, 1);
     cursorPos = cursorPos + 1;
@@ -818,7 +826,10 @@ void checkCode()
     lcd.print("0000");
     lcd.setCursor(6, 1);
     countering = 0;
-    dig[0] = 0; dig[1] = 0; dig[2] = 0; dig[3] = 0;
+    dig[0] = 0;
+    dig[1] = 0;
+    dig[2] = 0;
+    dig[3] = 0;
     // setup();
   }
 }
@@ -863,11 +874,11 @@ int getTemp()
   hum = DHT.humidity;
   temp = DHT.temperature;
   // Print temp and humidity values to serial monitor
-  Serial.print("Humidity: ");
-  Serial.print(hum);
-  Serial.print(" %, Temp: ");
-  Serial.print(temp);
-  Serial.println(" Celsius");
+  /*Serial.print("Humidity: ");
+   Serial.print(hum);
+   Serial.print(" %, Temp: ");
+   Serial.print(temp);
+   Serial.println(" Celsius");*/
   // delay(2000); // Delay 2 sec.
   return temp;
 }
@@ -885,11 +896,11 @@ int getHum()
   hum = DHT.humidity;
   temp = DHT.temperature;
   // Print temp and humidity values to serial monitor
-  Serial.print("Humidity: ");
+  /*Serial.print("Humidity: ");
   Serial.print(hum);
   Serial.print(" %, Temp: ");
   Serial.print(temp);
-  Serial.println(" Celsius");
+  Serial.println(" Celsius");*/
   // delay(2000); // Delay 2 sec.
   return hum;
 }
@@ -980,7 +991,7 @@ float getSpeed()
     velocity = t2 - t1;
     velocity = velocity / 1000;               // convert millisecond to second for timig
     velocity = (0.2 / velocity) * 3.6 * 1000; // km/s
-    Serial.print(velocity );
+    Serial.print(velocity);
     speeding = velocity;
     Serial.println(" m/hr");
     delay(500);
@@ -1019,4 +1030,23 @@ void controlMotor(float speed)
       digitalWrite(in2, LOW);
     }
   }
+}
+
+void errorStopWatering()
+{
+  Serial.println("Setting the GSM in text mode");
+  Serial1.println("AT+CMGF=1\r");
+  delay(200);
+  Serial.println("Sending SMS to the desired phone number!");
+  Serial1.println("AT+CMGS=\"+306973991989\"\r");
+  // Replace x with mobile number
+  delay(500);
+  Serial1.println(" watering has stopped"); // SMS Text
+  delay(200);
+  Serial1.println((char)26); // ASCII code of CTRL+Z
+  delay(1000);
+  Serial1.println();
+  Serial1.println("AT");
+  delay(200);
+  Serial1.println("AT+CMGF=1\r");
 }
