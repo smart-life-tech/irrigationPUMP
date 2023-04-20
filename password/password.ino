@@ -73,7 +73,7 @@ const int SensorPin = 3;  // Define Interrupt Pin (2 or 3 @ Arduino Uno)
 
 int InterruptCounter;
 float WindSpeed;
-
+bool wind, voltage = true;
 unsigned long timeNow;
 int
     eepromOffset = 0,
@@ -131,7 +131,7 @@ int green = 7;
 int red = 8;
 String pass = "";
 bool doOnce, doOnce2, doOnce3 = true;
-
+unsigned long currentDistance = 0;
 String inputstring = "";
 bool setMet = true;
 int radius = 2;
@@ -217,16 +217,17 @@ void setup()
   // When time needs to be re-set on a previously configured device, the
   // following line sets the RTC to the date & time this sketch was compiled
   rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  lcd.print("Enter password:");
+
+  pinMode(upButton, INPUT_PULLUP);
+  pinMode(downButton, INPUT_PULLUP);
+  pinMode(select, INPUT_PULLUP);
+  // set values of variables
+  /*lcd.print("Enter password:");
   lcd.setCursor(6, 1);
   lcd.print("0000");
   lcd.cursor();
   lcd.noBlink();
   lcd.setCursor(6, 1);
-  pinMode(upButton, INPUT_PULLUP);
-  pinMode(downButton, INPUT_PULLUP);
-  pinMode(select, INPUT_PULLUP);
-  // set values of variables
   cursorPos = 0;
   for (int i = 0; i <= 3; i++)
   {
@@ -239,7 +240,7 @@ void setup()
     if (countering == 100)
       break;
   }
-  lcd.noCursor();
+  lcd.noCursor();*/
   // This line sets the RTC with an explicit date & time, for example to set
   Serial.println("Initializing gsm ...");
 
@@ -282,7 +283,14 @@ void loop()
     Serial.println(getHum());
     Serial.print("voltage value");
     Serial.println(getVoltage());*/
-
+  if (getVoltage() < 11.5)
+  {
+    if (voltage)
+    {
+      errorVoltage();
+      voltage = false;
+    }
+  }
   //================================================================
   if (Serial1.available() > 0)
   {
@@ -395,6 +403,7 @@ void loop()
     lcd.setCursor(0, 3);
     lcd.print("len rem.");
     lcd.print(half_revolutions * metra);
+    currentDistance = half_revolutions * metra;
     if (half_revolutions <= 0)
     {
       if (stopWatering)
@@ -849,6 +858,14 @@ float getWind()
   delay(50 * RecordTime);
   detachInterrupt(digitalPinToInterrupt(SensorPin));
   WindSpeed = (float)InterruptCounter / (float)RecordTime * 2.4;
+  if (WindSpeed < 3)
+  {
+    if (wind)
+    {
+      errorWind();
+      wind = false;
+    }
+  }
   return WindSpeed;
 }
 
@@ -996,6 +1013,13 @@ float getSpeed()
     Serial.print(velocity);
     speeding = velocity;
     Serial.println(" m/hr");
+    if (abs(velocity - setSpeed) > (0.15 * setSpeed) || abs(velocity - setSpeed) < (0.15 * setSpeed))
+    {
+      errorDeviation();
+    }
+   int  timeLeft = currentDistance / speeding; // m div  m/s
+    Serial.print("time left");
+    Serial.println(timeLeft);
     delay(500);
     read = false;
   }
@@ -1034,6 +1058,7 @@ void controlMotor(float speed)
   }
 }
 
+// error handling section
 void errorStopWatering()
 {
   Serial.println("Setting the GSM in text mode");
@@ -1044,6 +1069,63 @@ void errorStopWatering()
   // Replace x with mobile number
   delay(500);
   Serial1.println(" watering has stopped"); // SMS Text
+  delay(200);
+  Serial1.println((char)26); // ASCII code of CTRL+Z
+  delay(1000);
+  Serial1.println();
+  Serial1.println("AT");
+  delay(200);
+  Serial1.println("AT+CMGF=1\r");
+}
+
+void errorDeviation()
+{
+  Serial.println("Setting the GSM in text mode");
+  Serial1.println("AT+CMGF=1\r");
+  delay(200);
+  Serial.println("Sending SMS to the desired phone number!");
+  Serial1.println("AT+CMGS=\"+306973991989\"\r");
+  // Replace x with mobile number
+  delay(500);
+  Serial1.println(" speed deviation from set by 15%"); // SMS Text
+  delay(200);
+  Serial1.println((char)26); // ASCII code of CTRL+Z
+  delay(1000);
+  Serial1.println();
+  Serial1.println("AT");
+  delay(200);
+  Serial1.println("AT+CMGF=1\r");
+}
+
+void errorVoltage()
+{
+  Serial.println("Setting the GSM in text mode");
+  Serial1.println("AT+CMGF=1\r");
+  delay(200);
+  Serial.println("Sending SMS to the desired phone number!");
+  Serial1.println("AT+CMGS=\"+306973991989\"\r");
+  // Replace x with mobile number
+  delay(500);
+  Serial1.println(" battery is low"); // SMS Text
+  delay(200);
+  Serial1.println((char)26); // ASCII code of CTRL+Z
+  delay(1000);
+  Serial1.println();
+  Serial1.println("AT");
+  delay(200);
+  Serial1.println("AT+CMGF=1\r");
+}
+
+void errorWind()
+{
+  Serial.println("Setting the GSM in text mode");
+  Serial1.println("AT+CMGF=1\r");
+  delay(200);
+  Serial.println("Sending SMS to the desired phone number!");
+  Serial1.println("AT+CMGS=\"+306973991989\"\r");
+  // Replace x with mobile number
+  delay(500);
+  Serial1.println(" wind is less than 3 barefoot"); // SMS Text
   delay(200);
   Serial1.println((char)26); // ASCII code of CTRL+Z
   delay(1000);
