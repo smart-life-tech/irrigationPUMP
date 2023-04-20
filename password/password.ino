@@ -1008,7 +1008,7 @@ float getSpeed()
   {
     velocity = t2 - t1;
     velocity = velocity / 1000;               // convert millisecond to second for timig
-    velocity = (0.25 / velocity) * 3.6 * 1000; // km/s
+    velocity = (0.9 / velocity) * 3.6 * 1000; // km/s
     Serial.println("velocity/speed: ");
     Serial.print(velocity);
     speeding = velocity;
