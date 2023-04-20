@@ -858,13 +858,15 @@ float getWind()
   delay(50 * RecordTime);
   detachInterrupt(digitalPinToInterrupt(SensorPin));
   WindSpeed = (float)InterruptCounter / (float)RecordTime * 2.4;
-  if (WindSpeed < 3)
+  if (WindSpeed > 3)
   {
     if (wind)
     {
       errorWind();
       wind = false;
     }
+  }else{
+    wind=true;
   }
   return WindSpeed;
 }
