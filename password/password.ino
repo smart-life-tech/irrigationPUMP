@@ -954,6 +954,8 @@ float getSpeed()
       else
       {
         half_revolutions--;
+        if (half_revolutions <= 0)
+          half_revolutions = 0;
       }
       clear = false;
     }
