@@ -1013,7 +1013,7 @@ float getSpeed()
     Serial.print(velocity);
     speeding = velocity;
     Serial.println(" m/hr");
-    if (abs(velocity - setSpeed) > (0.15 * setSpeed) || abs(velocity - setSpeed) < (0.15 * setSpeed))
+    if ((velocity ) > (0.15 * setSpeed) || (velocity) < (0.15 * setSpeed))
     {
       errorDeviation();
     }
