@@ -162,7 +162,7 @@ int length = 0;
 int pwm = 6;
 int in1 = 5;
 int in2 = 4;
-
+bool deviation =true;
 int cursorPos;
 int dig[4];
 int upButton = 9;
@@ -1017,9 +1017,13 @@ float getSpeed()
     Serial.print(velocity);
     speeding = velocity;
     Serial.println(" m/hr");
-    if ((velocity) > (0.15 * setSpeed) + setSpeed || (velocity) < setSpeed - (0.15 * setSpeed))
+    if (velocity > (0.15 * setSpeed) + setSpeed) //|| (velocity) < setSpeed - (0.15 * setSpeed))
     {
-      errorDeviation();
+      if (deviation)
+      {
+        errorDeviation();
+        deviation = false;
+      }
     }
     int timeLeft = currentDistance / speeding; // m div  m/s
     Serial.print("time left");
