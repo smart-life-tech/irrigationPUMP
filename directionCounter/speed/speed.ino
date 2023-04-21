@@ -12,7 +12,6 @@ void setup()
 
     pinMode(IR1, INPUT);
 
-
     Serial.begin(9600);
 }
 
@@ -25,9 +24,10 @@ void loop()
         {
             counter++;
             Serial.print("counts : ");
-
+            Serial.println(counter);
             clear = false;
         }
+    
     }
     else if (digitalRead(IR1) == 1)
     {
@@ -60,8 +60,8 @@ void loop()
     if (read)
     {
         velocity = t2 - t1;
-        velocity = velocity / 1000;             // convert millisecond to second for timig
-        velocity = (1 / velocity) * 3.6 * 1000; // km/s
+        velocity = velocity / 1000;                // convert millisecond to second for timig
+        velocity = (0.25 / velocity) * 3.6 * 1000; // km/s
         Serial.println("velocity/speed: ");
         Serial.print(velocity);
         speeding = velocity;
