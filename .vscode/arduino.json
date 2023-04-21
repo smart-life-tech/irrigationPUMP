@@ -1,5 +1,5 @@
 {
     "board": "arduino:avr:mega",
     "configuration": "cpu=atmega2560",
-    "sketch": "password/password.ino"
+    "sketch": "directionCounter\\speed\\speed.ino"
 }
