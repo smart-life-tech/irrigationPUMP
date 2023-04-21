@@ -1,5 +1,4 @@
 int IR1 = 2;
-int IR2 = 2;
 unsigned long t1 = 0;
 unsigned long t2 = 0;
 float velocity;
@@ -12,7 +11,7 @@ void setup()
 {
 
     pinMode(IR1, INPUT);
-    pinMode(IR2, INPUT);
+
 
     Serial.begin(9600);
 }
