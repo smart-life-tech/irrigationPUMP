@@ -3,7 +3,8 @@ unsigned long t1 = 0;
 unsigned long t2 = 0;
 float velocity;
 int speeding = 0;
-bool count1, clear, count2, read = true;
+bool count1=true;
+bool  clear, count2, read = false;
 int counter = 0;
 // int vkmh = (100*3600)/1000;
 
@@ -39,7 +40,7 @@ void loop()
         if (count1)
         {
             t1 = millis();
-            // Serial.println(t1);
+             Serial.println(t1);
             read = false;
             count2 = true;
             count1 = false;
@@ -50,7 +51,7 @@ void loop()
         if (count2)
         {
             t2 = millis();
-            //  Serial.println(t2);
+              Serial.println(t2);
             counter = 0;
             read = true;
             count1 = true;
