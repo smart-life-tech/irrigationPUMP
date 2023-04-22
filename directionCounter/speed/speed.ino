@@ -44,10 +44,11 @@ void loop()
     velocity = t2 - t1;
     velocity = velocity / 1000;                 // convert millisecond to second for timig
     velocity = (0.155 / velocity) * 3.6 * 1000; // km/s
+    velocity = velocity/1000;
     Serial.println("velocity/speed: ");
     Serial.print(velocity);
     speeding = velocity;
-    Serial.println(" m/hr");
+    Serial.println(" km/hr");
     delay(500);
     read = false;
   }
