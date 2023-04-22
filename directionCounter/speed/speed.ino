@@ -22,8 +22,8 @@ void loop()
   if (count2)
   {
     t2 = millis();
-    //Serial.print("t2 ");
-    //Serial.println(t2);
+    Serial.print("t2 ");
+    Serial.println(t2);
     read = true;
     done = true;
     count1 = false;
@@ -32,8 +32,8 @@ void loop()
   if (count1)
   {
     t1 = millis();
-    //Serial.print("t1 ");
-    //Serial.println(t1);
+    Serial.print("t1 ");
+    Serial.println(t1);
     done = true;
     count1 = false;
     count2 = false;
@@ -55,7 +55,7 @@ void loop()
 void reads()
 {
   if (done) {
-    if (millis() - lastMillis > 400) {
+    if (millis() - lastMillis > 300) {
       lastMillis = millis();
       //Serial.println("counting");
       counter++;
