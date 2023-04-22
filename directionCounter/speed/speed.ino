@@ -18,6 +18,29 @@ void setup()
 
 void loop()
 {
+    if (counter == 1)
+    {
+        if (count1)
+        {
+            t1 = millis();
+            Serial.println(t1);
+            read = false;
+            count2 = true;
+            count1 = false;
+        }
+    }
+    else if (counter >= 2)
+    {
+        if (count2)
+        {
+            t2 = millis();
+            Serial.println(t2);
+            read = true;
+            count1 = true;
+            count2 = false;
+        }
+        counter = 0;
+    }
     if (read)
     {
         velocity = t2 - t1;
@@ -43,27 +66,4 @@ void reads()
     // }
     // clear = true;
     // delay(10);
-    if (counter == 1)
-    {
-        if (count1)
-        {
-            t1 = millis();
-            Serial.println(t1);
-            read = false;
-            count2 = true;
-            count1 = false;
-        }
-    }
-    else if (counter >= 2)
-    {
-        if (count2)
-        {
-            t2 = millis();
-            Serial.println(t2);
-            read = true;
-            count1 = true;
-            count2 = false;
-        }
-         counter = 0;
-    }
 }
