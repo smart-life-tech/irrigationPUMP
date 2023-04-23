@@ -56,7 +56,7 @@ void loop()
 void reads()
 {
   if (done) {
-    if (millis() - lastMillis > 300) {
+    if (millis() - lastMillis >   50) {
       lastMillis = millis();
       //Serial.println("counting");
       counter++;
