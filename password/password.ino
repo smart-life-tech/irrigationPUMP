@@ -76,17 +76,17 @@ float WindSpeed;
 bool wind, voltage = true;
 unsigned long timeNow;
 int
-    eepromOffset = 0,
-    str1AddrOffset,
-    str2AddrOffset,
-    str3AddrOffset,
-    str4AddrOffset,
-    str5AddrOffset,
-    newStr1AddrOffset,
-    newStr2AddrOffset,
-    newStr3AddrOffset,
-    newStr4AddrOffset,
-    newStr5AddrOffset;
+eepromOffset = 0,
+str1AddrOffset,
+str2AddrOffset,
+str3AddrOffset,
+str4AddrOffset,
+str5AddrOffset,
+newStr1AddrOffset,
+newStr2AddrOffset,
+newStr3AddrOffset,
+newStr4AddrOffset,
+newStr5AddrOffset;
 // Writing
 String inputString = "";
 String phoneNum = "";
@@ -119,6 +119,7 @@ unsigned long prev = 0;
 int mNow, hNow = 0;
 bool count, dir = true;
 bool done = false;
+bool done2 = true;
 float speed = 0.00;
 const int button[] = {7, 8, 9};
 int countering = 0;
@@ -156,9 +157,9 @@ boolean ends = true;
 
 float timePerTurn = 0.0;
 unsigned long
-    speeding = 0,
-    turnStart = 0,
-    turnEnd = 0;
+speeding = 0,
+turnStart = 0,
+turnEnd = 0;
 int speedSet = 30;
 int length = 0;
 int pwm = 6;
@@ -186,7 +187,7 @@ void setup()
   pinMode(in2, OUTPUT);
   count = true;
   speedSet = setSpeed;
-  Serial.println("Preparing to send SMS");
+  // Serial.println("Preparing to send SMS");
   // SendMessage();
   // Serial.begin(115200);
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
@@ -227,34 +228,35 @@ void setup()
   pinMode(select, INPUT_PULLUP);
   // set values of variables
   /*lcd.print("Enter password:");
-  lcd.setCursor(6, 1);
-  lcd.print("0000");
-  lcd.cursor();
-  lcd.noBlink();
-  lcd.setCursor(6, 1);
-  cursorPos = 0;
-  for (int i = 0; i <= 3; i++)
-  {
+    lcd.setCursor(6, 1);
+    lcd.print("0000");
+    lcd.cursor();
+    lcd.noBlink();
+    lcd.setCursor(6, 1);
+    cursorPos = 0;
+    for (int i = 0; i <= 3; i++)
+    {
     dig[i] = 0;
-  }
+    }
 
-  while (1)
-  {
+    while (1)
+    {
     passwordStart();
     if (countering == 100)
       break;
-  }
-  lcd.noCursor();*/
-  // This line sets the RTC with an explicit date & time, for example to set
-  Serial.println("Initializing gsm ...");
+    }
+    lcd.noCursor();
+    // This line sets the RTC with an explicit date & time, for example to set
+    Serial.println("Initializing gsm ...");
 
-  Serial1.println("AT"); // Once the handshake test is successful, it will back to OK
-  updateSerial();
-  Serial1.println("AT+CMGF=1"); // Configuring TEXT mode
-  updateSerial();
-  delay(100);
-  Serial1.println("AT+CNMI=1,2,0,0,0"); // Decides how newly arrived SMS messages should be handled
-  updateSerial();
+    Serial1.println("AT"); // Once the handshake test is successful, it will back to OK
+    updateSerial();
+    Serial1.println("AT+CMGF=1"); // Configuring TEXT mode
+    updateSerial();
+    delay(100);
+    Serial1.println("AT+CNMI=1,2,0,0,0"); // Decides how newly arrived SMS messages should be handled
+    updateSerial();
+  */
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("hose is releasing..."); // this prints whats in between the quotes
@@ -278,8 +280,8 @@ void loop()
   Hour = now.hour();
   Second = now.second();
   getSpeed();
- // getSpeeding();// this controls the motor retraction
-  /*
+  getSpeeding();// this controls the motor retraction
+
   // controlMotor(getSpeed());
   if (getVoltage() < 11.5)
   {
@@ -440,7 +442,7 @@ void loop()
     lcd.print(" len:"); // this prints the tag value
     lcd.print(int(half_revolutions * metra));
   }
-*/
+
 }
 void updateSerial()
 {
@@ -464,7 +466,7 @@ void updateSerial()
   inputstring = "";
 }
 void magnet_detect() // This function is called whenever a magnet/interrupt is detected by the arduino
-{                    // lcd.clear();
+{ // lcd.clear();
   if (count)
   {
     turnStart = millis();
@@ -759,7 +761,7 @@ void moveRight()
     cursorPos = 0;       // how  we can use every part of the move of joystick code here
   }
   else
-  {                        // define that for every movement of the joystick change the direction
+  { // define that for every movement of the joystick change the direction
     int a = cursorPos + 7; // change the numbers display on lcd for ok button click on joystick take in center and click the passcode will enter.
     lcd.setCursor(a, 1);
     cursorPos = cursorPos + 1;
@@ -895,10 +897,10 @@ int getTemp()
   temp = DHT.temperature;
   // Print temp and humidity values to serial monitor
   /*Serial.print("Humidity: ");
-   Serial.print(hum);
-   Serial.print(" %, Temp: ");
-   Serial.print(temp);
-   Serial.println(" Celsius");*/
+    Serial.print(hum);
+    Serial.print(" %, Temp: ");
+    Serial.print(temp);
+    Serial.println(" Celsius");*/
   // delay(2000); // Delay 2 sec.
   return temp;
 }
@@ -917,10 +919,10 @@ int getHum()
   temp = DHT.temperature;
   // Print temp and humidity values to serial monitor
   /*Serial.print("Humidity: ");
-  Serial.print(hum);
-  Serial.print(" %, Temp: ");
-  Serial.print(temp);
-  Serial.println(" Celsius");*/
+    Serial.print(hum);
+    Serial.print(" %, Temp: ");
+    Serial.print(temp);
+    Serial.println(" Celsius");*/
   // delay(2000); // Delay 2 sec.
   return hum;
 }
@@ -966,7 +968,7 @@ float getSpeed()
     Serial.print("t2 ");
     Serial.println(t2);
     read = true;
-    done = true;
+    done2 = true;
     count1 = false;
     count2 = false;
   }
@@ -975,7 +977,7 @@ float getSpeed()
     t1 = millis();
     Serial.print("t1 ");
     Serial.println(t1);
-    done = true;
+    done2 = true;
     count1 = false;
     count2 = false;
   }
@@ -1107,10 +1109,12 @@ void errorWind()
 
 void reads()
 {
-  if (done)
+  if (done2)
   {
     if (millis() - lastMillis > 250)
     {
+      if (done)half_revolutions--;
+      if (!done)half_revolutions++;
       lastMillis = millis();
       // Serial.println("counting");
       counter++;
@@ -1128,7 +1132,8 @@ void reads()
         count1 = false;
         counter = 0;
       }
-      done = false;
+      done2 = false;
     }
   }
+
 }
