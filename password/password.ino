@@ -143,6 +143,8 @@ float metra = 0.25;
 const int analogInPin = A1; // Analog input pin that the potentiometer is attached to batery
 const int analogOutPin = 9; // Analog output pin that the LED is attached to
 
+unsigned long lastMillis = 0;
+
 int sensorValue = 0; // value read from the pot
 int outputValue = 0; // value output to the PWM (analog out)
 int buttonUp = 9;
@@ -162,7 +164,7 @@ int length = 0;
 int pwm = 6;
 int in1 = 5;
 int in2 = 4;
-bool deviation =true;
+bool deviation = true;
 int cursorPos;
 int dig[4];
 int upButton = 9;
@@ -188,7 +190,9 @@ void setup()
   // SendMessage();
   // Serial.begin(115200);
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
-  attachInterrupt(0, getSpeeding, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
+  // attachInterrupt(0, getSpeeding, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
+  pinMode(IR1, INPUT_PULLUP);
+  attachInterrupt(0, reads, RISING);
   half_revolutions = 10;
   rpm = 100;
   timeold = 0;
@@ -273,7 +277,8 @@ void loop()
   Minute = now.minute();
   Hour = now.hour();
   Second = now.second();
-  getSpeeding();
+  getSpeed();
+ // getSpeeding();// this controls the motor retraction
   /*
   // controlMotor(getSpeed());
   if (getVoltage() < 11.5)
@@ -523,8 +528,8 @@ void DisplayPSI() // main display
   value = analogRead(analogInPin);
   vOUT = (value * 5.0) / 1024.0;
   vIN = vOUT / (R2 / (R1 + R2));
-  //Serial.print("Input = ");
-  //Serial.println(vIN);
+  // Serial.print("Input = ");
+  // Serial.println(vIN);
   outputValue = vIN;
 
   // sensorValue = analogRead(analogInPin); // FOR THE BATTERY
@@ -841,8 +846,8 @@ float getVoltage()
   value = analogRead(analogInPin);
   vOUT = (value * 5.0) / 1024.0;
   vIN = vOUT / (R2 / (R1 + R2));
-  //Serial.print("Input = ");
-  //Serial.println(vIN);
+  // Serial.print("Input = ");
+  // Serial.println(vIN);
   return vIN;
 }
 float getWind()
@@ -949,81 +954,42 @@ String getTimeDate()
   char buf1[20];
   DateTime now = rtc.now();
   sprintf(buf1, "%02d:%02d:%02d %02d/%02d/%02d", now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
-  //Serial.print(F("Date/Time: "));
-  //Serial.println(buf1);
+  // Serial.print(F("Date/Time: "));
+  // Serial.println(buf1);
   return buf1;
 }
 float getSpeed()
 {
-  if (digitalRead(IR1) == 0)
+  if (count2)
   {
-    if (clear)
-    {
-      counter++;
-     Serial.print("counts : ");
-     
-      if (releasing)
-      {
-        half_revolutions++;
-      }
-      else
-      {
-        half_revolutions--;
-        if (half_revolutions <= 0)
-          half_revolutions = 0;
-      }
-      Serial.println(half_revolutions);
-      clear = false;
-    }
+    t2 = millis();
+    Serial.print("t2 ");
+    Serial.println(t2);
+    read = true;
+    done = true;
+    count1 = false;
+    count2 = false;
   }
-  else if (digitalRead(IR1) == 1)
+  if (count1)
   {
-    clear = true;
-    delay(100);
+    t1 = millis();
+    Serial.print("t1 ");
+    Serial.println(t1);
+    done = true;
+    count1 = false;
+    count2 = false;
   }
-  if (counter == 1)
-  {
-    if (count1)
-    {
-      t1 = millis();
-     // Serial.println(t1);
-      read = false;
-      count2 = true;
-      count1 = false;
-    }
-  }
-  else if (counter == 2)
-  {
-    if (count2)
-    {
-      t2 = millis();
-    //  Serial.println(t2);
-      counter = 0;
-      read = true;
-      count1 = true;
-      count2 = false;
-    }
-  }
+
   if (read)
   {
     velocity = t2 - t1;
-    velocity = velocity / 1000;               // convert millisecond to second for timig
-    velocity = (1 / velocity) * 3.6 * 1000; // km/s
+    velocity = velocity / 1000;                // convert millisecond to second for timig
+    velocity = (0.18 / velocity) * 3.6 * 1000; // km/s
+    velocity = velocity / 1000;
     Serial.println("velocity/speed: ");
     Serial.print(velocity);
     speeding = velocity;
-    Serial.println(" m/hr");
-    if (velocity > (0.15 * setSpeed) + setSpeed) //|| (velocity) < setSpeed - (0.15 * setSpeed))
-    {
-      if (deviation)
-      {
-        errorDeviation();
-        deviation = false;
-      }
-    }
-    int timeLeft = currentDistance / speeding; // m div  m/s
-    Serial.print("time left: ");
-    Serial.println(timeLeft);
+    Serial.println(" km/hr");
     delay(500);
     read = false;
   }
@@ -1041,14 +1007,14 @@ void controlMotor(float speed)
     if (speed > setSpeed + 400.00)
     {
       // delay(5000);
-     // Serial.println("moving forward, more speed");
+      // Serial.println("moving forward, more speed");
       analogWrite(pwm, 255);
       digitalWrite(in2, HIGH);
       digitalWrite(in1, LOW);
     }
     else if (speed < setSpeed - 300.00)
     {
-     // Serial.println("moving backward, less speed");
+      // Serial.println("moving backward, less speed");
       analogWrite(pwm, 255);
       digitalWrite(in2, LOW);
       digitalWrite(in1, HIGH);
@@ -1137,4 +1103,32 @@ void errorWind()
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
+}
+
+void reads()
+{
+  if (done)
+  {
+    if (millis() - lastMillis > 250)
+    {
+      lastMillis = millis();
+      // Serial.println("counting");
+      counter++;
+      if (counter == 1)
+      {
+        // Serial.println("count1");
+        count1 = true;
+        count2 = false;
+        // done = false;
+      }
+      else if (counter == 2)
+      {
+        // Serial.println("count2");
+        count2 = true;
+        count1 = false;
+        counter = 0;
+      }
+      done = false;
+    }
+  }
 }
