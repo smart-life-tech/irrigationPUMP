@@ -992,19 +992,19 @@ float getSpeed()
     velocity = velocity / 1000;                // convert millisecond to second for timig
     velocity = (0.18 / velocity) * 3.6 * 1000; // m/h
     velocity = velocity;
-   // Serial.println("velocity/speed: ");
-    //Serial.print(velocity);
+    // Serial.println("velocity/speed: ");
+    // Serial.print(velocity);
     speeding = velocity;
-    Serial.println(" km/hr");
+    Serial.println(" m/hr");
     float wateringTimeNow = wateringEnd((currentDistance), velocity); // meter/hr
     // float totalWateringTime = wateringEnd(total_len * metra, getSpeed());         // mph
     float timeLeft = wateringTimeNow;
-    Serial.print("speeding  ");
+    Serial.print("speed ");
     Serial.println(velocity); // hours
     Serial.print("current len : ");
     Serial.println(currentDistance);
-    Serial.print("time left for watering in hrs: ");
-    Serial.println(timeLeft);
+    Serial.print("time left for watering in miutes: ");
+    Serial.println(timeLeft * 60);
     delay(500);
     read = false;
   }
