@@ -407,7 +407,7 @@ void loop()
 
     currentDistance = half_revolutions * metra;
     float wateringTimeNow = wateringEnd(currentDistance, getSpeed()); // meter/hr
-    float totalWateringTime = wateringEnd(total_len, getSpeed());     // mph
+    float totalWateringTime = wateringEnd(total_len*metra, getSpeed());     // mph
     float timeLeft =abs (totalWateringTime - wateringTimeNow);             // hours
     Serial.print("time left for watering : ");
     Serial.println(timeLeft);
