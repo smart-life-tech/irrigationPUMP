@@ -406,8 +406,8 @@ void loop()
     lcd.print(half_revolutions * metra);
 
     currentDistance = half_revolutions * metra;
-    total_len = total_len * metra;
-    float wateringTimeNow = wateringEnd((total_len - currentDistance), getSpeed()); // meter/hr
+    // total_len = total_len * metra;
+    float wateringTimeNow = wateringEnd((total_len - currentDistance), speeding); // meter/hr
     // float totalWateringTime = wateringEnd(total_len * metra, getSpeed());         // mph
     float timeLeft = wateringTimeNow;
     Serial.print("total len ");
@@ -976,8 +976,8 @@ float getSpeed()
   if (count2)
   {
     t2 = millis();
-   // Serial.print("t2 ");
-   // Serial.println(t2);
+    // Serial.print("t2 ");
+    // Serial.println(t2);
     read = true;
     done2 = true;
     count1 = false;
@@ -986,8 +986,8 @@ float getSpeed()
   if (count1)
   {
     t1 = millis();
-  //  Serial.print("t1 ");
-   // Serial.println(t1);
+    //  Serial.print("t1 ");
+    // Serial.println(t1);
     done2 = true;
     count1 = false;
     count2 = false;
@@ -1127,8 +1127,10 @@ void reads()
       if (done)
         half_revolutions--;
       if (!done)
+      {
         half_revolutions++;
-      total_len = half_revolutions;
+        total_len = half_revolutions * metra;
+      }
       lastMillis = millis();
       // Serial.println("counting");
       counter++;
