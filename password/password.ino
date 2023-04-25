@@ -998,7 +998,7 @@ float getSpeed()
     Serial.println(" m/hr");
     float wateringTimeNow = wateringEnd((currentDistance), velocity); // meter/hr
     // float totalWateringTime = wateringEnd(total_len * metra, getSpeed());         // mph
-    float timeLeft = wateringTimeNow;
+    float timeLeft = currentDistance/velocity;;
     Serial.print("speed ");
     Serial.println(velocity); // hours
     Serial.print("current len : ");
