@@ -1007,7 +1007,7 @@ float getSpeed()
     Serial.print("time left for watering in miutes: ");
     timeLeft = timeLeft * 60;
     Serial.println(timeLeft);
-    if (timeLeft < 0.5)
+    if (timeLeft < 30)
     {
       if (almostDone)
         sendAlmostDone();
