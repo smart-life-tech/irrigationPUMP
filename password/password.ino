@@ -1015,7 +1015,7 @@ float getSpeed()
     }
     else if (timeLeft > 1)
     {
-      almostDone = true;
+      //almostDone = true;
     }
     delay(500);
     read = false;
