@@ -407,11 +407,12 @@ void loop()
 
     currentDistance = half_revolutions * metra;
     // total_len = total_len * metra;
-    float wateringTimeNow = wateringEnd((currentDistance), speeding); // meter/hr
+    float gets= getSpeed();
+    float wateringTimeNow = wateringEnd((currentDistance), velocity); // meter/hr
     // float totalWateringTime = wateringEnd(total_len * metra, getSpeed());         // mph
     float timeLeft = wateringTimeNow;
     Serial.print("speeding  ");
-    Serial.println(speeding); // hours
+    Serial.println(velocity); // hours
     Serial.print("current len : ");
     Serial.println(currentDistance);
     Serial.print("time left for watering : ");
@@ -448,7 +449,7 @@ void loop()
     if (speeding > 0)
     {
       lcd.print("km/h:");     // this prints whats in between the quotes
-      lcd.print(speeding, 1); // this prints the tag value
+      lcd.print(velocity, 1); // this prints the tag value
     }
     lcd.setCursor(8, 3);
     lcd.print(" len:"); // this prints the tag value
