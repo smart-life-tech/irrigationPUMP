@@ -76,17 +76,17 @@ float WindSpeed;
 bool wind, voltage = true;
 unsigned long timeNow;
 int
-eepromOffset = 0,
-str1AddrOffset,
-str2AddrOffset,
-str3AddrOffset,
-str4AddrOffset,
-str5AddrOffset,
-newStr1AddrOffset,
-newStr2AddrOffset,
-newStr3AddrOffset,
-newStr4AddrOffset,
-newStr5AddrOffset;
+    eepromOffset = 0,
+    str1AddrOffset,
+    str2AddrOffset,
+    str3AddrOffset,
+    str4AddrOffset,
+    str5AddrOffset,
+    newStr1AddrOffset,
+    newStr2AddrOffset,
+    newStr3AddrOffset,
+    newStr4AddrOffset,
+    newStr5AddrOffset;
 // Writing
 String inputString = "";
 String phoneNum = "";
@@ -154,12 +154,13 @@ int buttonOk = 7;
 int metraAdd = 0; // address for the meter variable
 int speedAdd = 0; // address for the meter variable
 boolean ends = true;
-
+float total_len = 0;
+int endTime = 0;
 float timePerTurn = 0.0;
 unsigned long
-speeding = 0,
-turnStart = 0,
-turnEnd = 0;
+    speeding = 0,
+    turnStart = 0,
+    turnEnd = 0;
 int speedSet = 30;
 int length = 0;
 int pwm = 6;
@@ -280,7 +281,7 @@ void loop()
   Hour = now.hour();
   Second = now.second();
   getSpeed();
-  getSpeeding();// this controls the motor retraction
+  getSpeeding(); // this controls the motor retraction
 
   // controlMotor(getSpeed());
   if (getVoltage() < 11.5)
@@ -403,7 +404,13 @@ void loop()
     lcd.setCursor(0, 3);
     lcd.print("len rem.");
     lcd.print(half_revolutions * metra);
+
     currentDistance = half_revolutions * metra;
+    float wateringTimeNow = wateringEnd(currentDistance, getSpeed()); // meter/hr
+    float totalWateringTime = wateringEnd(total_len, getSpeed());     // mph
+    float timeLeft =abs (totalWateringTime - wateringTimeNow);             // hours
+    Serial.print("time left for watering : ");
+    Serial.println(timeLeft);
     if (half_revolutions <= 0)
     {
       if (stopWatering)
@@ -435,14 +442,13 @@ void loop()
     lcd.setCursor(0, 3);
     if (speeding > 0)
     {
-      lcd.print("km/h:");       // this prints whats in between the quotes
-      lcd.print(int(speeding)); // this prints the tag value
+      lcd.print("km/h:");     // this prints whats in between the quotes
+      lcd.print(speeding, 1); // this prints the tag value
     }
     lcd.setCursor(8, 3);
     lcd.print(" len:"); // this prints the tag value
     lcd.print(int(half_revolutions * metra));
   }
-
 }
 void updateSerial()
 {
@@ -466,7 +472,7 @@ void updateSerial()
   inputstring = "";
 }
 void magnet_detect() // This function is called whenever a magnet/interrupt is detected by the arduino
-{ // lcd.clear();
+{                    // lcd.clear();
   if (count)
   {
     turnStart = millis();
@@ -761,7 +767,7 @@ void moveRight()
     cursorPos = 0;       // how  we can use every part of the move of joystick code here
   }
   else
-  { // define that for every movement of the joystick change the direction
+  {                        // define that for every movement of the joystick change the direction
     int a = cursorPos + 7; // change the numbers display on lcd for ok button click on joystick take in center and click the passcode will enter.
     lcd.setCursor(a, 1);
     cursorPos = cursorPos + 1;
@@ -1113,8 +1119,11 @@ void reads()
   {
     if (millis() - lastMillis > 250)
     {
-      if (done)half_revolutions--;
-      if (!done)half_revolutions++;
+      if (done)
+        half_revolutions--;
+      if (!done)
+        half_revolutions++;
+      total_len = half_revolutions;
       lastMillis = millis();
       // Serial.println("counting");
       counter++;
@@ -1135,5 +1144,10 @@ void reads()
       done2 = false;
     }
   }
+}
 
+float wateringEnd(float distance, float speed)
+{
+  endTime = distance / speed;
+  return endTime;
 }
