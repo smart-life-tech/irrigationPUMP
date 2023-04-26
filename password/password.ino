@@ -72,6 +72,7 @@ float vIN = 0.0;
 float R1 = 30000.0;
 float R2 = 7500.0;
 int value = 0;
+float timeLeft = 0;
 const int RecordTime = 2; // Define Measuring Time (Seconds)
 const int SensorPin = 3;  // Define Interrupt Pin (2 or 3 @ Arduino Uno)
 bool almostDone = false;
@@ -304,6 +305,7 @@ void loop()
     if (receivedMessage.indexOf("info") > 0)
     {
       Serial.println("requesting machine information info");
+      infoMessage();
     }
   }
   getSpeed();
@@ -1025,8 +1027,8 @@ float getSpeed()
     Serial.println(" m/hr");
     float wateringTimeNow = wateringEnd((currentDistance), velocity); // meter/hr
     // float totalWateringTime = wateringEnd(total_len * metra, getSpeed());         // mph
-    float timeLeft = currentDistance / velocity;
-    ;
+    timeLeft = currentDistance / velocity;
+
     Serial.print("speed ");
     Serial.println(velocity); // hours
     Serial.print("current len : ");
@@ -1169,6 +1171,27 @@ void sendAlmostDone()
   // Replace x with mobile number
   delay(500);
   Serial1.println(" 30 minutes left to the ending of the watering "); // SMS Text
+  delay(200);
+  Serial1.println((char)26); // ASCII code of CTRL+Z
+  delay(1000);
+  Serial1.println();
+  Serial1.println("AT");
+  delay(200);
+  Serial1.println("AT+CMGF=1\r");
+}
+void infoMessage()
+{
+  String data = "M.L " + String(currentDistance) + " T.L " + String(timeLeft) + " PRE" + String((int)getPsi);
+  data += " BAT " + String(int(getVoltage())) + "T&D" + getTimeDate() + "HUM " + String(getHum()) + "tem " + String(getTemp());
+  data += "wind " + String(int(getWind()));
+  Serial.println("Setting the GSM in text mode");
+  Serial1.println("AT+CMGF=1\r");
+  delay(200);
+  Serial.println("Sending SMS to the desired phone number!");
+  Serial1.println("AT+CMGS=\"+306973991989\"\r");
+  // Replace x with mobile number
+  delay(500);
+  Serial1.println(data); // SMS Text
   delay(200);
   Serial1.println((char)26); // ASCII code of CTRL+Z
   delay(1000);
