@@ -1181,9 +1181,9 @@ void sendAlmostDone()
 }
 void infoMessage()
 {
-  String data = "M.L " + String(currentDistance) + " T.L " + String(timeLeft) + " PRE" + String((int)getPsi);
-  data += " BAT " + String(int(getVoltage())) + "T&D" + getTimeDate() + "HUM " + String(getHum()) + "tem " + String(getTemp());
-  data += "wind " + String(int(getWind()));
+  String data = "current distance: " + String(currentDistance) + "\n Time left " + String(timeLeft) + "\n PREssure" + String(int(getPsi));
+  data += "\n BATtery " + String(int(getVoltage())) + "\n time and date" + getTimeDate() + "\n HUMidity " + String(getHum()) + "\n temp " + String(getTemp());
+  data += "\n wind " + String(int(getWind()));
   Serial.println("Setting the GSM in text mode");
   Serial1.println("AT+CMGF=1\r");
   delay(200);
