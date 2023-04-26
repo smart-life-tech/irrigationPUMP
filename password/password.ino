@@ -301,6 +301,9 @@ void loop()
     String receivedMessage = salengGSM.smsRxMsg;
     Serial.print("Whole Message in string =");
     Serial.println(receivedMessage);
+    if(receivedMessage.indexOf("info")>0){
+      Serial.println("requesting machine information info");
+    }
   }
   getSpeed();
   getSpeeding(); // this controls the motor retraction
