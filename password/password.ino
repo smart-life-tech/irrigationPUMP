@@ -594,11 +594,11 @@ float timeConvert(int time)
 
 void ReadUnreadMessages()
 {
-  while (Serial1.available() > 0)
+  if (Serial1.available() > 0)
   {
-    char inByte = Serial1.read();
-    Serial.write(inByte);
-    inputString += inByte;
+    //char inByte = Serial1.read();
+    //Serial.write(inByte);
+    inputString = Serial1.readStringUntil('\n');//+= inByte;
   }
   Serial.print("recived message : ");
   Serial.println(inputString);
