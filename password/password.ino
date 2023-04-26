@@ -284,7 +284,7 @@ void loop()
   getSpeeding(); // this controls the motor retraction
 
   // controlMotor(getSpeed());
-  if (getVoltage() < 11.5)
+  if (getVoltage() < 1.5)// should be 11 .5
   {
     if (voltage)
     {
@@ -594,11 +594,11 @@ float timeConvert(int time)
 
 void ReadUnreadMessages()
 {
-  if (Serial1.available() > 0)
+  while (Serial1.available() > 0)
   {
-    //char inByte = Serial1.read();
-    //Serial.write(inByte);
-    inputString = Serial1.readStringUntil('\n');//+= inByte;
+    char inByte = Serial1.read();
+    Serial.write(inByte);
+    inputString += inByte;//Serial1.readStringUntil('\n');//
   }
   Serial.print("recived message : ");
   Serial.println(inputString);
