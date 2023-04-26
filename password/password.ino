@@ -32,6 +32,10 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include <EEPROM.h>
 #include <EEPROM.h>
 #include "dht.h"
+#include <LayadCircuits_SalengGSM.h>
+#include <SoftwareSerial.h>
+SoftwareSerial gsmSerial(19,18);
+LayadCircuits_SalengGSM salengGSM = LayadCircuits_SalengGSM(&Serial1);
 #define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
 dht DHT;
 // dht1wire DHT(DHT22_PIN, dht::DHT22);
@@ -178,7 +182,13 @@ void setup()
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
   delay(1000);
   Serial.println("Preparing to read received SMSes");
-  Serial1.begin(9600); // Setting the baud rate of GSM Module
+  Serial1.begin(9600);   // Setting the baud rate of GSM Module
+  salengGSM.begin(9600); // this is the default baud rate
+  Serial.begin(9600);
+  Serial.print(F("Preparing Saleng GSM Shield.Pls wait for 10 seconds..."));
+  delay(5000); // allow 10 seconds for modem to boot up and register
+  salengGSM.initSalengGSM();
+  Serial.println(F("Done"));
   pinMode(buttonUp, INPUT_PULLUP);
   pinMode(buttonDown, INPUT_PULLUP);
   pinMode(buttonOk, INPUT_PULLUP);
@@ -280,11 +290,20 @@ void loop()
   Minute = now.minute();
   Hour = now.hour();
   Second = now.second();
+  salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
+  if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
+  {
+    salengGSM.readSMS(); // updates the read flag
+    Serial.print("Sender=");
+    Serial.println(salengGSM.smsSender);
+    Serial.print("Whole Message=");
+    Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
+  }
   getSpeed();
   getSpeeding(); // this controls the motor retraction
 
   // controlMotor(getSpeed());
-  if (getVoltage() < 1.5)// should be 11 .5
+  if (getVoltage() < 1.5) // should be 11 .5
   {
     if (voltage)
     {
@@ -293,29 +312,29 @@ void loop()
     }
   }
   //================================================================
-  if (Serial1.available() > 0)
-  {
-    // n delay(50);
-    while (1)
-    {
-      ReadUnreadMessages();
-      if (millis() - timeNow > 10000)
-      {
-        timeNow = millis();
-        break;
-      }
-    }
-    Serial.print("phone number in  use : ");
-    Serial.println(phoneNum);
+  /* if (Serial1.available() > 0)
+   {
+     // n delay(50);
+     while (1)
+     {
+       ReadUnreadMessages();
+       if (millis() - timeNow > 10000)
+       {
+         timeNow = millis();
+         break;
+       }
+     }
+     Serial.print("phone number in  use : ");
+     Serial.println(phoneNum);
 
-    Serial.print("prog step in  use : ");
-    Serial.println(progstep);
+     Serial.print("prog step in  use : ");
+     Serial.println(progstep);
 
-    Serial.print("diameters in  use : ");
-    Serial.println(wheelDia);
-  }
-  // delay(1000);
-
+     Serial.print("diameters in  use : ");
+     Serial.println(wheelDia);
+   }
+   // delay(1000);
+ */
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
@@ -362,7 +381,7 @@ void loop()
         dir = false;
         setMet = false;
         releasing = false;
-        almostDone=true;
+        almostDone = true;
         break;
       }
     }
@@ -598,7 +617,7 @@ void ReadUnreadMessages()
   {
     char inByte = Serial1.read();
     Serial.write(inByte);
-    inputString += inByte;//Serial1.readStringUntil('\n');//
+    inputString += inByte; // Serial1.readStringUntil('\n');//
   }
   Serial.print("recived message : ");
   Serial.println(inputString);
@@ -1008,7 +1027,7 @@ float getSpeed()
     Serial.print("time left for watering in miutes: ");
     timeLeft = timeLeft * 60;
     Serial.println(timeLeft);
-    if (timeLeft < 30)// 30 mites
+    if (timeLeft < 30) // 30 mites
     {
       if (almostDone)
         sendAlmostDone();
@@ -1016,7 +1035,7 @@ float getSpeed()
     }
     else if (timeLeft > 1)
     {
-      //almostDone = true;
+      // almostDone = true;
     }
     delay(500);
     read = false;
