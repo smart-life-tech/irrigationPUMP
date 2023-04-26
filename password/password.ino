@@ -34,7 +34,7 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include "dht.h"
 #include <LayadCircuits_SalengGSM.h>
 #include <SoftwareSerial.h>
-SoftwareSerial gsmSerial(19,18);
+SoftwareSerial gsmSerial(19, 18);
 LayadCircuits_SalengGSM salengGSM = LayadCircuits_SalengGSM(&Serial1);
 #define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
 dht DHT;
@@ -298,6 +298,9 @@ void loop()
     Serial.println(salengGSM.smsSender);
     Serial.print("Whole Message=");
     Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
+    String receivedMessage = salengGSM.smsRxMsg;
+    Serial.print("Whole Message in string =");
+    Serial.println(receivedMessage);
   }
   getSpeed();
   getSpeeding(); // this controls the motor retraction
