@@ -86,12 +86,12 @@ int
     str2AddrOffset,
     str3AddrOffset,
     str4AddrOffset,
-    str5AddrOffset,
+    metraAddress,
     newStr1AddrOffset,
     newStr2AddrOffset,
     newStr3AddrOffset,
     newStr4AddrOffset,
-    newStr5AddrOffset;
+    newmetraAddress;
 // Writing
 String inputString = "";
 String phoneNum = "";
@@ -157,7 +157,7 @@ int buttonUp = 9;
 int buttonDown = 8;
 int buttonOk = 7;
 int metraAdd = 0; // address for the meter variable
-int speedAdd = 0; // address for the meter variable
+int speedAdd = 1; // address for the meter variable
 boolean ends = true;
 float total_len = 0;
 int endTime = 0;
@@ -671,14 +671,14 @@ void processData(String inputString)
       Serial.print("new phone number set to :");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
-      str1AddrOffset = writeStringToEEPROM(eepromOffset, phoneNum);
+    //  str1AddrOffset = writeStringToEEPROM(eepromOffset, phoneNum);
     }
     else if (id == "2")
     {
       Serial.print("new phone number set to :");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
-      str2AddrOffset = writeStringToEEPROM(str1AddrOffset, phoneNum);
+     // str2AddrOffset = writeStringToEEPROM(str1AddrOffset, phoneNum);
       //  writeStringToEEPROM(str2AddrOffset, str3);
     }
     else if (id == "3")
@@ -686,7 +686,7 @@ void processData(String inputString)
       Serial.print("new phone number set to :");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
-      str3AddrOffset = writeStringToEEPROM(str2AddrOffset, phoneNum);
+      //str3AddrOffset = writeStringToEEPROM(str2AddrOffset, phoneNum);
       //  writeStringToEEPROM(str2AddrOffset, str3);
     }
     inputString = "";
@@ -701,7 +701,8 @@ void processData(String inputString)
     Serial.print("program step number  set to :");
     Serial.println(inputString.substring(num + 1));
     progstep = inputString.substring(num + 1);
-    str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
+    //str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
+    EEPROM.write(speedAdd,progstep.toInt());
     inputString = "";
   }
   if (inputString.indexOf("MTR#") > -1)
@@ -714,8 +715,8 @@ void processData(String inputString)
     Serial.print("THE meter  number  set to :");
     Serial.println(inputString.substring(num+1 ));
     wheelDia = inputString.substring(num+1);
-    speedSet = wheelDia.toInt();
-    str5AddrOffset = writeStringToEEPROM(str4AddrOffset, wheelDia);
+    metra = wheelDia.toInt();
+    EEPROM.write(metraAdd, metra);
     inputString = "";
   }
   Serial.print("phone number in  use : ");
