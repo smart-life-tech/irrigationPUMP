@@ -279,11 +279,19 @@ void setup()
 
   metra = EEPROM.read(metraAdd);
   if (metra == 255)
+  {
     metra = 6.0;
+  }
+  else
+  {
+    metra = EEPROM.read(0);
+    setSpeed = EEPROM.read(1);
+  }
+
   dir = true;
   half_revolutions = 0;
   // timeConvert(6);// mins hour
-  metra = 0.1524; // 6 inches
+  // 6 inches
 }
 void loop()
 {
@@ -612,7 +620,7 @@ void ReadUnreadMessages()
   // read from port 0, send to port 1:
   //  Serial.print("received data in caps ");
   // Serial.println(inputString);
-  
+
   inputString = "";
 
   if (Serial.available())
@@ -671,14 +679,14 @@ void processData(String inputString)
       Serial.print("new phone number set to :");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
-    //  str1AddrOffset = writeStringToEEPROM(eepromOffset, phoneNum);
+      //  str1AddrOffset = writeStringToEEPROM(eepromOffset, phoneNum);
     }
     else if (id == "2")
     {
       Serial.print("new phone number set to :");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
-     // str2AddrOffset = writeStringToEEPROM(str1AddrOffset, phoneNum);
+      // str2AddrOffset = writeStringToEEPROM(str1AddrOffset, phoneNum);
       //  writeStringToEEPROM(str2AddrOffset, str3);
     }
     else if (id == "3")
@@ -686,8 +694,8 @@ void processData(String inputString)
       Serial.print("new phone number set to :");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
-      //str3AddrOffset = writeStringToEEPROM(str2AddrOffset, phoneNum);
-      //  writeStringToEEPROM(str2AddrOffset, str3);
+      // str3AddrOffset = writeStringToEEPROM(str2AddrOffset, phoneNum);
+      //   writeStringToEEPROM(str2AddrOffset, str3);
     }
     inputString = "";
   }
@@ -701,8 +709,8 @@ void processData(String inputString)
     Serial.print("program step number  set to :");
     Serial.println(inputString.substring(num + 1));
     progstep = inputString.substring(num + 1);
-    //str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
-    EEPROM.write(speedAdd,progstep.toInt());
+    // str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
+    EEPROM.write(speedAdd, progstep.toInt());
     inputString = "";
   }
   if (inputString.indexOf("MTR#") > -1)
@@ -713,8 +721,8 @@ void processData(String inputString)
     // Serial.println(inputString.indexOf("#"))MTR#134.0#
     int num = inputString.indexOf("#");
     Serial.print("THE meter  number  set to :");
-    Serial.println(inputString.substring(num+1 ));
-    wheelDia = inputString.substring(num+1);
+    Serial.println(inputString.substring(num + 1));
+    wheelDia = inputString.substring(num + 1);
     metra = wheelDia.toInt();
     EEPROM.write(metraAdd, metra);
     inputString = "";
@@ -723,10 +731,10 @@ void processData(String inputString)
   Serial.println(phoneNum);
 
   Serial.print("prog step in  use : ");
-  Serial.println(progstep);
+  Serial.println(metra);
 
-  Serial.print("diameters in  use : ");
-  Serial.println(wheelDia);
+  Serial.print("speed in  use : ");
+  Serial.println(setSpeed);
 }
 void readMem()
 {
@@ -1160,8 +1168,8 @@ void sendAlmostDone()
 }
 void infoMessage()
 {
-  String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft)+ "\ncollection m/h: " + String(timeLeft) + "\n bars: " + String(int(getPsi));
-  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int(getVoltage())) + "\n time: " + getTimeDate() + "\n date: " + getTimeDate()+ "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
+  String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(timeLeft) + "\n bars: " + String(int(getPsi));
+  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int(getVoltage())) + "\n time: " + getTimeDate() + "\n date: " + getTimeDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
   data += "\n wind: " + String(int(getWind()));
   Serial.println("Setting the GSM in text mode");
   Serial1.println("AT+CMGF=1\r");
