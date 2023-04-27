@@ -656,7 +656,7 @@ void SendMessage()
 }
 void processData(String inputString)
 {
-  if (inputString.indexOf("ER#") > -1)
+  if (inputString.indexOf("PRYGNUMBER") > -1)
   {
     Serial.print("received : ");
     Serial.println(inputString);
