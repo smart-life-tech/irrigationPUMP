@@ -284,8 +284,8 @@ void setup()
   }
   else
   {
-    metra = EEPROM.read(0);
-    setSpeed = EEPROM.read(1);
+    metra = EEPROM.read(metraAdd);
+    setSpeed = EEPROM.read(speedAdd);
   }
 
   dir = true;
@@ -711,6 +711,7 @@ void processData(String inputString)
     progstep = inputString.substring(num + 1);
     // str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
     EEPROM.write(speedAdd, progstep.toInt());
+    setSpeed = progstep.toInt();
     inputString = "";
   }
   if (inputString.indexOf("MTR#") > -1)
