@@ -321,30 +321,7 @@ void loop()
       voltage = false;
     }
   }
-  //================================================================
-  /* if (Serial1.available() > 0)
-   {
-     // n delay(50);
-     while (1)
-     {
-       ReadUnreadMessages();
-       if (millis() - timeNow > 10000)
-       {
-         timeNow = millis();
-         break;
-       }
-     }
-     Serial.print("phone number in  use : ");
-     Serial.println(phoneNum);
 
-     Serial.print("prog step in  use : ");
-     Serial.println(progstep);
-
-     Serial.print("diameters in  use : ");
-     Serial.println(wheelDia);
-   }
-   // delay(1000);
- */
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
@@ -735,8 +712,8 @@ void processData(String inputString)
     // Serial.println(inputString.indexOf("#"))MTR#134.0#
     int num = inputString.indexOf("#");
     Serial.print("THE meter  number  set to :");
-    Serial.println(inputString.substring(num + 1));
-    wheelDia = inputString.substring(num + 1);
+    Serial.println(inputString.substring(num+1 ));
+    wheelDia = inputString.substring(num+1);
     speedSet = wheelDia.toInt();
     str5AddrOffset = writeStringToEEPROM(str4AddrOffset, wheelDia);
     inputString = "";
