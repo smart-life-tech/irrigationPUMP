@@ -711,7 +711,7 @@ void processData(String inputString)
     progstep = inputString.substring(num + 1);
     // str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
     EEPROM.write(speedAdd, progstep.toInt());
-    setSpeed = progstep.toInt();
+    setSpeed = progstep.toInt()/1000;
     inputString = "";
   }
   if (inputString.indexOf("MTR#") > -1)
