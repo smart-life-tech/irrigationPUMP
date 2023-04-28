@@ -333,7 +333,7 @@ void loop()
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
-    delay(100);
+    delay(1500);
     lcd.clear();
     while (1)
     {
