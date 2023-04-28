@@ -972,15 +972,26 @@ float getPsi()
   // Serial.print(pressure_bar);
   return pressure_bar;
 }
-String getTimeDate()
+String getTime()
 {
   char buf1[20];
   DateTime now = rtc.now();
-  sprintf(buf1, "%02d:%02d:%02d %02d/%02d/%02d", now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
+  sprintf(buf1, "%02d:%02d:%02d", now.hour(), now.minute(), now.second());
   // Serial.print(F("Date/Time: "));
   // Serial.println(buf1);
   return buf1;
 }
+
+String getDate()
+{
+  char buf1[20];
+  DateTime now = rtc.now();
+  sprintf(buf1, " %02d/%02d/%02d", now.day(), now.month(), now.year());
+  // Serial.print(F("Date/Time: "));
+  // Serial.println(buf1);
+  return buf1;
+}
+
 float getSpeed()
 {
   if (count2)
@@ -1170,7 +1181,7 @@ void sendAlmostDone()
 void infoMessage()
 {
   String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(timeLeft) + "\n bars: " + String(int(getPsi));
-  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int(getVoltage())) + "\n time: " + getTimeDate() + "\n date: " + getTimeDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
+  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int(getVoltage())) + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
   data += "\n wind: " + String(int(getWind()));
   Serial.println("Setting the GSM in text mode");
   Serial1.println("AT+CMGF=1\r");
