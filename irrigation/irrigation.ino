@@ -410,7 +410,7 @@ void loop()
     lcd.print(now.year());
     lcd.setCursor(0, 2);
     lcd.print("W:");
-    lcd.print(getWind(), 0);
+    lcd.print(0, 0);
     lcd.print(" T:");
     lcd.print(getTemp());
     lcd.print(" H:");

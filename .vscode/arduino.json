@@ -1,5 +1,5 @@
 {
-    "board": "arduino:avr:mega",
     "configuration": "cpu=atmega2560",
+    "board": "arduino:avr:mega",
     "sketch": "irrigation\\irrigation.ino"
 }
