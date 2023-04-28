@@ -347,6 +347,7 @@ void loop()
       lcd.print("meter/h adjust ");
       lcd.setCursor(15, 2);
       lcd.print(speedSet);
+      delay(2000);
       if (!digitalRead(buttonUp))
       {
         delay(100);
@@ -367,7 +368,7 @@ void loop()
       {
         EEPROM.update(speedSet, speedAdd);
         length = half_revolutions * metra;
-        Serial.print("speed set is :");
+        Serial.print("ok button pressed, speed set is :");
         Serial.println(speedSet);
         setSpeed = speedSet;
         lcd.clear();
@@ -434,7 +435,7 @@ void loop()
         stopWatering = false;
       }
     }
-    delay(1000);
+   // delay(1000);
     unsigned long timeNow = millis();
     if (timeNow - prev > 5000)
     {
@@ -1183,7 +1184,7 @@ void sendAlmostDone()
 void infoMessage()
 {
   String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(timeLeft) + "\n bars: " + String(int(getPsi));
-  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage()/13)*100)) + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
+  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage()/13)*100))+" %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
   data += "\n wind: " + String(int(getWind()));
   Serial.println("Setting the GSM in text mode");
   Serial1.println("AT+CMGF=1\r");
