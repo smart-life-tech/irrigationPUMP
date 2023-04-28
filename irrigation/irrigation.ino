@@ -333,7 +333,7 @@ void loop()
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
-    delay(3000);
+    delay(1000);
     lcd.clear();
     while (1)
     {
@@ -417,8 +417,10 @@ void loop()
     lcd.print(" V :");
     lcd.print(getVoltage(), 0);
     lcd.setCursor(0, 3);
-    lcd.print("len rem.");
-    lcd.print(half_revolutions * metra);
+    lcd.print("L.rem.");
+    lcd.print(int(half_revolutions * metra));
+    lcd.print(" sp:");
+    lcd.print(setSpeed);
 
     currentDistance = half_revolutions * metra;
     // total_len = total_len * metra;
@@ -724,7 +726,7 @@ void processData(String inputString)
     Serial.print("THE meter  number  set to :");
     Serial.println(inputString.substring(num + 1));
     wheelDia = inputString.substring(num + 1);
-    metra = wheelDia.toInt();
+    metra = wheelDia.toInt()/1000;
     EEPROM.write(metraAdd, metra);
     inputString = "";
   }
@@ -1181,7 +1183,7 @@ void sendAlmostDone()
 void infoMessage()
 {
   String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(timeLeft) + "\n bars: " + String(int(getPsi));
-  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int(getVoltage())) + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
+  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage()/13)*100)) + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
   data += "\n wind: " + String(int(getWind()));
   Serial.println("Setting the GSM in text mode");
   Serial1.println("AT+CMGF=1\r");
