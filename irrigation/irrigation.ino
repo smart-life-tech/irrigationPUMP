@@ -715,6 +715,8 @@ void processData(String inputString)
     // str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
     EEPROM.write(speedAdd, progstep.toInt());
     setSpeed = progstep.toInt();
+    Serial.print("program speed number  set to :");
+    Serial.println(setSpeed);
     inputString = "";
   }
   if (inputString.indexOf("MTR#") > -1)
