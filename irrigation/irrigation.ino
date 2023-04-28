@@ -435,7 +435,7 @@ void loop()
         stopWatering = false;
       }
     }
-   // delay(1000);
+   delay(1000);
     unsigned long timeNow = millis();
     if (timeNow - prev > 5000)
     {
