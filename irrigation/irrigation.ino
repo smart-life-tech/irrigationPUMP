@@ -347,7 +347,7 @@ void loop()
       lcd.print("meter/h adjust ");
       lcd.setCursor(15, 2);
       lcd.print(speedSet);
-      delay(1000);
+      delay(500);
       if (!digitalRead(buttonUp))
       {
         delay(100);
@@ -714,7 +714,7 @@ void processData(String inputString)
     progstep = inputString.substring(num + 1);
     // str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
     EEPROM.write(speedAdd, progstep.toInt());
-    setSpeed = progstep.toInt()/1000;
+    setSpeed = progstep.toInt();
     inputString = "";
   }
   if (inputString.indexOf("MTR#") > -1)
