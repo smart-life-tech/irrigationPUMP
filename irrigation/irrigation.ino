@@ -347,7 +347,7 @@ void loop()
       lcd.print("meter/h adjust ");
       lcd.setCursor(15, 2);
       lcd.print(speedSet);
-      delay(2000);
+      delay(1000);
       if (!digitalRead(buttonUp))
       {
         delay(100);
