@@ -178,6 +178,8 @@ int upButton = 9;
 int downButton = 8;
 int select = 7;
 bool stopWatering = true;
+float pressure_bar = 0;
+int percent = 0;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -402,26 +404,56 @@ void loop()
     // lcd.print(Seconds);
 
     //================================================
-    lcd.print(" Y=");       // this prints whats in between the quotes
-    lcd.print(now.day());   // this prints whats in between the quotes
-    lcd.print(":");         // this clears the display field so anything left is deleted
-    lcd.print(now.month()); // this prints the tag value
-    lcd.print(":");         // this clears the display field so anything left is deleted
-    lcd.print(now.year());
+    /*lcd.print(" Y=");       // this prints whats in between the quotes
+     lcd.print(now.day());   // this prints whats in between the quotes
+     lcd.print(":");         // this clears the display field so anything left is deleted
+     lcd.print(now.month()); // this prints the tag value
+     lcd.print(":");         // this clears the display field so anything left is deleted
+     lcd.print(now.year());
+     lcd.setCursor(0, 2);
+     lcd.print("W:");
+     lcd.print(0, 0);
+     lcd.print(" T:");
+     lcd.print(getTemp());
+     lcd.print(" H:");
+     lcd.print(getHum());
+     lcd.print(" V :");
+     lcd.print(getVoltage(), 0);
+     lcd.setCursor(0, 3);
+     lcd.print("L.rem.");
+     lcd.print(int(half_revolutions * metra));
+     lcd.print(" sp:");
+     lcd.print(setSpeed);
+ */
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("dar:");      // this prints whats in between the quotes
+    lcd.print(getPsi(), 0); // this prints whats in between the quotes
+    lcd.print(" wind:");    // this clears the display field so anything left is deleted
+    lcd.print(0, 0);        // this prints the tag value
+    lcd.print(now.hour());
+    lcd.print(now.minute());
+
+    lcd.setCursor(0, 1);
+    lcd.print("volt: ");
+    lcd.print(getVoltage(), 0);
+    lcd.print(" watt:");
+    lcd.print(percent, 0);
+    lcd.print(":");
+
     lcd.setCursor(0, 2);
-    lcd.print("W:");
-    lcd.print(0, 0);
-    lcd.print(" T:");
-    lcd.print(getTemp());
+    lcd.print("dist:");
+    lcd.print(int(half_revolutions * metra));
+    lcd.print(" m/h:");
+    lcd.print(setSpeed);
     lcd.print(" H:");
     lcd.print(getHum());
-    lcd.print(" V :");
-    lcd.print(getVoltage(), 0);
+
     lcd.setCursor(0, 3);
-    lcd.print("L.rem.");
-    lcd.print(int(half_revolutions * metra));
-    lcd.print(" sp:");
-    lcd.print(setSpeed);
+    lcd.print("time left:");
+    lcd.print(timeLeft);
+    lcd.print(" T:");
+    lcd.print(getTemp());
 
     currentDistance = half_revolutions * metra;
     // total_len = total_len * metra;
@@ -435,7 +467,7 @@ void loop()
         stopWatering = false;
       }
     }
-   delay(1000);
+    delay(1000);
     unsigned long timeNow = millis();
     if (timeNow - prev > 5000)
     {
@@ -544,7 +576,7 @@ void DisplayPSI() // main display
   // Serial.print(voltage);
 
   float pressure_pascal = (3.0 * ((float)voltage - 0.47)) * 1000000.0;
-  float pressure_bar = pressure_pascal / 10e5;
+  pressure_bar = pressure_pascal / 10e5;
   // Serial.print("Pressure = ");
   // Serial.print(pressure_bar);
   // Serial.println(" bars");
@@ -564,20 +596,20 @@ void DisplayPSI() // main display
   // outputValue=constrain(outputValue,0,12);
   //   Serial.print("raw battery value : ");
   //   Serial.println(sensorValue);
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("BA:"); // this prints whats in between the quotes
-  lcd.print(pressure_bar);
-  // lcd.print(" VOLT:");  // this prints whats in between the quotes
-  //  lcd.print(outputValue);             // this prints the tag value
-  lcd.print("  batt:");
-  int percent = (outputValue / 12.5) * 100.0;
+  /*lcd.clear();
+   lcd.setCursor(0, 0);
+   lcd.print("BA:"); // this prints whats in between the quotes
+   lcd.print(pressure_bar);
+   // lcd.print(" VOLT:");  // this prints whats in between the quotes
+   //  lcd.print(outputValue);             // this prints the tag value
+   lcd.print("  batt:");*/
+  percent = (outputValue / 12.5) * 100.0;
   if (percent != newp)
     // lcd.clear();
     newp = percent;
-  lcd.print(percent);
-  // Serial.println(percent);
-  lcd.print("%");
+  // lcd.print(percent);
+  //  Serial.println(percent);
+  // lcd.print("%");
 }
 // this section stores the setpoints into the arduino eeprom so the unit can start up after a power fail
 void storeAll()
@@ -729,7 +761,7 @@ void processData(String inputString)
     Serial.print("THE meter  number  set to :");
     Serial.println(inputString.substring(num + 1));
     wheelDia = inputString.substring(num + 1);
-    metra = wheelDia.toInt()/1000;
+    metra = wheelDia.toInt() / 1000;
     EEPROM.write(metraAdd, metra);
     inputString = "";
   }
@@ -1185,8 +1217,8 @@ void sendAlmostDone()
 }
 void infoMessage()
 {
-  String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(timeLeft) + "\n bars: " + String(int(getPsi));
-  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage()/13)*100))+" %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
+  String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(int(getPsi));
+  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
   data += "\n wind: " + String(int(getWind()));
   Serial.println("Setting the GSM in text mode");
   Serial1.println("AT+CMGF=1\r");
