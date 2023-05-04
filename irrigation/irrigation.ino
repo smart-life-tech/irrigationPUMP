@@ -67,6 +67,7 @@ int readStringFromEEPROM(int addrOffset, String *strToRead)
   *strToRead = String(data);
   return addrOffset + 1 + newStrLen;
 }
+int newSpeed=15;
 float vOUT = 0.0;
 float vIN = 0.0;
 float R1 = 30000.0;
@@ -110,7 +111,7 @@ int IR1 = 2;
 int IR2 = 3;
 unsigned long t1 = 0;
 unsigned long t2 = 0;
-float setSpeed = 1500.00;
+float setSpeed = 5.00;
 float velocity = 0.00;
 bool read = false;
 // int vkmh = (100*3600)/1000;
@@ -430,29 +431,37 @@ void loop()
     lcd.print("dar:");      // this prints whats in between the quotes
     lcd.print(getPsi(), 0); // this prints whats in between the quotes
     lcd.print(" wind:");    // this clears the display field so anything left is deleted
-    lcd.print(0, 0);        // this prints the tag value
+    lcd.print(int(getWind()));
+    lcd.print(" ");
     lcd.print(now.hour());
+    lcd.print(":");
+    if (now.minute() < 10)
+      Minutes = "0" + String(Minute);
     lcd.print(now.minute());
-
+    
     lcd.setCursor(0, 1);
-    lcd.print("volt: ");
+    lcd.print("voltt:");
     lcd.print(getVoltage(), 0);
     lcd.print(" watt:");
-    lcd.print(percent, 0);
-    lcd.print(":");
+    int percent = (outputValue / 12.0) * 100.0;
+  if (percent != newp)
+    newp = percent;
+    lcd.print(percent);
+    lcd.print("%");
+    
 
     lcd.setCursor(0, 2);
     lcd.print("dist:");
     lcd.print(int(half_revolutions * metra));
     lcd.print(" m/h:");
-    lcd.print(setSpeed);
+    lcd.print(newSpeed);
     lcd.print(" H:");
     lcd.print(getHum());
 
     lcd.setCursor(0, 3);
     lcd.print("time left:");
     lcd.print(timeLeft);
-    lcd.print(" T:");
+    lcd.print(" C:");
     lcd.print(getTemp());
 
     currentDistance = half_revolutions * metra;
@@ -747,6 +756,7 @@ void processData(String inputString)
     // str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
     EEPROM.write(speedAdd, progstep.toInt());
     setSpeed = progstep.toInt();
+    newSpeed=setSpeed;
     Serial.print("program speed number  set to :");
     Serial.println(setSpeed);
     inputString = "";
