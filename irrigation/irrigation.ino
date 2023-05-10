@@ -1081,6 +1081,7 @@ float getSpeed()
     Serial.print("time left for watering in miutes: ");
     timeLeft = timeLeft * 60;
     Serial.println(timeLeft);
+    reads();
     if (timeLeft < 30) // 30 mites
     {
       if (almostDone)
@@ -1098,7 +1099,7 @@ float getSpeed()
   }
   else
   {
-   // velocity = 0;
+    velocity = 0;
   }
   return velocity;
 }
@@ -1262,7 +1263,7 @@ void reads()
         total_len = half_revolutions * metra;
       }
       lastMillis = millis();
-      // Serial.println("counting");
+      Serial.println(half_revolutions);
       counter++;
       if (counter == 1)
       {
