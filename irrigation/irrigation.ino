@@ -67,7 +67,7 @@ int readStringFromEEPROM(int addrOffset, String *strToRead)
   *strToRead = String(data);
   return addrOffset + 1 + newStrLen;
 }
-int newSpeed=15;
+int newSpeed = 15;
 float vOUT = 0.0;
 float vIN = 0.0;
 float R1 = 30000.0;
@@ -438,17 +438,16 @@ void loop()
     if (now.minute() < 10)
       Minutes = "0" + String(Minute);
     lcd.print(now.minute());
-    
+
     lcd.setCursor(0, 1);
     lcd.print("voltt:");
     lcd.print(getVoltage(), 0);
     lcd.print(" watt:");
     int percent = (outputValue / 12.0) * 100.0;
-  if (percent != newp)
-    newp = percent;
+    if (percent != newp)
+      newp = percent;
     lcd.print(percent);
     lcd.print("%");
-    
 
     lcd.setCursor(0, 2);
     lcd.print("dist:");
@@ -756,7 +755,7 @@ void processData(String inputString)
     // str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
     EEPROM.write(speedAdd, progstep.toInt());
     setSpeed = progstep.toInt();
-    newSpeed=setSpeed;
+    newSpeed = setSpeed;
     Serial.print("program speed number  set to :");
     Serial.println(setSpeed);
     inputString = "";
@@ -1044,8 +1043,8 @@ float getSpeed()
   if (count2)
   {
     t2 = millis();
-    // Serial.print("t2 ");
-    // Serial.println(t2);
+    Serial.print("t2 ");
+    Serial.println(t2);
     read = true;
     done2 = true;
     count1 = false;
@@ -1054,8 +1053,8 @@ float getSpeed()
   if (count1)
   {
     t1 = millis();
-    //  Serial.print("t1 ");
-    // Serial.println(t1);
+    Serial.print("t1 ");
+    Serial.println(t1);
     done2 = true;
     count1 = false;
     count2 = false;
@@ -1085,8 +1084,10 @@ float getSpeed()
     if (timeLeft < 30) // 30 mites
     {
       if (almostDone)
+      {
         sendAlmostDone();
-      almostDone = false;
+        almostDone = false;
+      }
     }
     else if (timeLeft > 1)
     {
@@ -1097,7 +1098,7 @@ float getSpeed()
   }
   else
   {
-    velocity = 0;
+   // velocity = 0;
   }
   return velocity;
 }
