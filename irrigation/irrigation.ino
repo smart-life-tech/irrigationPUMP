@@ -448,7 +448,7 @@ void loop()
       newp = percent;
     lcd.print(percent);
     lcd.print("%");
-
+    reads();
     lcd.setCursor(0, 2);
     lcd.print("dist:");
     lcd.print(int(half_revolutions * metra));
@@ -489,6 +489,7 @@ void loop()
   else
   {
     // lcd.clear();
+    reads();
     lcd.setCursor(0, 0);
     lcd.print("hose is releasing..."); // this prints whats in between the quotes
     lcd.setCursor(0, 1);
@@ -496,11 +497,8 @@ void loop()
     lcd.setCursor(0, 2);
     lcd.print("for watering start ");
     lcd.setCursor(0, 3);
-    if (speeding > 0)
-    {
-      lcd.print("km/h:");     // this prints whats in between the quotes
-      lcd.print(velocity, 1); // this prints the tag value
-    }
+    lcd.print("km/h:");     // this prints whats in between the quotes
+    lcd.print(velocity, 1); // this prints the tag value
     lcd.setCursor(8, 3);
     lcd.print(" len:"); // this prints the tag value
     lcd.print(int(half_revolutions * metra));
