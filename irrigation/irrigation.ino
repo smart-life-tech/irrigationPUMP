@@ -1099,7 +1099,7 @@ float getSpeed()
   }
   else
   {
-    velocity = 0;
+   // velocity = 0;
   }
   return velocity;
 }
