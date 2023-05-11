@@ -145,7 +145,7 @@ int radius = 2;
 int newp = 0;
 int hall1 = 2;
 String Minutes = "";
-float metra = 0.25;
+float metra = 250;
 // These constants won't change. They're used to give names to the pins used:
 const int analogInPin = A1; // Analog input pin that the potentiometer is attached to batery
 const int analogOutPin = 9; // Analog output pin that the LED is attached to
