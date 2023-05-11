@@ -1047,6 +1047,7 @@ float getSpeed()
     done2 = true;
     count1 = false;
     count2 = false;
+    reads();
   }
   if (count1)
   {
@@ -1056,6 +1057,7 @@ float getSpeed()
     done2 = true;
     count1 = false;
     count2 = false;
+    reads();
   }
 
   if (read)
@@ -1065,7 +1067,7 @@ float getSpeed()
     velocity = (0.18 / velocity) * 3.6 * 1000; // m/h
     velocity = velocity;
     // Serial.println("velocity/speed: ");
-    // Serial.print(velocity);
+    Serial.print(velocity);
     speeding = velocity;
     Serial.println(" m/hr");
     float wateringTimeNow = wateringEnd((currentDistance), velocity); // meter/hr
@@ -1079,7 +1081,7 @@ float getSpeed()
     Serial.print("time left for watering in miutes: ");
     timeLeft = timeLeft * 60;
     Serial.println(timeLeft);
-    reads();
+
     if (timeLeft < 30) // 30 mites
     {
       if (almostDone)
@@ -1261,6 +1263,7 @@ void reads()
         total_len = half_revolutions * metra;
       }
       lastMillis = millis();
+      Serial.print("revolutions ");
       Serial.println(half_revolutions);
       counter++;
       if (counter == 1)
