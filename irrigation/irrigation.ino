@@ -463,8 +463,8 @@ void loop()
     currentDistance = half_revolutions * metra;
     timeLeft = currentDistance / velocity;
     lcd.setCursor(0, 3);
-    lcd.print("Time(hr):");
-    lcd.print(int(timeLeft));
+    lcd.print("Time(min):");
+    lcd.print(int(timeLeft*60));
     lcd.print(" C:");
     lcd.print(getTemp());
 
