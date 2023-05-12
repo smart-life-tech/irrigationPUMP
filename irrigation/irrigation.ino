@@ -207,7 +207,7 @@ void setup()
   // SendMessage();
   // Serial.begin(115200);
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
-   attachInterrupt(0, getSpeeding, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
+  attachInterrupt(0, getSpeeding, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
   pinMode(IR1, INPUT_PULLUP);
   attachInterrupt(0, reads, RISING);
   half_revolutions = 10;
@@ -457,11 +457,11 @@ void loop()
     lcd.print("dist:");
     lcd.print(int(half_revolutions * metra));
     lcd.print(" m/h:");
-    lcd.print(int(velocity));
+    lcd.print(int(velocity + 500));
     lcd.print(" H:");
     lcd.print(getHum());
     currentDistance = half_revolutions * metra;
-    timeLeft = currentDistance / velocity;
+    timeLeft = currentDistance / velocity + 500;
     lcd.setCursor(0, 3);
     lcd.print("Time(min):");
     lcd.print(int(timeLeft));
@@ -1080,7 +1080,8 @@ float getSpeed()
     Serial.println(t2 - t1);
     speeding = velocity;
     // Serial.println(" m/hr");
-    float wateringTimeNow = wateringEnd((currentDistance), velocity); // meter/hr
+    currentDistance = half_revolutions * metra;
+    float wateringTimeNow = wateringEnd(currentDistance, velocity); // meter/hr
     // float totalWateringTime = wateringEnd(total_len * metra, getSpeed());         // mph
     timeLeft = currentDistance / velocity;
 
@@ -1092,7 +1093,7 @@ float getSpeed()
     timeLeft = timeLeft * 60;
     Serial.println(timeLeft);
 
-    if (timeLeft < 30) // 30 mites
+    if (timeLeft > 300) // 30 mites, should be less than 30 meyers < 30 npt > 300
     {
       if (almostDone)
       {
@@ -1291,6 +1292,8 @@ void reads()
       done2 = false;
     }
   }
+  if (half_revolutions <= 0)
+    half_revolutions = 0;
 }
 
 float wateringEnd(float distance, float speed)
