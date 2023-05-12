@@ -457,13 +457,14 @@ void loop()
     lcd.print("dist:");
     lcd.print(int(half_revolutions * metra));
     lcd.print(" m/h:");
-    lcd.print(newSpeed);
+    lcd.print(int(velocity));
     lcd.print(" H:");
     lcd.print(getHum());
-
+    currentDistance = half_revolutions * metra;
+    timeLeft = currentDistance / velocity;
     lcd.setCursor(0, 3);
     lcd.print("time left:");
-    lcd.print(timeLeft);
+    lcd.print(int(timeLeft));
     lcd.print(" C:");
     lcd.print(getTemp());
 
@@ -506,10 +507,10 @@ void loop()
     lcd.setCursor(8, 3);
     lcd.print(" hall : "); // this prints the tag value
     lcd.print(int(half_revolutions * metra));
-   // Serial.print("revolutions in loop");
-    //Serial.println(half_revolutions);
-    //Serial.print("velocity ::: ");
-    //Serial.println(velocity);
+    // Serial.print("revolutions in loop");
+    // Serial.println(half_revolutions);
+    // Serial.print("velocity ::: ");
+    // Serial.println(velocity);
   }
 }
 void updateSerial()
@@ -762,6 +763,7 @@ void processData(String inputString)
     EEPROM.write(speedAdd, progstep.toInt());
     setSpeed = progstep.toInt();
     newSpeed = setSpeed;
+    metra = newSpeed;
     Serial.print("program speed number  set to :");
     Serial.println(setSpeed);
     inputString = "";
@@ -1060,7 +1062,7 @@ float getSpeed()
   if (count1)
   {
     t1 = millis();
-   Serial.print("t1 ");
+    Serial.print("t1 ");
     Serial.println(t1);
     done2 = true;
     count1 = false;
@@ -1071,13 +1073,13 @@ float getSpeed()
   if (read)
   {
     velocity = t2 - t1;
-    velocity = velocity / 1000;                // convert millisecond to second for timig
+    velocity = velocity / 1000;                 // convert millisecond to second for timig
     velocity = (0.056 / velocity) * 3.6 * 1000; // m/h
-    
+
     Serial.print("time differnce: ");
-    Serial.println(t2-t1);
+    Serial.println(t2 - t1);
     speeding = velocity;
-    //Serial.println(" m/hr");
+    // Serial.println(" m/hr");
     float wateringTimeNow = wateringEnd((currentDistance), velocity); // meter/hr
     // float totalWateringTime = wateringEnd(total_len * metra, getSpeed());         // mph
     timeLeft = currentDistance / velocity;
