@@ -145,7 +145,7 @@ int radius = 2;
 int newp = 0;
 int hall1 = 2;
 String Minutes = "";
-float metra = 250;
+float metra = 0.25;
 // These constants won't change. They're used to give names to the pins used:
 const int analogInPin = A1; // Analog input pin that the potentiometer is attached to batery
 const int analogOutPin = 9; // Analog output pin that the LED is attached to
@@ -293,8 +293,11 @@ void setup()
 
   dir = true;
   half_revolutions = 0;
+  Serial.print("meter in use from last memory");
+  Serial.println(metra);
   // timeConvert(6);// mins hour
   // 6 inches
+  metra = 0.25;
 }
 void loop()
 {
@@ -497,11 +500,15 @@ void loop()
     lcd.setCursor(0, 2);
     lcd.print("for watering start ");
     lcd.setCursor(0, 3);
-    lcd.print("km/h:");     // this prints whats in between the quotes
-    lcd.print(velocity, 1); // this prints the tag value
+    lcd.print("km/h:");       // this prints whats in between the quotes
+    lcd.print(int(velocity)); // this prints the tag value
     lcd.setCursor(8, 3);
-    lcd.print(" len:"); // this prints the tag value
+    lcd.print(" len : "); // this prints the tag value
     lcd.print(int(half_revolutions * metra));
+    Serial.print("revolutions in loop");
+    Serial.println(half_revolutions);
+    Serial.print("velocity ::: ");
+    Serial.println(velocity);
   }
 }
 void updateSerial()
@@ -1041,8 +1048,8 @@ float getSpeed()
   if (count2)
   {
     t2 = millis();
-    Serial.print("t2 ");
-    Serial.println(t2);
+    //Serial.print("t2 ");
+    //Serial.println(t2);
     read = true;
     done2 = true;
     count1 = false;
@@ -1052,8 +1059,8 @@ float getSpeed()
   if (count1)
   {
     t1 = millis();
-    Serial.print("t1 ");
-    Serial.println(t1);
+   // Serial.print("t1 ");
+    //Serial.println(t1);
     done2 = true;
     count1 = false;
     count2 = false;
@@ -1099,7 +1106,7 @@ float getSpeed()
   }
   else
   {
-   // velocity = 0;
+    // velocity = 0;
   }
   return velocity;
 }
@@ -1263,8 +1270,6 @@ void reads()
         total_len = half_revolutions * metra;
       }
       lastMillis = millis();
-      Serial.print("revolutions ");
-      Serial.println(half_revolutions);
       counter++;
       if (counter == 1)
       {
