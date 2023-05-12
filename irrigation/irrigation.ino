@@ -34,6 +34,7 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include "dht.h"
 #include <LayadCircuits_SalengGSM.h>
 #include <SoftwareSerial.h>
+#include <Arduino.h>
 SoftwareSerial gsmSerial(19, 18);
 LayadCircuits_SalengGSM salengGSM = LayadCircuits_SalengGSM(&Serial1);
 #define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
@@ -503,12 +504,12 @@ void loop()
     lcd.print("km/h:");       // this prints whats in between the quotes
     lcd.print(int(velocity)); // this prints the tag value
     lcd.setCursor(8, 3);
-    lcd.print(" len : "); // this prints the tag value
+    lcd.print(" hall : "); // this prints the tag value
     lcd.print(int(half_revolutions * metra));
-    Serial.print("revolutions in loop");
-    Serial.println(half_revolutions);
-    Serial.print("velocity ::: ");
-    Serial.println(velocity);
+   // Serial.print("revolutions in loop");
+    //Serial.println(half_revolutions);
+    //Serial.print("velocity ::: ");
+    //Serial.println(velocity);
   }
 }
 void updateSerial()
@@ -1048,8 +1049,8 @@ float getSpeed()
   if (count2)
   {
     t2 = millis();
-    //Serial.print("t2 ");
-    //Serial.println(t2);
+    Serial.print("t2 ");
+    Serial.println(t2);
     read = true;
     done2 = true;
     count1 = false;
@@ -1059,8 +1060,8 @@ float getSpeed()
   if (count1)
   {
     t1 = millis();
-   // Serial.print("t1 ");
-    //Serial.println(t1);
+   Serial.print("t1 ");
+    Serial.println(t1);
     done2 = true;
     count1 = false;
     count2 = false;
@@ -1072,11 +1073,11 @@ float getSpeed()
     velocity = t2 - t1;
     velocity = velocity / 1000;                // convert millisecond to second for timig
     velocity = (0.18 / velocity) * 3.6 * 1000; // m/h
-    velocity = velocity;
-    // Serial.println("velocity/speed: ");
-    Serial.print(velocity);
+    
+    Serial.print("time differnce: ");
+    Serial.println(t2-t1);
     speeding = velocity;
-    Serial.println(" m/hr");
+    //Serial.println(" m/hr");
     float wateringTimeNow = wateringEnd((currentDistance), velocity); // meter/hr
     // float totalWateringTime = wateringEnd(total_len * metra, getSpeed());         // mph
     timeLeft = currentDistance / velocity;
