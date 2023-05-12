@@ -461,13 +461,13 @@ void loop()
     lcd.print(" H:");
     lcd.print(getHum());
     currentDistance = half_revolutions * metra;
-    timeLeft = currentDistance / (velocity + 500);
+    //timeLeft = currentDistance / (velocity + 500);
     lcd.setCursor(0, 3);
     lcd.print("Time(min):");
-    lcd.print(int(timeLeft*60));
+    lcd.print(int(timeLeft));
     lcd.print(" C:");
     lcd.print(getTemp());
-    Serial.print("Time(min):");
+    Serial.print("Time left(min):");
     Serial.println(int(timeLeft));
     currentDistance = half_revolutions * metra;
     // total_len = total_len * metra;
