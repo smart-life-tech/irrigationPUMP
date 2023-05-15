@@ -239,7 +239,7 @@ void setup()
   // following line sets the RTC to the date & time this sketch was compiled
   // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   // January 21, 2014 at 3am you would call:
-  rtc.adjust(DateTime(2023, 5, 15, 22, 24, 0));
+  rtc.adjust(DateTime(2023, 5, 15, 23, 30, 0));
   pinMode(upButton, INPUT_PULLUP);
   pinMode(downButton, INPUT_PULLUP);
   pinMode(select, INPUT_PULLUP);
