@@ -488,7 +488,12 @@ void loop()
     }
     delay(1000);
     unsigned long timeNow = millis();
-    if (timeNow - prev > 10000 || !digitalRead(buttonUp) || !digitalRead(buttonDown))
+    if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
+    {
+      lcd.backlight();
+      prev = millis();
+    }
+    if (timeNow - prev > 10000)
     {
       prev = timeNow;
       // Serial.println("lcd cleared");
