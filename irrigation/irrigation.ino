@@ -238,7 +238,7 @@ void setup()
   // When time needs to be re-set on a previously configured device, the
   // following line sets the RTC to the date & time this sketch was compiled
   // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-   // January 21, 2014 at 3am you would call:
+  // January 21, 2014 at 3am you would call:
   rtc.adjust(DateTime(2023, 5, 15, 22, 24, 0));
   pinMode(upButton, INPUT_PULLUP);
   pinMode(downButton, INPUT_PULLUP);
