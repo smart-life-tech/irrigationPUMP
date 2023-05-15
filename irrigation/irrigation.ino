@@ -237,7 +237,7 @@ void setup()
   }
   // When time needs to be re-set on a previously configured device, the
   // following line sets the RTC to the date & time this sketch was compiled
-  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 
   pinMode(upButton, INPUT_PULLUP);
   pinMode(downButton, INPUT_PULLUP);
@@ -299,6 +299,7 @@ void setup()
   // timeConvert(6);// mins hour
   // 6 inches
   metra = 0.25;
+  lcd.backlight();
 }
 void loop()
 {
@@ -340,6 +341,7 @@ void loop()
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
+    lcd.backlight();
     delay(1000);
     lcd.clear();
     while (1)
@@ -379,6 +381,7 @@ void loop()
         Serial.println(speedSet);
         setSpeed = speedSet;
         lcd.clear();
+        lcd.noBacklight();
         done = true;
         ends = true;
         dir = false;
@@ -461,7 +464,7 @@ void loop()
     lcd.print(" H:");
     lcd.print(getHum());
     currentDistance = half_revolutions * metra;
-    //timeLeft = currentDistance / (velocity + 500);
+    // timeLeft = currentDistance / (velocity + 500);
     lcd.setCursor(0, 3);
     lcd.print("Time(min):");
     lcd.print(int(timeLeft));
@@ -935,6 +938,8 @@ float getWind()
   delay(50 * RecordTime);
   detachInterrupt(digitalPinToInterrupt(SensorPin));
   WindSpeed = (float)InterruptCounter / (float)RecordTime * 2.4;
+  Serial.print("wind speed: ");
+  Serial.println(WindSpeed);
   if (WindSpeed > 3)
   {
     if (wind)
@@ -1023,8 +1028,8 @@ float getPsi()
 
   float pressure_pascal = (3.0 * ((float)voltage - 0.47)) * 1000000.0;
   float pressure_bar = pressure_pascal / 10e5;
-  // Serial.print("Pressure = ");
-  // Serial.print(pressure_bar);
+  Serial.print("Pressure = ");
+  Serial.print(pressure_bar);
   return pressure_bar;
 }
 String getTime()
