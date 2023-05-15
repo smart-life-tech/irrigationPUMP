@@ -381,7 +381,8 @@ void loop()
         Serial.println(speedSet);
         setSpeed = speedSet;
         lcd.clear();
-        lcd.noBacklight();
+       // lcd.noBacklight();
+       prev=millis();
         done = true;
         ends = true;
         dir = false;
@@ -486,11 +487,12 @@ void loop()
     }
     delay(1000);
     unsigned long timeNow = millis();
-    if (timeNow - prev > 5000)
+    if (timeNow - prev > 10000)
     {
       prev = timeNow;
       // Serial.println("lcd cleared");
       // lcd.clear();
+      lcd.noBacklight();
       ends = true;
       // ReadUnreadMessages();
     }
