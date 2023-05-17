@@ -459,7 +459,7 @@ void loop()
       newp = percent;
     lcd.print(percent);
     lcd.print("%");
-    reads();
+    //reads();
     lcd.setCursor(0, 2);
     lcd.print("dist:");
     lcd.print(int(half_revolutions * metra));
@@ -509,7 +509,7 @@ void loop()
   else
   {
     // lcd.clear();
-    reads();
+    //reads();
     lcd.setCursor(0, 0);
     lcd.print("hose is releasing..."); // this prints whats in between the quotes
     lcd.setCursor(0, 1);
@@ -1087,7 +1087,7 @@ float getSpeed()
     done2 = true;
     count1 = false;
     count2 = false;
-    reads();
+    //reads();
   }
 
   if (read)
