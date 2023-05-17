@@ -182,6 +182,7 @@ int select = 7;
 bool stopWatering = true;
 float pressure_bar = 0;
 int percent = 0;
+char ps[30];
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -943,7 +944,7 @@ float getWind()
 {
   InterruptCounter = 0;
   attachInterrupt(digitalPinToInterrupt(SensorPin), countup, RISING);
-  delay(50 * RecordTime);
+  delay(500 * RecordTime);
   detachInterrupt(digitalPinToInterrupt(SensorPin));
   WindSpeed = (float)InterruptCounter / (float)RecordTime * 2.4;
   Serial.print("wind speed: ");
@@ -1037,7 +1038,9 @@ float getPsi()
   float pressure_pascal = (3.0 * ((float)voltage - 0.47)) * 1000000.0;
   float pressure_bar = pressure_pascal / 10e5;
   Serial.print("Pressure = ");
-  Serial.print(pressure_bar);
+  Serial.println(pressure_bar);
+  
+  dtostrf(pressure_bar, 3, 1, ps);
   return pressure_bar;
 }
 String getTime()
@@ -1254,7 +1257,7 @@ void sendAlmostDone()
 }
 void infoMessage()
 {
-  String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(int(getPsi));
+  String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
   data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
   data += "\n wind: " + String(int(getWind()));
   Serial.println("Setting the GSM in text mode");
