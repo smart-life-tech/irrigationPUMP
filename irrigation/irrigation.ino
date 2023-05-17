@@ -183,7 +183,7 @@ bool stopWatering = true;
 float pressure_bar = 0;
 int percent = 0;
 char ps[30];
-int winding=0;
+int winding = 0;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -211,7 +211,7 @@ void setup()
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
   attachInterrupt(0, getSpeeding, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
   pinMode(IR1, INPUT_PULLUP);
-  //attachInterrupt(0, reads, RISING);
+   attachInterrupt(0, reads, RISING);
   half_revolutions = 10;
   rpm = 100;
   timeold = 0;
@@ -459,7 +459,7 @@ void loop()
       newp = percent;
     lcd.print(percent);
     lcd.print("%");
-    //reads();
+    // reads();
     lcd.setCursor(0, 2);
     lcd.print("dist:");
     lcd.print(int(half_revolutions * metra));
@@ -488,7 +488,7 @@ void loop()
         stopWatering = false;
       }
     }
-    //delay(1000);
+    // delay(1000);
     (getWind());
     unsigned long timeNow = millis();
     if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
@@ -509,7 +509,7 @@ void loop()
   else
   {
     // lcd.clear();
-    //reads();
+    // reads();
     lcd.setCursor(0, 0);
     lcd.print("hose is releasing..."); // this prints whats in between the quotes
     lcd.setCursor(0, 1);
@@ -1042,7 +1042,7 @@ float getPsi()
   float pressure_bar = pressure_pascal / 10e5;
   Serial.print("Pressure = ");
   Serial.println(pressure_bar);
-  
+
   dtostrf(pressure_bar, 3, 1, ps);
   return pressure_bar;
 }
@@ -1087,7 +1087,7 @@ float getSpeed()
     done2 = true;
     count1 = false;
     count2 = false;
-    //reads();
+    // reads();
   }
 
   if (read)
