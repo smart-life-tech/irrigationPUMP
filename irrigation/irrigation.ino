@@ -183,6 +183,7 @@ bool stopWatering = true;
 float pressure_bar = 0;
 int percent = 0;
 char ps[30];
+int winding=0;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -441,7 +442,7 @@ void loop()
     lcd.print("dar:");      // this prints whats in between the quotes
     lcd.print(getPsi(), 0); // this prints whats in between the quotes
     lcd.print(" wind:");    // this clears the display field so anything left is deleted
-    lcd.print(int(getWind()));
+    lcd.print(winding);
     lcd.print(" ");
     lcd.print(now.hour());
     lcd.print(":");
@@ -487,7 +488,8 @@ void loop()
         stopWatering = false;
       }
     }
-    delay(1000);
+    //delay(1000);
+    (getWind());
     unsigned long timeNow = millis();
     if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
     {
@@ -949,6 +951,7 @@ float getWind()
   WindSpeed = (float)InterruptCounter / (float)RecordTime * 2.4;
   Serial.print("wind speed: ");
   Serial.println(WindSpeed);
+  winding = WindSpeed;
   if (WindSpeed > 3)
   {
     if (wind)
@@ -1259,7 +1262,7 @@ void infoMessage()
 {
   String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
   data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
-  data += "\n wind: " + String(int(getWind()));
+  data += "\n wind: " + String(winding);
   Serial.println("Setting the GSM in text mode");
   Serial1.println("AT+CMGF=1\r");
   delay(200);
