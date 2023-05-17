@@ -211,7 +211,7 @@ void setup()
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
   attachInterrupt(0, getSpeeding, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
   pinMode(IR1, INPUT_PULLUP);
-  attachInterrupt(0, reads, RISING);
+  //attachInterrupt(0, reads, RISING);
   half_revolutions = 10;
   rpm = 100;
   timeold = 0;
