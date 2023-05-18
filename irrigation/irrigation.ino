@@ -211,7 +211,7 @@ void setup()
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
   attachInterrupt(0, getSpeeding, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
   pinMode(IR1, INPUT_PULLUP);
-   attachInterrupt(0, reads, RISING);
+  attachInterrupt(0, reads, RISING);
   half_revolutions = 10;
   rpm = 100;
   timeold = 0;
@@ -400,9 +400,12 @@ void loop()
   {
     DisplayPSI(); // pressure and battery measurement
     lcd.setCursor(0, 1);
-    lcd.print("T=");       // this prints whats in between the quotes
-    lcd.print(now.hour()); // this prints whats in between the quotes
-    lcd.print(":");        // this clears the display field so anything left is deleted
+    lcd.print("T="); // this prints whats in between the quotes
+    if (now.hour() < 10)
+      lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
+    else
+      lcd.print(now.hour());
+    lcd.print(":"); // this clears the display field so anything left is deleted
     if (now.minute() < 10)
       Minutes = "0" + String(Minute);
     else
@@ -446,7 +449,7 @@ void loop()
     lcd.print(" ");
     lcd.print(now.hour());
     lcd.print(":");
-    Minute=now.minute();
+    Minute = now.minute();
     if (Minute < 10)
       Minutes = "0" + String(Minute);
     lcd.print(Minutes);
@@ -953,7 +956,7 @@ float getWind()
   Serial.print("wind speed: ");
   Serial.println(WindSpeed);
   winding = WindSpeed;
-  if (WindSpeed > 3)
+  if (WindSpeed > 20)
   {
     if (wind)
     {
@@ -1231,7 +1234,7 @@ void errorWind()
   Serial1.println("AT+CMGS=\"+306973991989\"\r");
   // Replace x with mobile number
   delay(500);
-  Serial1.println(" wind is greater than 3 barefoot"); // SMS Text
+  Serial1.println(" wind is greater than 20 Km/h"); // SMS Text
   delay(200);
   Serial1.println((char)26); // ASCII code of CTRL+Z
   delay(1000);
@@ -1263,7 +1266,7 @@ void infoMessage()
 {
   String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
   data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
-  data += "\n wind: " + String(winding);
+  data += "\n wind Km/h: " + String(winding);
   Serial.println("Setting the GSM in text mode");
   Serial1.println("AT+CMGF=1\r");
   delay(200);
