@@ -446,9 +446,10 @@ void loop()
     lcd.print(" ");
     lcd.print(now.hour());
     lcd.print(":");
-    if (now.minute() < 10)
+    Minute=now.minute();
+    if (Minute < 10)
       Minutes = "0" + String(Minute);
-    lcd.print(now.minute());
+    lcd.print(Minutes);
 
     lcd.setCursor(0, 1);
     lcd.print("voltt:");
