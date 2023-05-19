@@ -209,9 +209,9 @@ void setup()
   // SendMessage();
   // Serial.begin(115200);
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
-  attachInterrupt(0, getSpeeding, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
+  attachInterrupt(0, speedInt, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
   pinMode(IR1, INPUT_PULLUP);
-  attachInterrupt(0, reads, RISING);
+  //attachInterrupt(0, reads, RISING);
   half_revolutions = 10;
   rpm = 100;
   timeold = 0;
@@ -402,9 +402,13 @@ void loop()
     lcd.setCursor(0, 1);
     lcd.print("T="); // this prints whats in between the quotes
     if (now.hour() < 10)
+    {
       lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
+    }
     else
+    {
       lcd.print(now.hour());
+    }
     lcd.print(":"); // this clears the display field so anything left is deleted
     if (now.minute() < 10)
       Minutes = "0" + String(Minute);
@@ -1028,6 +1032,10 @@ void getSpeeding()
   float s = getSpeed();
   controlMotor(s);
 }
+
+void speedInt(){
+  getSpeed();
+}
 float getPsi()
 {
   // this section monitors the live psi and turns the compressor run bit on or off based off setpoints
@@ -1081,7 +1089,7 @@ float getSpeed()
     done2 = true;
     count1 = false;
     count2 = false;
-    reads();
+   // reads();
   }
   if (count1)
   {
