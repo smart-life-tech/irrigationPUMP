@@ -1051,7 +1051,7 @@ float getPsi()
   // Serial.print(voltage);
 
   float pressure_pascal = (3.0 * ((float)voltage - 0.47)) * 1000000.0;
-  float pressure_bar = pressure_pascal / 10e5;
+  float pressure_bar = pressure_pascal / 10e6;
   Serial.print("Pressure = ");
   Serial.println(pressure_bar);
 
@@ -1106,7 +1106,7 @@ float getSpeed()
   {
     velocity = t2 - t1;
     velocity = velocity / 1000;                 // convert millisecond to second for timig
-    velocity = (0.056 / velocity) * 3.6 * 1000; // m/h
+    velocity = (0.9 / velocity) * 3.6 * 1000; // m/h
 
     Serial.print("time differnce: ");
     Serial.println(t2 - t1);
