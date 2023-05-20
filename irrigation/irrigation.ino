@@ -184,6 +184,7 @@ float pressure_bar = 0;
 int percent = 0;
 char ps[30];
 int winding = 0;
+float wheel = 0.155;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -398,6 +399,7 @@ void loop()
   }
   if (done)
   {
+    wheel=0.9;
     DisplayPSI(); // pressure and battery measurement
     lcd.setCursor(0, 1);
     /* lcd.print("T="); // this prints whats in between the quotes
@@ -1115,7 +1117,7 @@ float getSpeed()
   {
     velocity = t2 - t1;
     velocity = velocity / 1000;               // convert millisecond to second for timig
-    velocity = (0.9 / velocity) * 3.6 * 1000; // m/h
+    velocity = (wheel / velocity) * 3.6 * 1000; // m/h
 
     Serial.print("time differnce: ");
     Serial.println(t2 - t1);
