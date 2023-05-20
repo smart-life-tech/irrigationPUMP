@@ -158,7 +158,7 @@ float pressure_bar = 0;
 int percent = 0;
 char ps[30];
 int winding = 0;
-float wheel = 0.05;
+float wheel = 0.95;
 int speedCounter = 0;
 bool speedFlag = true;
 void setup()
@@ -278,7 +278,7 @@ void setup()
   Serial.println(metra);
   // timeConvert(6);// mins hour
   // 6 inches
-  metra = 0.25;
+  metra = 0.95;
   lcd.backlight();
 }
 void loop()
@@ -515,7 +515,7 @@ void loop()
     lcd.print((velocity),1); // this prints the tag value
     lcd.setCursor(8, 3);
     lcd.print(" hall : "); // this prints the tag value
-    lcd.print((half_revolutions * metra),2);
+    lcd.print((half_revolutions *wheel),1);
     // Serial.print("revolutions in loop");
     // Serial.println(half_revolutions);
     // Serial.print("velocity ::: ");
