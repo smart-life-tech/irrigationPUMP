@@ -328,7 +328,7 @@ void loop()
     }
     processData(receivedMessage);
   }
-  getSpeed();
+  //getSpeed();
   getSpeeding(); // this controls the motor retraction
 
   // controlMotor(getSpeed());
@@ -400,7 +400,7 @@ void loop()
   {
     DisplayPSI(); // pressure and battery measurement
     lcd.setCursor(0, 1);
-    lcd.print("T="); // this prints whats in between the quotes
+    /* lcd.print("T="); // this prints whats in between the quotes
     if (now.hour() < 10)
     {
       lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
@@ -423,7 +423,7 @@ void loop()
     // lcd.print(Seconds);
 
     //================================================
-    /*lcd.print(" Y=");       // this prints whats in between the quotes
+   lcd.print(" Y=");       // this prints whats in between the quotes
      lcd.print(now.day());   // this prints whats in between the quotes
      lcd.print(":");         // this clears the display field so anything left is deleted
      lcd.print(now.month()); // this prints the tag value
@@ -451,7 +451,14 @@ void loop()
     lcd.print(" wind:");    // this clears the display field so anything left is deleted
     lcd.print(winding);
     lcd.print(" ");
-    lcd.print(now.hour());
+        if (now.hour() < 10)
+    {
+      lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
+    }
+    else
+    {
+      lcd.print(now.hour());
+    }
     lcd.print(":");
     Minute = now.minute();
     if (Minute < 10)
@@ -486,7 +493,7 @@ void loop()
     Serial.println(int(timeLeft));
     currentDistance = half_revolutions * metra;
     // total_len = total_len * metra;
-    float gets = getSpeed();
+    //float gets = getSpeed();
 
     if (half_revolutions <= 0)
     {
@@ -1051,7 +1058,7 @@ float getPsi()
   // Serial.print(voltage);
 
   float pressure_pascal = (3.0 * ((float)voltage - 0.47)) * 1000000.0;
-  float pressure_bar = pressure_pascal / 10e6;
+  float pressure_bar = pressure_pascal / 10e4;
   Serial.print("Pressure = ");
   Serial.println(pressure_bar);
 
