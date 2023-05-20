@@ -160,6 +160,7 @@ char ps[30];
 int winding = 0;
 float wheel = 0.05;
 int speedCounter = 0;
+bool speedFlag = true;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -305,9 +306,9 @@ void loop()
     processData(receivedMessage);
   }
   // getSpeed();
-  getSpeeding(); // this controls the motor retraction
+  // getSpeeding(); // this controls the motor retraction
 
-  // controlMotor(getSpeed());
+  controlMotor(velocity);
   if (getVoltage() < 1.5) // should be 11 .5
   {
     if (voltage)
@@ -1020,8 +1021,14 @@ void getSpeeding()
 
 void speedInt()
 {
-  Serial.println("hall sensor active");
-  getSpeed();
+  // Serial.println("hall sensor active");
+  speedCounter++;
+  if (speedCounter > 7)
+  {
+    speedFlag = !speedFlag;
+    getSpeed();
+    speedCounter = 0;
+  }
 }
 
 float getPsi()
@@ -1069,7 +1076,7 @@ String getDate()
 float getSpeed()
 {
 
-  if (count2 && speedCounter > 5)
+  if (!speedFlag)
   {
     Serial.println(speedCounter);
     t2 = millis();
@@ -1082,7 +1089,8 @@ float getSpeed()
     speedCounter = 0;
     // reads();
   }
-  if (count1)
+
+  if (speedFlag)
   {
     speedCounter++;
     t1 = millis();
@@ -1138,6 +1146,7 @@ float getSpeed()
   }
   return velocity;
 }
+
 void controlMotor(float speed)
 {
   if (speed > 0)
