@@ -1020,7 +1020,7 @@ void getSpeeding()
 
 void speedInt()
 {
-  // Serial.println("hall sensor active");
+   Serial.println("hall sensor active");
   getSpeed();
 }
 
@@ -1071,6 +1071,7 @@ float getSpeed()
   speedCounter++;
   if (count2 && speedCounter > 20)
   {
+    Serial.println(speedCounter);
     t2 = millis();
     Serial.print("t2 ");
     Serial.println(t2);
