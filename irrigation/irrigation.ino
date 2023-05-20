@@ -1045,8 +1045,10 @@ void getSpeeding()
 
 void speedInt()
 {
+  Serial.println("hall sensor active");
   getSpeed();
 }
+
 float getPsi()
 {
   // this section monitors the live psi and turns the compressor run bit on or off based off setpoints
