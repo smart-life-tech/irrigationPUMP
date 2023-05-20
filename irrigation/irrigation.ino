@@ -512,10 +512,10 @@ void loop()
     lcd.print("for watering start ");
     lcd.setCursor(0, 3);
     lcd.print("km/h:");       // this prints whats in between the quotes
-    lcd.print((velocity),1); // this prints the tag value
+    lcd.print((velocity), 1); // this prints the tag value
     lcd.setCursor(8, 3);
     lcd.print(" hall : "); // this prints the tag value
-    lcd.print((half_revolutions *wheel),1);
+    lcd.print((half_revolutions * wheel), 1);
     // Serial.print("revolutions in loop");
     // Serial.println(half_revolutions);
     // Serial.print("velocity ::: ");
@@ -1021,7 +1021,7 @@ void getSpeeding()
 
 void speedInt()
 {
-   Serial.println("hall sensor active");
+  Serial.println("hall sensor active");
   speedCounter++;
   if (speedCounter > 4)
   {
@@ -1075,7 +1075,13 @@ String getDate()
 
 float getSpeed()
 {
-
+  if (done)
+    half_revolutions--;
+  if (!done)
+  {
+    half_revolutions++;
+    total_len = half_revolutions * metra;
+  }
   if (!speedFlag)
   {
     Serial.println(speedCounter);
