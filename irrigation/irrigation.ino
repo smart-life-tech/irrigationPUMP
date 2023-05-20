@@ -449,7 +449,7 @@ void loop()
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("dar:");      // this prints whats in between the quotes
-    lcd.print(getPsi(), 2); // this prints whats in between the quotes
+    lcd.print(getPsi(), 1); // this prints whats in between the quotes
     lcd.print(" wi:");    // this clears the display field so anything left is deleted
     lcd.print(winding);
     lcd.print(" ");
