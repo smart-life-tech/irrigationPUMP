@@ -1,30 +1,4 @@
-/*
-  🔴 operating screen
-  ✔️reel pressure in bars
-  ✔️volts and watts
-  ✔️meters per hour m/h
-  ✔️remaining measures
-  ✔️remaining meters in time
-  ✔️time and date
-  ✔️temperature C H
 
-  🔴Errors that will inform us
-  ✔️Stop watering
-  ✔️15% deviation in collection measures
-  ✔️Wind greater than 3 Beaufort
-  ✔️Half an hour before the end of watering
-  ✔️Low battery voltage
-
-  🔴Messages on mobile for information
-  ✔️Counts collection counters / hour
-  ✔️Measures left until it ends
-  ✔️How much time is left for watering until the end
-  ✔️The water pressure (bar) on the reel
-  ✔️Battery indicator
-  ✔️Time and date display
-  ✔️Temperature & humidity indicator
-  ✔️Wind speed
-*/
 #include <Wire.h>                   // Wire library
 #include <LiquidCrystal_I2C.h>      // Liquid Crystal I2C library
 LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
@@ -185,6 +159,7 @@ int percent = 0;
 char ps[30];
 int winding = 0;
 float wheel = 0.05;
+int speedCounter = 0;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -399,7 +374,7 @@ void loop()
   }
   if (done)
   {
-    wheel=0.9;
+    wheel = 0.9;
     DisplayPSI(); // pressure and battery measurement
     lcd.setCursor(0, 1);
     /* lcd.print("T="); // this prints whats in between the quotes
@@ -450,7 +425,7 @@ void loop()
     lcd.setCursor(0, 0);
     lcd.print("dar:");      // this prints whats in between the quotes
     lcd.print(getPsi(), 1); // this prints whats in between the quotes
-    lcd.print(" wi:");    // this clears the display field so anything left is deleted
+    lcd.print(" wi:");      // this clears the display field so anything left is deleted
     lcd.print(winding);
     lcd.print(" ");
     if (now.hour() < 10)
@@ -480,7 +455,7 @@ void loop()
     // reads();
     lcd.setCursor(0, 2);
     lcd.print("dist:");
-    lcd.print(int(half_revolutions *wheel));
+    lcd.print(int(half_revolutions * wheel));
     lcd.print(" m/h:");
     lcd.print(int(velocity + 500));
     lcd.print(" H:");
@@ -1045,7 +1020,7 @@ void getSpeeding()
 
 void speedInt()
 {
- // Serial.println("hall sensor active");
+  // Serial.println("hall sensor active");
   getSpeed();
 }
 
@@ -1093,7 +1068,8 @@ String getDate()
 
 float getSpeed()
 {
-  if (count2)
+  speedCounter++;
+  if (count2 && speedCounter > 4)
   {
     t2 = millis();
     Serial.print("t2 ");
@@ -1102,6 +1078,7 @@ float getSpeed()
     done2 = true;
     count1 = true;
     count2 = false;
+    speedCounter = 0;
     // reads();
   }
   if (count1)
@@ -1118,7 +1095,7 @@ float getSpeed()
   if (read)
   {
     velocity = t2 - t1;
-    velocity = velocity / 1000;               // convert millisecond to second for timig
+    velocity = velocity / 1000;                 // convert millisecond to second for timig
     velocity = (wheel / velocity) * 3.6 * 1000; // m/h
 
     Serial.print("time differnce: ");
