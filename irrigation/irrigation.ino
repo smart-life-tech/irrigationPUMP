@@ -184,7 +184,7 @@ float pressure_bar = 0;
 int percent = 0;
 char ps[30];
 int winding = 0;
-float wheel = 0.155;
+float wheel = 0.095;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -449,7 +449,7 @@ void loop()
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("dar:");      // this prints whats in between the quotes
-    lcd.print(getPsi(), 0); // this prints whats in between the quotes
+    lcd.print(getPsi(), 2); // this prints whats in between the quotes
     lcd.print(" wind:");    // this clears the display field so anything left is deleted
     lcd.print(winding);
     lcd.print(" ");
