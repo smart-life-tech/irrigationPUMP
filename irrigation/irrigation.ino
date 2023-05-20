@@ -211,7 +211,7 @@ void setup()
   // attachInterrupt(0, magnet_detect, FALLING);//Initialize the intterrupt pin (Arduino digital pin 2)
   attachInterrupt(0, speedInt, RISING); // Initialize the intterrupt pin (Arduino digital pin 2)
   pinMode(IR1, INPUT_PULLUP);
-  //attachInterrupt(0, reads, RISING);
+  // attachInterrupt(0, reads, RISING);
   half_revolutions = 10;
   rpm = 100;
   timeold = 0;
@@ -328,7 +328,7 @@ void loop()
     }
     processData(receivedMessage);
   }
-  //getSpeed();
+  // getSpeed();
   getSpeeding(); // this controls the motor retraction
 
   // controlMotor(getSpeed());
@@ -451,7 +451,7 @@ void loop()
     lcd.print(" wind:");    // this clears the display field so anything left is deleted
     lcd.print(winding);
     lcd.print(" ");
-        if (now.hour() < 10)
+    if (now.hour() < 10)
     {
       lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
     }
@@ -461,12 +461,13 @@ void loop()
     }
     lcd.print(":");
     Minute = now.minute();
+    Minutes = String(Minute);
     if (Minute < 10)
       Minutes = "0" + String(Minute);
     lcd.print(Minutes);
 
     lcd.setCursor(0, 1);
-    lcd.print("voltt:");
+    lcd.print("volt:");
     lcd.print(getVoltage(), 0);
     lcd.print(" watt:");
     int percent = (outputValue / 12.0) * 100.0;
@@ -493,7 +494,7 @@ void loop()
     Serial.println(int(timeLeft));
     currentDistance = half_revolutions * metra;
     // total_len = total_len * metra;
-    //float gets = getSpeed();
+    // float gets = getSpeed();
 
     if (half_revolutions <= 0)
     {
@@ -1040,7 +1041,8 @@ void getSpeeding()
   controlMotor(s);
 }
 
-void speedInt(){
+void speedInt()
+{
   getSpeed();
 }
 float getPsi()
@@ -1096,7 +1098,7 @@ float getSpeed()
     done2 = true;
     count1 = false;
     count2 = false;
-   // reads();
+    // reads();
   }
   if (count1)
   {
@@ -1112,7 +1114,7 @@ float getSpeed()
   if (read)
   {
     velocity = t2 - t1;
-    velocity = velocity / 1000;                 // convert millisecond to second for timig
+    velocity = velocity / 1000;               // convert millisecond to second for timig
     velocity = (0.9 / velocity) * 3.6 * 1000; // m/h
 
     Serial.print("time differnce: ");
