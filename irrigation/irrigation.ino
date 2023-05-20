@@ -1045,7 +1045,7 @@ void getSpeeding()
 
 void speedInt()
 {
-  Serial.println("hall sensor active");
+ // Serial.println("hall sensor active");
   getSpeed();
 }
 
@@ -1100,7 +1100,7 @@ float getSpeed()
     Serial.println(t2);
     read = true;
     done2 = true;
-    count1 = false;
+    count1 = true;
     count2 = false;
     // reads();
   }
@@ -1111,7 +1111,7 @@ float getSpeed()
     Serial.println(t1);
     done2 = true;
     count1 = false;
-    count2 = false;
+    count2 = true;
     // reads();
   }
 
@@ -1134,7 +1134,7 @@ float getSpeed()
     Serial.println(velocity); // hours
     Serial.print("current len : ");
     Serial.println(currentDistance);
-    Serial.print("time left for watering in miutes: ");
+    Serial.print("time left for watering in minutes: ");
     timeLeft = timeLeft * 60;
     Serial.println(timeLeft);
 
