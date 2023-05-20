@@ -1069,7 +1069,7 @@ String getDate()
 float getSpeed()
 {
   speedCounter++;
-  if (count2 && speedCounter > 4)
+  if (count2 && speedCounter > 20)
   {
     t2 = millis();
     Serial.print("t2 ");
