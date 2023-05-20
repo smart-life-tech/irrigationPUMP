@@ -1023,7 +1023,7 @@ void speedInt()
 {
   // Serial.println("hall sensor active");
   speedCounter++;
-  if (speedCounter > 7)
+  if (speedCounter > 4)
   {
     speedFlag = !speedFlag;
     getSpeed();
