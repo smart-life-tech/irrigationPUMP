@@ -375,7 +375,7 @@ void loop()
   }
   if (done)
   {
-    wheel = 1.1;
+    wheel = 1.3;
     DisplayPSI(); // pressure and battery measurement
     lcd.setCursor(0, 1);
     /* lcd.print("T="); // this prints whats in between the quotes
@@ -458,7 +458,7 @@ void loop()
     lcd.print("dist:");
     lcd.print(int(half_revolutions * wheel));
     lcd.print(" m/h:");
-    lcd.print(int(velocity + 500));
+    lcd.print(int(velocity));
     lcd.print(" H:");
     lcd.print(getHum());
     currentDistance = half_revolutions * metra;
