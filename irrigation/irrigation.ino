@@ -375,7 +375,7 @@ void loop()
   }
   if (done)
   {
-    wheel = 1.3;
+    wheel = 1.7;
     DisplayPSI(); // pressure and battery measurement
     lcd.setCursor(0, 1);
     /* lcd.print("T="); // this prints whats in between the quotes
