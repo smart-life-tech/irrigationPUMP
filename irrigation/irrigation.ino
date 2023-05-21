@@ -457,7 +457,7 @@ void loop()
     lcd.setCursor(0, 2);
     lcd.print("dist:");
     lcd.print(int(half_revolutions * wheel));
-    lcd.print(" m/h:");
+    lcd.print(" m/h.");
     lcd.print(int(velocity));
     lcd.print(" H:");
     lcd.print(getHum());
