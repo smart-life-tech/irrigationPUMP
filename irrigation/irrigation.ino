@@ -4,7 +4,6 @@
 LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include "RTClib.h"
 #include <EEPROM.h>
-#include <EEPROM.h>
 #include "dht.h"
 #include <LayadCircuits_SalengGSM.h>
 #include <SoftwareSerial.h>
@@ -328,7 +327,7 @@ void loop()
       }
       else if (!digitalRead(buttonOk))
       {
-        EEPROM.update(speedSet, speedAdd);
+        //EEPROM.update(speedSet, speedAdd);
         length = half_revolutions * metra;
         Serial.print("ok button pressed, speed set is :");
         Serial.println(speedSet);
@@ -745,7 +744,7 @@ void processData(String inputString)
     Serial.println(inputString.substring(num + 1));
     progstep = inputString.substring(num + 1);
     // str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
-    EEPROM.write(speedAdd, progstep.toInt());
+    //EEPROM.write(speedAdd, progstep.toInt());
     setSpeed = progstep.toInt();
     newSpeed = setSpeed;
     metra = newSpeed;
@@ -764,7 +763,7 @@ void processData(String inputString)
     Serial.println(inputString.substring(num + 1));
     wheelDia = inputString.substring(num + 1);
     metra = wheelDia.toInt() / 1000;
-    EEPROM.write(metraAdd, metra);
+    //EEPROM.write(metraAdd, metra);
     inputString = "";
   }
   Serial.print("phone number in  use : ");
@@ -1256,7 +1255,9 @@ void infoMessage(String number)
   Serial.println(number);
   Serial.print("number numbers:");
   Serial.println(readFromEEPROM(0));
+  Serial.print("number numbers2:");
   Serial.println(readFromEEPROM(20));
+  Serial.print("number numbers3:");
   Serial.println(readFromEEPROM(40));
   String command = "";
   if (number == readFromEEPROM(0))
