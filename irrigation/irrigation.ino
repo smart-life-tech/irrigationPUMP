@@ -728,7 +728,7 @@ void processData(String inputString)
       Serial.print("new phone number 3 set to :");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
-      writeToEEPROM(30, phoneNum);
+      writeToEEPROM(40, phoneNum);
       // str3AddrOffset = writeStringToEEPROM(str2AddrOffset, phoneNum);
       //   writeStringToEEPROM(str2AddrOffset, str3);
     }
@@ -1256,8 +1256,8 @@ void infoMessage(String number)
   Serial.println(number);
   Serial.print("number numbers:");
   Serial.println(readFromEEPROM(0));
-  Serial.println(readFromEEPROM(10));
   Serial.println(readFromEEPROM(20));
+  Serial.println(readFromEEPROM(40));
   String command = "";
   if (number == readFromEEPROM(0))
   {
@@ -1265,17 +1265,17 @@ void infoMessage(String number)
     Serial.println(readFromEEPROM(0));
     command = "AT+CMGS=\"" + readFromEEPROM(0) + "\"\r";
   }
-  else if (number == readFromEEPROM(10))
-  {
-    Serial.print("number in use  number 2:");
-    Serial.println(readFromEEPROM(0));
-    command = "AT+CMGS=\"" + readFromEEPROM(0) + "\"\r";
-  }
   else if (number == readFromEEPROM(20))
   {
-    Serial.print("number in use  number 3:");
+    Serial.print("number in use  number 2:");
     Serial.println(readFromEEPROM(20));
     command = "AT+CMGS=\"" + readFromEEPROM(20) + "\"\r";
+  }
+  else if (number == readFromEEPROM(40))
+  {
+    Serial.print("number in use  number 3:");
+    Serial.println(readFromEEPROM(40));
+    command = "AT+CMGS=\"" + readFromEEPROM(40) + "\"\r";
   }
   Serial.print("commnad length: ");
   Serial.println(command.length());
