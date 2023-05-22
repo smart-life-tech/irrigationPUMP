@@ -1277,6 +1277,8 @@ void infoMessage(String number)
     Serial.println(readFromEEPROM(20));
     command = "AT+CMGS=\"" + readFromEEPROM(20) + "\"\r";
   }
+  Serial.print("commnad length: ");
+  Serial.println(command.length());
   if (command.length() > 0)
   {
     String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
