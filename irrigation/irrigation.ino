@@ -327,7 +327,7 @@ void loop()
       }
       else if (!digitalRead(buttonOk))
       {
-        //EEPROM.update(speedSet, speedAdd);
+        // EEPROM.update(speedSet, speedAdd);
         length = half_revolutions * metra;
         Serial.print("ok button pressed, speed set is :");
         Serial.println(speedSet);
@@ -744,7 +744,7 @@ void processData(String inputString)
     Serial.println(inputString.substring(num + 1));
     progstep = inputString.substring(num + 1);
     // str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
-    //EEPROM.write(speedAdd, progstep.toInt());
+    // EEPROM.write(speedAdd, progstep.toInt());
     setSpeed = progstep.toInt();
     newSpeed = setSpeed;
     metra = newSpeed;
@@ -763,7 +763,7 @@ void processData(String inputString)
     Serial.println(inputString.substring(num + 1));
     wheelDia = inputString.substring(num + 1);
     metra = wheelDia.toInt() / 1000;
-    //EEPROM.write(metraAdd, metra);
+    // EEPROM.write(metraAdd, metra);
     inputString = "";
   }
   Serial.print("phone number in  use : ");
@@ -1255,8 +1255,10 @@ void infoMessage(String number)
   Serial.println(number);
   Serial.print("number numbers:");
   Serial.println(readFromEEPROM(0));
+  delay(500);
   Serial.print("number numbers2:");
   Serial.println(readFromEEPROM(20));
+  delay(500);
   Serial.print("number numbers3:");
   Serial.println(readFromEEPROM(40));
   String command = "";
