@@ -15,33 +15,17 @@ LayadCircuits_SalengGSM salengGSM = LayadCircuits_SalengGSM(&Serial1);
 dht DHT;
 // dht1wire DHT(DHT22_PIN, dht::DHT22);
 //  Constants
+#define MAX_LENGTH 50
+
+void writeToEEPROM(int address, const String &data);
+String readFromEEPROM(int address);
+int address = 0;
 
 // Variables
 float hum;  // Stores humidity value
 float temp; // Stores temperature value
 bool releasing = true;
-int writeStringToEEPROM(int addrOffset, const String &strToWrite)
-{
-  byte len = strToWrite.length();
-  EEPROM.write(addrOffset, len);
-  for (int i = 0; i < len; i++)
-  {
-    EEPROM.write(addrOffset + 1 + i, strToWrite[i]);
-  }
-  return addrOffset + 1 + len;
-}
-int readStringFromEEPROM(int addrOffset, String *strToRead)
-{
-  int newStrLen = EEPROM.read(addrOffset);
-  char data[newStrLen + 1];
-  for (int i = 0; i < newStrLen; i++)
-  {
-    data[i] = EEPROM.read(addrOffset + 1 + i);
-  }
-  data[newStrLen] = '\0';
-  *strToRead = String(data);
-  return addrOffset + 1 + newStrLen;
-}
+
 int newSpeed = 15;
 float vOUT = 0.0;
 float vIN = 0.0;
@@ -56,18 +40,7 @@ int InterruptCounter;
 float WindSpeed;
 bool wind, voltage = true;
 unsigned long timeNow;
-int
-    eepromOffset = 0,
-    str1AddrOffset,
-    str2AddrOffset,
-    str3AddrOffset,
-    str4AddrOffset,
-    metraAddress,
-    newStr1AddrOffset,
-    newStr2AddrOffset,
-    newStr3AddrOffset,
-    newStr4AddrOffset,
-    newmetraAddress;
+
 // Writing
 String inputString = "";
 String phoneNum = "";
@@ -132,8 +105,8 @@ int outputValue = 0; // value output to the PWM (analog out)
 int buttonUp = 9;
 int buttonDown = 8;
 int buttonOk = 7;
-int metraAdd = 0; // address for the meter variable
-int speedAdd = 1; // address for the meter variable
+int metraAdd = 41; // address for the meter variable
+int speedAdd = 40; // address for the meter variable
 boolean ends = true;
 float total_len = 0;
 int endTime = 0;
@@ -301,7 +274,7 @@ void loop()
     if (receivedMessage.indexOf("info") > 0)
     {
       Serial.println("requesting machine information info");
-      infoMessage();
+      infoMessage(salengGSM.smsSender);
     }
     processData(receivedMessage);
   }
@@ -735,24 +708,27 @@ void processData(String inputString)
     Serial.println(id);
     if (id == "1")
     {
-      Serial.print("new phone number set to :");
+      Serial.print("new phone number 1 set to :");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
+      writeToEEPROM(0, phoneNum);
       //  str1AddrOffset = writeStringToEEPROM(eepromOffset, phoneNum);
     }
     else if (id == "2")
     {
-      Serial.print("new phone number set to :");
+      Serial.print("new phone number 2 set to :");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
+      writeToEEPROM(20, phoneNum);
       // str2AddrOffset = writeStringToEEPROM(str1AddrOffset, phoneNum);
       //  writeStringToEEPROM(str2AddrOffset, str3);
     }
     else if (id == "3")
     {
-      Serial.print("new phone number set to :");
+      Serial.print("new phone number 3 set to :");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
+      writeToEEPROM(30, phoneNum);
       // str3AddrOffset = writeStringToEEPROM(str2AddrOffset, phoneNum);
       //   writeStringToEEPROM(str2AddrOffset, str3);
     }
@@ -802,9 +778,6 @@ void processData(String inputString)
 }
 void readMem()
 {
-  newStr1AddrOffset = readStringFromEEPROM(eepromOffset, &phoneNum);
-  newStr4AddrOffset = readStringFromEEPROM(newStr3AddrOffset, &progstep);
-  readStringFromEEPROM(newStr4AddrOffset, &wheelDia);
 }
 void passwordStart()
 {
@@ -1277,26 +1250,55 @@ void sendAlmostDone()
   delay(200);
   Serial1.println("AT+CMGF=1\r");
 }
-void infoMessage()
+void infoMessage(String number)
 {
-  String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
-  data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
-  data += "\n wind Km/h: " + String(winding);
-  Serial.println("Setting the GSM in text mode");
-  Serial1.println("AT+CMGF=1\r");
-  delay(200);
-  Serial.println("Sending SMS to the desired phone number!");
-  Serial1.println("AT+CMGS=\"+306973991989\"\r");
-  // Replace x with mobile number
-  delay(500);
-  Serial1.println(data); // SMS Text
-  delay(200);
-  Serial1.println((char)26); // ASCII code of CTRL+Z
-  delay(1000);
-  Serial1.println();
-  Serial1.println("AT");
-  delay(200);
-  Serial1.println("AT+CMGF=1\r");
+  Serial.print("number :");
+  Serial.println(number);
+  Serial.print("number numbers:");
+  Serial.println(readFromEEPROM(0));
+  Serial.println(readFromEEPROM(10));
+  Serial.println(readFromEEPROM(20));
+  String command = "";
+  if (number == readFromEEPROM(0))
+  {
+    Serial.print("number in use  number 1:");
+    Serial.println(readFromEEPROM(0));
+    command = "AT+CMGS=\"" + readFromEEPROM(0) + "\"\r";
+  }
+  else if (number == readFromEEPROM(10))
+  {
+    Serial.print("number in use  number 2:");
+    Serial.println(readFromEEPROM(0));
+    command = "AT+CMGS=\"" + readFromEEPROM(0) + "\"\r";
+  }
+  else if (number == readFromEEPROM(20))
+  {
+    Serial.print("number in use  number 3:");
+    Serial.println(readFromEEPROM(20));
+    command = "AT+CMGS=\"" + readFromEEPROM(20) + "\"\r";
+  }
+  if (command.length() > 0)
+  {
+    String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
+    data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
+    data += "\n wind Km/h: " + String(winding);
+    Serial.println("Setting the GSM in text mode");
+    Serial1.println("AT+CMGF=1\r");
+    delay(200);
+    Serial.println("Sending SMS to the desired phone number!");
+    // Serial1.println("AT+CMGS=\"+306973991989\"\r");
+    Serial1.println(command);
+    // Replace x with mobile number
+    delay(500);
+    Serial1.println(data); // SMS Text
+    delay(200);
+    Serial1.println((char)26); // ASCII code of CTRL+Z
+    delay(1000);
+    Serial1.println();
+    Serial1.println("AT");
+    delay(200);
+    Serial1.println("AT+CMGF=1\r");
+  }
 }
 
 void reads()
@@ -1340,4 +1342,32 @@ float wateringEnd(float distance, float speed)
   endTime = distance / speed;
   return endTime;
 }
+
+void writeToEEPROM(int address, const String &data)
+{
+  int length = data.length();
+  for (int i = 0; i < length; i++)
+  {
+    EEPROM.write(address + i, data[i]);
+  }
+  EEPROM.write(address + length, '\0');
+}
+
+String readFromEEPROM(int address)
+{
+  String data;
+  char character = EEPROM.read(address);
+  int i = 0;
+
+  while (character != '\0' && i < MAX_LENGTH)
+  {
+    data += character;
+    address++;
+    character = EEPROM.read(address);
+    i++;
+  }
+
+  return data;
+}
+
 // version 10.12
