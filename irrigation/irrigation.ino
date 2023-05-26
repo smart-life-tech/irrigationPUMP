@@ -707,7 +707,7 @@ void processData(String inputString)
     Serial.println(id);
     if (id == "1")
     {
-      Serial.print("new phone number 1 set to :");
+      Serial.print("new phone number 1 set to : ");
       Serial.println(inputString.substring(num + 3));
       phoneNum = inputString.substring(num + 3);
       writeToEEPROM(0, phoneNum);
@@ -1262,6 +1262,7 @@ void infoMessage(String number)
   Serial.print("number numbers3:");
   Serial.println(readFromEEPROM(40));
   String command = "";
+
   if (number == readFromEEPROM(0))
   {
     Serial.print("number in use  number 1:");
@@ -1282,6 +1283,8 @@ void infoMessage(String number)
   }
   Serial.print("commnad length: ");
   Serial.println(command.length());
+   Serial.print("commnad sent: ");
+  Serial.println(command);
   if (command.length() > 0)
   {
     String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
