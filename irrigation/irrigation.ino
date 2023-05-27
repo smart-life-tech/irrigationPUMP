@@ -695,7 +695,26 @@ void SendMessage()
 }
 void processData(String inputString)
 {
-  if (inputString.indexOf("PROGNUBER") > -1)
+  bool found;
+  // Convert the String objects to character arrays
+  char *sentenceChars = strdup(inputString.c_str());
+  String searchWord = "PROGNUBER";
+  char *searchWordChars = strdup(searchWord.c_str());
+
+  if (strstr(sentenceChars, searchWordChars) != NULL)
+  {
+    Serial.println("The word is found!");
+    found = true;
+  }
+  else
+  {
+    Serial.println("The word is not found!");
+    found = false;
+  }
+
+
+  Serial.println(inputString.indexOf("PROGNUBER"));
+  if (found)
   {
     Serial.print("received : ");
     Serial.println(inputString);
@@ -774,6 +793,7 @@ void processData(String inputString)
 
   Serial.print("speed in  use : ");
   Serial.println(setSpeed);
+  found=false;
 }
 void readMem()
 {
@@ -1283,7 +1303,7 @@ void infoMessage(String number)
   }
   Serial.print("commnad length: ");
   Serial.println(command.length());
-   Serial.print("commnad sent: ");
+  Serial.print("commnad sent: ");
   Serial.println(command);
   if (command.length() > 0)
   {
