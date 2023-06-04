@@ -131,6 +131,7 @@ int percent = 0;
 char ps[30];
 int winding = 0;
 float wheel = 0.95;
+float collectWheel = 0.6;
 int speedCounter = 0;
 bool speedFlag = true;
 void setup()
@@ -253,6 +254,7 @@ void setup()
   metra = 0.95;
   lcd.backlight();
 }
+
 void loop()
 {
   DateTime now = rtc.now();
@@ -347,53 +349,9 @@ void loop()
   }
   if (done)
   {
-    wheel = 0.89;
+    wheel = collectWheel;
     DisplayPSI(); // pressure and battery measurement
     lcd.setCursor(0, 1);
-    /* lcd.print("T="); // this prints whats in between the quotes
-    if (now.hour() < 10)
-    {
-      lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
-    }
-    else
-    {
-      lcd.print(now.hour());
-    }
-    lcd.print(":"); // this clears the display field so anything left is deleted
-    if (now.minute() < 10)
-      Minutes = "0" + String(Minute);
-    else
-      Minutes = String(Minute);
-    lcd.print(Minutes); // this prints the tag value
-    // lcd.print(":");         // this clears the display field so anything left is deleted
-    if (now.second() < 10)
-      Seconds = "0" + String(Second);
-    else
-      Seconds = String(Second);
-    // lcd.print(Seconds);
-
-    //================================================
-   lcd.print(" Y=");       // this prints whats in between the quotes
-     lcd.print(now.day());   // this prints whats in between the quotes
-     lcd.print(":");         // this clears the display field so anything left is deleted
-     lcd.print(now.month()); // this prints the tag value
-     lcd.print(":");         // this clears the display field so anything left is deleted
-     lcd.print(now.year());
-     lcd.setCursor(0, 2);
-     lcd.print("W:");
-     lcd.print(0, 0);
-     lcd.print(" T:");
-     lcd.print(getTemp());
-     lcd.print(" H:");
-     lcd.print(getHum());
-     lcd.print(" V :");
-     lcd.print(getVoltage(), 0);
-     lcd.setCursor(0, 3);
-     lcd.print("L.rem.");
-     lcd.print(int(half_revolutions * metra));
-     lcd.print(" sp:");
-     lcd.print(setSpeed);
- */
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("dar:");      // this prints whats in between the quotes
@@ -433,8 +391,8 @@ void loop()
     lcd.print(int(velocity));
     lcd.print(" H:");
     lcd.print(getHum());
-    currentDistance = half_revolutions * metra;
-    // timeLeft = currentDistance / (velocity + 500);
+    currentDistance = half_revolutions * wheel;
+    timeLeft = currentDistance / (velocity);
     lcd.setCursor(0, 3);
     lcd.print("Time(min):");
     lcd.print(int(timeLeft));
@@ -712,7 +670,6 @@ void processData(String inputString)
     found = false;
   }
 
-
   Serial.println(inputString.indexOf("PROGNUBER"));
   if (found)
   {
@@ -759,7 +716,7 @@ void processData(String inputString)
     // inputString.toUpperCase(); // Uppercase the Received Message
     //  Serial.println(inputString.indexOf("#"));PROGSTEP#1234567890#
     int num = inputString.indexOf("#");
-    Serial.print("program step number  set to :");
+    Serial.print("program speed number  set to :");
     Serial.println(inputString.substring(num + 1));
     progstep = inputString.substring(num + 1);
     // str4AddrOffset = writeStringToEEPROM(str3AddrOffset, progstep);
@@ -767,8 +724,9 @@ void processData(String inputString)
     setSpeed = progstep.toInt();
     newSpeed = setSpeed;
     metra = newSpeed;
-    Serial.print("program speed number  set to :");
+    Serial.print("program wheel number  set to :");
     Serial.println(setSpeed);
+
     inputString = "";
   }
   if (inputString.indexOf("MTR#") > -1)
@@ -778,11 +736,14 @@ void processData(String inputString)
     // inputString.toUpperCase(); // Uppercase the Received Message
     // Serial.println(inputString.indexOf("#"))MTR#134.0#
     int num = inputString.indexOf("#");
-    Serial.print("THE meter  number  set to :");
-    Serial.println(inputString.substring(num + 1));
+    // Serial.print("THE meter wheel number  set to :");
+    // Serial.println(inputString.substring(num + 1));
     wheelDia = inputString.substring(num + 1);
-    metra = wheelDia.toInt() / 1000;
-    // EEPROM.write(metraAdd, metra);
+    collectWheel = wheelDia.toInt();
+    Serial.print("THE meter wheel number  set to :");
+    Serial.println(collectWheel);
+    // metra = wheelDia.toInt() / 1000;
+    EEPROM.write(metraAdd, collectWheel);
     inputString = "";
   }
   Serial.print("phone number in  use : ");
@@ -793,11 +754,9 @@ void processData(String inputString)
 
   Serial.print("speed in  use : ");
   Serial.println(setSpeed);
-  found=false;
+  found = false;
 }
-void readMem()
-{
-}
+
 void passwordStart()
 {
   int readUp = digitalRead(upButton);
