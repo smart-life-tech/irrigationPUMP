@@ -404,7 +404,9 @@ void loop()
     lcd.print(getTemp());
     Serial.print("Time left(min):");
     Serial.println(int(timeLeft));
-    currentDistance = half_revolutions * metra;
+     Serial.print("current distance :");
+    Serial.println(int(currentDistance));
+    //currentDistance = half_revolutions * metra;
     // total_len = total_len * metra;
     // float gets = getSpeed();
 
@@ -1001,7 +1003,7 @@ float getPsi()
   // Serial.print(voltage);
 
   float pressure_pascal = (3.0 * ((float)voltage - 0.47)) * 1000000.0;
-  float pressure_bar = pressure_pascal / 10e4;
+  float pressure_bar = pressure_pascal / 10e5;
   Serial.print("Pressure = ");
   Serial.println(pressure_bar);
 
