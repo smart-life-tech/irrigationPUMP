@@ -283,13 +283,17 @@ void loop()
   // getSpeeding(); // this controls the motor retraction
 
   controlMotor(velocity);
-  if (getVoltage() < 1.5) // should be 11 .5
+  if (getVoltage() < 9) // should be 11 .5
   {
     if (voltage)
     {
       errorVoltage();
       voltage = false;
     }
+  }
+  else if (getVoltage() > 10)
+  {
+    voltage = true;
   }
 
   if (!digitalRead(buttonOk))
@@ -1004,6 +1008,7 @@ float getPsi()
   dtostrf(pressure_bar, 3, 1, ps);
   return pressure_bar;
 }
+
 String getTime()
 {
   char buf1[20];
