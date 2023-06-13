@@ -58,7 +58,7 @@ int IR1 = 2;
 int IR2 = 3;
 unsigned long t1 = 0;
 unsigned long t2 = 0;
-float setSpeed = 5.00;
+float setSpeed = 123.00;
 float velocity = 0.00;
 bool read = false;
 // int vkmh = (100*3600)/1000;
@@ -319,15 +319,15 @@ void loop()
       {
         delay(100);
         lcd.clear();
-        speedSet = speedSet + 1.0;
-        if (speedSet > 8000)
-          speedSet = 8000;
+        speedSet = speedSet + 10.0;
+        if (speedSet > 800)
+          speedSet = 800;
       }
       else if (!digitalRead(buttonDown))
       {
         delay(100);
         lcd.clear();
-        speedSet = speedSet - 1.0;
+        speedSet = speedSet - 10.0;
         if (speedSet <= 0)
           speedSet = 0;
       }
@@ -404,11 +404,11 @@ void loop()
     lcd.print(getTemp());
     Serial.print("Time left(min):");
     Serial.println(int(timeLeft));
-     Serial.print("current distance :");
+    Serial.print("current distance :");
     Serial.println(int(currentDistance));
-    //currentDistance = half_revolutions * metra;
-    // total_len = total_len * metra;
-    // float gets = getSpeed();
+    // currentDistance = half_revolutions * metra;
+    //  total_len = total_len * metra;
+    //  float gets = getSpeed();
 
     if (half_revolutions <= 0)
     {
@@ -730,7 +730,7 @@ void processData(String inputString)
     setSpeed = progstep.toInt();
     newSpeed = setSpeed;
     metra = newSpeed;
-    Serial.print("program wheel number  set to :");
+    Serial.print("program speed number  set to :");
     Serial.println(setSpeed);
 
     inputString = "";
@@ -1115,18 +1115,21 @@ void controlMotor(float speed)
 {
   if (speed > 0)
   {
+    Serial.print("machine speed is: ");
     Serial.println(speed);
-    if (speed > setSpeed + 400.00)
+    Serial.print("machine set speed is: ");
+    Serial.println(setSpeed);
+    if (speed > setSpeed + 40.00)
     {
       // delay(5000);
-      // Serial.println("moving forward, more speed");
+      Serial.println("moving forward, more speed");
       analogWrite(pwm, 255);
       digitalWrite(in2, HIGH);
       digitalWrite(in1, LOW);
     }
-    else if (speed < setSpeed - 300.00)
+    else if (speed < setSpeed - 30.00)
     {
-      // Serial.println("moving backward, less speed");
+      Serial.println("moving backward, less speed");
       analogWrite(pwm, 255);
       digitalWrite(in2, LOW);
       digitalWrite(in1, HIGH);
