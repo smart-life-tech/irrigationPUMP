@@ -131,7 +131,7 @@ int percent = 0;
 char ps[30];
 int winding = 0;
 float wheel = 0.95;
-float collectWheel = 0.6;
+float collectWheel = 0.81;
 int speedCounter = 0;
 bool speedFlag = true;
 void setup()
@@ -282,7 +282,6 @@ void loop()
   // getSpeed();
   // getSpeeding(); // this controls the motor retraction
 
-  controlMotor(velocity);
   if (getVoltage() < 9) // should be 11 .5
   {
     if (voltage)
@@ -395,6 +394,7 @@ void loop()
     lcd.print(int(velocity));
     lcd.print(" H:");
     lcd.print(getHum());
+    controlMotor(velocity);
     currentDistance = half_revolutions * wheel;
     timeLeft = currentDistance / (velocity);
     lcd.setCursor(0, 3);
@@ -1030,7 +1030,7 @@ String getDate()
   // Serial.println(buf1);
   return buf1;
 }
-
+//reteuns current velocity
 float getSpeed()
 {
   if (done)
