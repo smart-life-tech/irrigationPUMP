@@ -1,4 +1,3 @@
-
 #include <Wire.h>                   // Wire library
 #include <LiquidCrystal_I2C.h>      // Liquid Crystal I2C library
 LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
@@ -134,6 +133,8 @@ float wheel = 0.95;
 float collectWheel = 0.81;
 int speedCounter = 0;
 bool speedFlag = true;
+unsigned long monitorStopage = 0;
+bool stopped=true;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -409,7 +410,16 @@ void loop()
     // currentDistance = half_revolutions * metra;
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
-
+    monitorStopage++;
+    if (currentDistance < total_len && monitorStopage > 100)
+    {
+      if (stopped)
+      {
+        sendStopSms();
+        stopped = false;
+      }
+    }
+    
     if (half_revolutions <= 0)
     {
       if (stopWatering)
@@ -458,6 +468,7 @@ void loop()
     // Serial.println(velocity);
   }
 }
+
 void updateSerial()
 {
   delay(1000);
@@ -884,6 +895,7 @@ void checkCode()
     // setup();
   }
 }
+
 float getVoltage()
 {
   value = analogRead(analogInPin);
@@ -893,6 +905,7 @@ float getVoltage()
   // Serial.println(vIN);
   return vIN;
 }
+
 float getWind()
 {
   InterruptCounter = 0;
@@ -922,6 +935,7 @@ void countup()
 {
   InterruptCounter++;
 }
+
 int getTemp()
 {
   /* //int chk = DHT.read22(DHT22_PIN);
@@ -970,6 +984,7 @@ int getHum()
   // delay(2000); // Delay 2 sec.
   return hum;
 }
+
 void getSpeeding()
 {
   float s = getSpeed();
@@ -979,6 +994,7 @@ void getSpeeding()
 void speedInt()
 {
   Serial.println("hall sensor active");
+  monitorStopage = 0;
   speedCounter++;
   if (speedCounter > 4)
   {
@@ -1030,11 +1046,15 @@ String getDate()
   // Serial.println(buf1);
   return buf1;
 }
-//reteuns current velocity
+// reteuns current velocity
 float getSpeed()
 {
   if (done)
+  {
     half_revolutions--;
+    stopped = true;
+  }
+
   if (!done)
   {
     half_revolutions++;
@@ -1238,6 +1258,26 @@ void sendAlmostDone()
   delay(200);
   Serial1.println("AT+CMGF=1\r");
 }
+
+void sendStopSms()
+{
+  Serial.println("Setting the GSM in text mode");
+  Serial1.println("AT+CMGF=1\r");
+  delay(200);
+  Serial.println("Sending SMS to the desired phone number!");
+  Serial1.println("AT+CMGS=\"+306973991989\"\r");
+  // Replace x with mobile number
+  delay(500);
+  Serial1.println(" wheel has stopped, watering isnt over yet, fault detected "); // SMS Text
+  delay(200);
+  Serial1.println((char)26); // ASCII code of CTRL+Z
+  delay(1000);
+  Serial1.println();
+  Serial1.println("AT");
+  delay(200);
+  Serial1.println("AT+CMGF=1\r");
+}
+
 void infoMessage(String number)
 {
   Serial.print("number :");
