@@ -134,7 +134,7 @@ float collectWheel = 0.81;
 int speedCounter = 0;
 bool speedFlag = true;
 unsigned long monitorStopage = 0;
-bool stopped=true;
+bool stopped = true;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -395,7 +395,11 @@ void loop()
     lcd.print(int(velocity));
     lcd.print(" H:");
     lcd.print(getHum());
-    controlMotor(velocity);
+
+    int simSpeed = map(analogRead(A4), 0, 1024, 10, 200);
+
+    controlMotor(simSpeed);
+
     currentDistance = half_revolutions * wheel;
     timeLeft = currentDistance / (velocity);
     lcd.setCursor(0, 3);
@@ -419,7 +423,7 @@ void loop()
         stopped = false;
       }
     }
-    
+
     if (half_revolutions <= 0)
     {
       if (stopWatering)
@@ -635,6 +639,7 @@ void ReadUnreadMessages()
     Serial1.write(inByte);
   }
 }
+
 void SendMessage()
 {
 
@@ -668,6 +673,7 @@ void SendMessage()
   //  Serial1.println("AT+CMGL=\"REC UNREAD\"\r");
   delay(1000);
 }
+
 void processData(String inputString)
 {
   bool found;
@@ -805,6 +811,7 @@ void passwordStart()
     // delay(500);
   }
 }
+
 void moveRight()
 {
   if (cursorPos == 3)
