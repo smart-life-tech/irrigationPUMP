@@ -396,8 +396,8 @@ void loop()
     lcd.print(" H:");
     lcd.print(getHum());
 
-    int simSpeed = map(analogRead(A4), 0, 1024, 10, 200);
-
+    int simSpeed = map(analogRead(A2), 0, 1024, 10, 200);
+    simSpeed = map(simSpeed, 60, 90, 10, 200);
     controlMotor(simSpeed);
 
     currentDistance = half_revolutions * wheel;
