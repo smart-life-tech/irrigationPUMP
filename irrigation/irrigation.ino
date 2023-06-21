@@ -396,15 +396,15 @@ void loop()
     lcd.print(" H:");
     lcd.print(getHum());
 
-    //int simSpeed = map(analogRead(A2), 0, 1024, 10, 200);
-    //simSpeed = map(simSpeed, 60, 90, 10, 200);
+    // int simSpeed = map(analogRead(A2), 0, 1024, 10, 200);
+    // simSpeed = map(simSpeed, 60, 90, 10, 200);
     controlMotor(velocity);
 
     currentDistance = half_revolutions * wheel;
-    timeLeft = currentDistance / (velocity);
+    timeLeft = currentDistance / (velocity); // meters/ m/hr
     lcd.setCursor(0, 3);
     lcd.print("Time(min):");
-    lcd.print(int(timeLeft));
+    lcd.print(int(timeLeft * 60));
     lcd.print(" C:");
     lcd.print(getTemp());
     Serial.print("Time left(min):");
@@ -1323,7 +1323,7 @@ void infoMessage(String number)
   Serial.println(command);
   if (command.length() > 0)
   {
-    String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
+    String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft*60) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
     data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
     data += "\n wind Km/h: " + String(winding);
     Serial.println("Setting the GSM in text mode");
