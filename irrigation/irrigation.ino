@@ -7,6 +7,7 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include <LayadCircuits_SalengGSM.h>
 #include <SoftwareSerial.h>
 #include <Arduino.h>
+#include <TimeLib.h>
 SoftwareSerial gsmSerial(19, 18);
 LayadCircuits_SalengGSM salengGSM = LayadCircuits_SalengGSM(&Serial1);
 #define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
@@ -135,6 +136,7 @@ int speedCounter = 0;
 bool speedFlag = true;
 unsigned long monitorStopage = 0;
 bool stopped = true;
+String modifiedTime="";
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -405,6 +407,9 @@ void loop()
     lcd.setCursor(0, 3);
     lcd.print("Time(min):");
     lcd.print(int(timeLeft * 60));
+     modifiedTime = addMinutesToCurrentTime(timeLeft * 60);
+    Serial.println(modifiedTime);
+
     lcd.print(" C:");
     lcd.print(getTemp());
     Serial.print("Time left(min):");
@@ -1323,7 +1328,7 @@ void infoMessage(String number)
   Serial.println(command);
   if (command.length() > 0)
   {
-    String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft*60) + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
+    String data = "current distance: " + String(currentDistance) + "\nTime left: " + /*String(timeLeft * 60)*/modifiedTime + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
     data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
     data += "\n wind Km/h: " + String(winding);
     Serial.println("Setting the GSM in text mode");
@@ -1414,4 +1419,21 @@ String readFromEEPROM(int address)
   return data;
 }
 
+String addMinutesToCurrentTime(long minutesToAdd)
+{
+  // Get the current time
+  time_t currentTime = now();
+
+  // Add minutes to the current time
+  currentTime += minutesToAdd * 60;
+
+  // Extract hour and minute from the modified time
+  int hourss = hour(currentTime);
+  int minutess = minute(currentTime);
+
+  // Format the result as a string (HH:MM)
+  String formattedTime = String(hourss) + ":" + String(minutess);
+
+  return formattedTime;
+}
 // version 10.12
