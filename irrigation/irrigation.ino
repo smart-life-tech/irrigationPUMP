@@ -7,7 +7,7 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include <LayadCircuits_SalengGSM.h>
 #include <SoftwareSerial.h>
 #include <Arduino.h>
-#include <TimeLib.h>
+#include <TimeLib.h>// install from https://github.com/PaulStoffregen/Time
 SoftwareSerial gsmSerial(19, 18);
 LayadCircuits_SalengGSM salengGSM = LayadCircuits_SalengGSM(&Serial1);
 #define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
