@@ -395,6 +395,16 @@ void loop()
     lcd.print(int(half_revolutions * wheel));
     lcd.print(" m/h.");
     lcd.print(int(velocity));
+    // the lines below is the 15 percent deviation message sensding line
+    int deviation = setSpeed / velocity;
+    deviation = 100 / deviation; // result will be in percentage
+    deviation = 100 - deviation; // left speed;
+
+    if ((deviation > 15))
+    {
+      errorDeviation();
+    }
+
     lcd.print(" H:");
     lcd.print(getHum());
 
@@ -1122,7 +1132,7 @@ float getSpeed()
     timeLeft = timeLeft * 60;
     Serial.println(timeLeft);
 
-    if (timeLeft > 300) // 30 mites, should be less than 30 meyers < 30 npt > 300
+    if (timeLeft < 30) // 30 mites, should be less than 30 meyers < 30 npt > 300
     {
       if (almostDone)
       {
@@ -1130,11 +1140,11 @@ float getSpeed()
         almostDone = false;
       }
     }
-    else if (timeLeft > 1)
+    else if (timeLeft > 30)
     {
-      // almostDone = true;
+      almostDone = true;
     }
-    delay(500);
+    // delay(500);
     read = false;
   }
   else
