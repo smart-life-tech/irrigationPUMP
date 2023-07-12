@@ -137,6 +137,7 @@ bool speedFlag = true;
 unsigned long monitorStopage = 0;
 bool stopped = true;
 String modifiedTime = "";
+bool devonce = true;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -402,9 +403,12 @@ void loop()
 
     if ((deviation > 15))
     {
-      errorDeviation();
+      if (devonce)
+      {
+        errorDeviation();
+        devonce = false;
+      }
     }
-
     lcd.print(" H:");
     lcd.print(getHum());
 
