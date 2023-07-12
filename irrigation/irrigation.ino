@@ -1,5 +1,6 @@
 #include <Wire.h>                   // Wire library
 #include <LiquidCrystal_I2C.h>      // Liquid Crystal I2C library
+LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 #include "RTClib.h"
 #include <EEPROM.h>
 #include "dht.h"
@@ -7,7 +8,6 @@
 #include <SoftwareSerial.h>
 #include <Arduino.h>
 #include <TimeLib.h> // install from https://github.com/PaulStoffregen/Time
-LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
 SoftwareSerial gsmSerial(19, 18);
 LayadCircuits_SalengGSM salengGSM = LayadCircuits_SalengGSM(&Serial1);
 #define DHT22_PIN 11 // DHT 22  (AM2302) - what pin we're connected to
@@ -137,7 +137,6 @@ bool speedFlag = true;
 unsigned long monitorStopage = 0;
 bool stopped = true;
 String modifiedTime = "";
-bool devonce = true;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -403,16 +402,9 @@ void loop()
 
     if ((deviation > 15))
     {
-      if (devonce)
-      {
-        errorDeviation();
-        devonce = false;
-      }
+      errorDeviation();
     }
-    else if (deviation < 10)
-    {
-      devonce = true;
-    }
+
     lcd.print(" H:");
     lcd.print(getHum());
 
@@ -1347,10 +1339,7 @@ void infoMessage(String number)
   Serial.println(command);
   if (command.length() > 0)
   {
-    float timeleft = currentDistance / wheel;
-    char timeL[5];
-    dtostrf(timeleft, 5, 1, timeL);
-    String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeL) /*modifiedTime*/ + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
+    String data = "current distance: " + String(currentDistance) + "\nTime left: " + /*String(timeLeft * 60)*/ modifiedTime + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
     data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
     data += "\n wind Km/h: " + String(winding);
     Serial.println("Setting the GSM in text mode");
