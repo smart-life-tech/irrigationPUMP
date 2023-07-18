@@ -1343,7 +1343,8 @@ void infoMessage(String number)
   Serial.println(command);
   if (command.length() > 0)
   {
-    String data = "current distance: " + String(currentDistance) + "\nTime left: " + /*String(timeLeft * 60)*/ modifiedTime + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
+    timeLeft = currentDistance / velocity;
+    String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) /*modifiedTime*/ + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
     data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
     data += "\n wind Km/h: " + String(winding);
     Serial.println("Setting the GSM in text mode");
