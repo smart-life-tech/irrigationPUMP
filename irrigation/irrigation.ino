@@ -433,8 +433,8 @@ void loop()
     {
       if (almostDone)
       {
-        sendAlmostDone();
-        almostDone = false;
+        //sendAlmostDone();
+       // almostDone = false;
       }
     }
     monitorStopage++;
@@ -1168,7 +1168,7 @@ float getSpeed()
     }
     else if (timeLeft > 30)
     {
-      almostDone = true;
+     // almostDone = true;
     }
     // delay(500);
     read = false;
