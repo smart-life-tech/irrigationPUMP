@@ -138,6 +138,7 @@ unsigned long monitorStopage = 0;
 bool stopped = true;
 String modifiedTime = "";
 bool devonce = true;
+bool winderror = true;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -400,15 +401,9 @@ void loop()
     int deviation = setSpeed / velocity;
     deviation = 100 / deviation; // result will be in percentage
     deviation = 100 - deviation; // left speed;
+    Serial.print("deviation : ");
+    Serial.println(deviation);
 
-    if ((deviation > 15))
-    {
-      if (devonce)
-      {
-        errorDeviation();
-        devonce = false;
-      }
-    }
     lcd.print(" H:");
     lcd.print(getHum());
 
@@ -424,7 +419,7 @@ void loop()
     //  lcd.print(int(timeLeft * 60));
     modifiedTime = addMinutesToCurrentTime(timeLeft * 60);
     Serial.println(modifiedTime);
-    lcd.print(modifiedTime);
+    lcd.print(timeLeft);
     lcd.print(" C:");
     lcd.print(getTemp());
     Serial.print("Time left(min):");
@@ -434,6 +429,14 @@ void loop()
     // currentDistance = half_revolutions * metra;
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
+    if (timeLeft < 30)
+    {
+      if (almostDone)
+      {
+        sendAlmostDone();
+        almostDone = false;
+      }
+    }
     monitorStopage++;
     if (currentDistance < total_len && monitorStopage > 100)
     {
@@ -443,7 +446,18 @@ void loop()
         stopped = false;
       }
     }
-
+    if ((deviation > 15) && stopped)
+    {
+      if (devonce)
+      {
+        errorDeviation();
+        devonce = false;
+      }
+    }
+    else
+    {
+      devonce = true;
+    }
     if (half_revolutions <= 0)
     {
       if (stopWatering)
@@ -454,6 +468,14 @@ void loop()
     }
     // delay(1000);
     (getWind());
+    if (getWind() > 20)
+    {
+      if (winderror)
+      {
+        errorWind();
+        winderror = false;
+      }
+    }
     unsigned long timeNow = millis();
     if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
     {
