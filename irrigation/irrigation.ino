@@ -284,7 +284,7 @@ void loop()
     }
     processData(receivedMessage);
   }
-  // getSpeed();
+  getSpeed();
   // getSpeeding(); // this controls the motor retraction
 
   if (getVoltage() < 9) // should be 11 .5
@@ -397,9 +397,10 @@ void loop()
     lcd.print(int(half_revolutions * wheel));
     lcd.print(" m/h.");
     lcd.print(int(velocity));
+
     // the lines below is the 15 percent deviation message sensding line
     int deviation = setSpeed / velocity;
-    deviation = 100 / deviation; // result will be in percentage
+    deviation = 100 * deviation; // result will be in percentage
     deviation = 100 - deviation; // left speed;
     Serial.print("deviation : ");
     Serial.println(deviation);
@@ -429,15 +430,20 @@ void loop()
     // currentDistance = half_revolutions * metra;
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
-    if (timeLeft < 30)
+    if (timeLeft < 30) // 30 mites, should be less than 30 meyers < 30 npt > 300
     {
       if (almostDone)
       {
-        //sendAlmostDone();
-       // almostDone = false;
+        sendAlmostDone();
+        almostDone = false;
       }
     }
+    else if (timeLeft > 30)
+    {
+      almostDone = true;
+    }
     monitorStopage++;
+
     if (currentDistance < total_len && monitorStopage > 100)
     {
       if (stopped)
@@ -446,7 +452,13 @@ void loop()
         stopped = false;
       }
     }
-    if ((deviation > 15) && stopped)
+    else
+    {
+      stopped = true;
+    }
+
+
+    if (deviation > 15)
     {
       if (devonce)
       {
@@ -467,7 +479,7 @@ void loop()
       }
     }
     // delay(1000);
-    (getWind());
+    getWind();
     if (getWind() > 20)
     {
       if (winderror)
@@ -1157,19 +1169,6 @@ float getSpeed()
     Serial.print("time left for watering in minutes: ");
     timeLeft = timeLeft * 60;
     Serial.println(timeLeft);
-
-    if (timeLeft < 30) // 30 mites, should be less than 30 meyers < 30 npt > 300
-    {
-      if (almostDone)
-      {
-        sendAlmostDone();
-        almostDone = false;
-      }
-    }
-    else if (timeLeft > 30)
-    {
-     // almostDone = true;
-    }
     // delay(500);
     read = false;
   }
