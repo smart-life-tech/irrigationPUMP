@@ -284,7 +284,7 @@ void loop()
     }
     processData(receivedMessage);
   }
-  getSpeed();
+  //getSpeed();
   // getSpeeding(); // this controls the motor retraction
 
   if (getVoltage() < 9) // should be 11 .5
