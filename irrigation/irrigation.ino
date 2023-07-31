@@ -139,6 +139,8 @@ bool stopped = true;
 String modifiedTime = "";
 bool devonce = true;
 bool winderror = true;
+// this section declares the minutecount variable and sets its initial values
+volatile unsigned long secondCount = 0; // use volatile for shared variables
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -266,27 +268,9 @@ void loop()
   Minute = now.minute();
   Hour = now.hour();
   Second = now.second();
-  salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
-  if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
-  {
-    salengGSM.readSMS(); // updates the read flag
-    Serial.print("Sender=");
-    Serial.println(salengGSM.smsSender);
-    Serial.print("Whole Message=");
-    Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
-    String receivedMessage = salengGSM.smsRxMsg;
-    Serial.print("Whole Message in string =");
-    Serial.println(receivedMessage);
-    if (receivedMessage.indexOf("info") > 0)
-    {
-      Serial.println("requesting machine information info");
-      infoMessage(salengGSM.smsSender);
-    }
-    processData(receivedMessage);
-  }
-  //getSpeed();
-  // getSpeeding(); // this controls the motor retraction
-
+  // getSpeed();
+  //  getSpeeding(); // this controls the motor retraction
+  readSms();
   if (getVoltage() < 9) // should be 11 .5
   {
     if (voltage)
@@ -350,13 +334,14 @@ void loop()
         dir = false;
         setMet = false;
         releasing = false;
-        almostDone = true;
+        almostDone = false;
         break;
       }
     }
   }
   if (done)
   {
+    readSms();
     wheel = collectWheel;
     DisplayPSI(); // pressure and battery measurement
     lcd.setCursor(0, 1);
@@ -457,8 +442,7 @@ void loop()
       stopped = true;
     }
 
-
-    if (deviation > 15)
+    if (deviation > 15 && velocity > 0)
     {
       if (devonce)
       {
@@ -587,9 +571,27 @@ void magnet_detect() // This function is called whenever a magnet/interrupt is d
   }
 }
 
-// this section declares the minutecount variable and sets its initial values
-volatile unsigned long secondCount = 0; // use volatile for shared variables
-
+void readSms()
+{
+  salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
+  if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
+  {
+    salengGSM.readSMS(); // updates the read flag
+    Serial.print("Sender=");
+    Serial.println(salengGSM.smsSender);
+    Serial.print("Whole Message=");
+    Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
+    String receivedMessage = salengGSM.smsRxMsg;
+    Serial.print("Whole Message in string =");
+    Serial.println(receivedMessage);
+    if (receivedMessage.indexOf("info") > 0)
+    {
+      Serial.println("requesting machine information info");
+      infoMessage(salengGSM.smsSender);
+    }
+    processData(receivedMessage);
+  }
+}
 void DisplayPSI() // main display
 {
   // this section monitors the live psi and turns the compressor run bit on or off based off setpoints
