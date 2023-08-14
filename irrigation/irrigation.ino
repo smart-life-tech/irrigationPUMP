@@ -283,7 +283,7 @@ void loop()
   {
     voltage = true;
   }
-
+  readSms();
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
@@ -415,6 +415,7 @@ void loop()
     // currentDistance = half_revolutions * metra;
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
+    readSms();
     if (timeLeft < 30) // 30 mites, should be less than 30 meyers < 30 npt > 300
     {
       if (almostDone)
@@ -463,7 +464,9 @@ void loop()
       }
     }
     // delay(1000);
+    readSms();
     getWind();
+    readSms();
     if (getWind() > 20)
     {
       if (winderror)
@@ -487,6 +490,7 @@ void loop()
       ends = true;
       // ReadUnreadMessages();
     }
+    readSms();
   }
   else
   {
