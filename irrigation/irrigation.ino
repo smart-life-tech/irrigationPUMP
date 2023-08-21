@@ -34,7 +34,7 @@ int value = 0;
 float timeLeft = 0;
 const int RecordTime = 2; // Define Measuring Time (Seconds)
 const int SensorPin = 3;  // Define Interrupt Pin (2 or 3 @ Arduino Uno)
-bool almostDone = false;
+bool almostDone, almostDone2 = false;
 int InterruptCounter;
 float WindSpeed;
 bool wind, voltage = true;
@@ -416,17 +416,11 @@ void loop()
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
     readSms();
-    if (timeLeft < 30) // 30 mites, should be less than 30 meyers < 30 npt > 300
+
+    if (almostDone)
     {
-      if (almostDone)
-      {
-        sendAlmostDone();
-        almostDone = false;
-      }
-    }
-    else if (timeLeft > 30)
-    {
-      almostDone = true;
+      sendAlmostDone();
+      almostDone = false;
     }
     monitorStopage++;
 
@@ -1175,6 +1169,16 @@ float getSpeed()
     Serial.print("time left for watering in minutes: ");
     timeLeft = timeLeft * 60;
     Serial.println(timeLeft);
+    if (timeLeft < 30 && almostDone2 == false) // 30 mites, should be less than 30 meyers < 30 npt > 300
+    {
+      almostDone = true;
+      almostDone2 = true;
+    }
+    else if (timeLeft > 30)
+    {
+      almostDone = false;
+      almostDone2 = false;
+    }
     // delay(500);
     read = false;
   }
