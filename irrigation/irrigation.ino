@@ -119,7 +119,7 @@ int length = 0;
 int pwm = 6;
 int in1 = 5;
 int in2 = 4;
-bool deviation = true;
+int deviation = true;
 int cursorPos;
 int dig[4];
 int upButton = 9;
@@ -384,9 +384,10 @@ void loop()
     lcd.print(int(velocity));
 
     // the lines below is the 15 percent deviation message sensding line
-    int deviation = setSpeed / velocity;
+    deviation = setSpeed / velocity;
     deviation = 100 * deviation; // result will be in percentage
     deviation = 100 - deviation; // left speed;
+    deviation = deviation * 100;
     Serial.print("deviation : ");
     Serial.println(deviation);
 
@@ -437,7 +438,7 @@ void loop()
       stopped = true;
     }
 
-    if (deviation > 1500 && velocity > 0)
+    if (deviation > 15 && velocity > 0)
     {
       if (devonce)
       {
