@@ -437,7 +437,7 @@ void loop()
       stopped = true;
     }
 
-    if (deviation > 15 && velocity > 0)
+    if (deviation > 1500 && velocity > 0)
     {
       if (devonce)
       {
