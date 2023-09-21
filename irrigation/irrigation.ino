@@ -416,8 +416,8 @@ void loop()
     // currentDistance = half_revolutions * metra;
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
-    // readSms();
-    salengGSM.smsMachine();
+    readSms();
+
     if (almostDone)
     {
       sendAlmostDone();
@@ -459,11 +459,11 @@ void loop()
       }
     }
     // delay(1000);
-    salengGSM.smsMachine();
+  readSms();
     // readSms();
     getWind();
     // readSms();
-    salengGSM.smsMachine();
+  readSms();
     if (getWind() > 20)
     {
       if (winderror)
@@ -488,7 +488,7 @@ void loop()
       // ReadUnreadMessages();
     }
     // readSms();
-    salengGSM.smsMachine();
+  readSms();
   }
   else
   {
