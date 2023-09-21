@@ -283,7 +283,7 @@ void loop()
   {
     voltage = true;
   }
-  //readSms();
+  // readSms();
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
@@ -341,7 +341,7 @@ void loop()
   }
   if (done)
   {
-    // readSms();
+    delay(500);
     wheel = collectWheel;
     DisplayPSI(); // pressure and battery measurement
     lcd.setCursor(0, 1);
@@ -416,7 +416,6 @@ void loop()
     // currentDistance = half_revolutions * metra;
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
-    // readSms();
 
     if (almostDone)
     {
@@ -459,11 +458,7 @@ void loop()
       }
     }
     // delay(1000);
-    // readSms();
-    // readSms();
-    getWind();
-    // readSms();
-    // readSms();
+
     if (getWind() > 20)
     {
       if (winderror)
@@ -487,7 +482,6 @@ void loop()
       ends = true;
       // ReadUnreadMessages();
     }
-    // readSms();
   }
   else
   {
