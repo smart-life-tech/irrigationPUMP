@@ -283,7 +283,7 @@ void loop()
   {
     voltage = true;
   }
-  readSms();
+  //readSms();
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
@@ -416,7 +416,7 @@ void loop()
     // currentDistance = half_revolutions * metra;
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
-    readSms();
+    // readSms();
 
     if (almostDone)
     {
@@ -459,11 +459,11 @@ void loop()
       }
     }
     // delay(1000);
-    readSms();
+    // readSms();
     // readSms();
     getWind();
     // readSms();
-    readSms();
+    // readSms();
     if (getWind() > 20)
     {
       if (winderror)
@@ -488,7 +488,6 @@ void loop()
       // ReadUnreadMessages();
     }
     // readSms();
-    readSms();
   }
   else
   {
