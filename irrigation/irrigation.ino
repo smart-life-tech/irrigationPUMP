@@ -341,7 +341,7 @@ void loop()
   }
   if (done)
   {
-    readSms();
+    // readSms();
     wheel = collectWheel;
     DisplayPSI(); // pressure and battery measurement
     lcd.setCursor(0, 1);
@@ -416,8 +416,8 @@ void loop()
     // currentDistance = half_revolutions * metra;
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
-    readSms();
-
+    // readSms();
+    salengGSM.smsMachine();
     if (almostDone)
     {
       sendAlmostDone();
@@ -459,9 +459,11 @@ void loop()
       }
     }
     // delay(1000);
-    readSms();
+    salengGSM.smsMachine();
+    // readSms();
     getWind();
-    readSms();
+    // readSms();
+    salengGSM.smsMachine();
     if (getWind() > 20)
     {
       if (winderror)
@@ -485,7 +487,8 @@ void loop()
       ends = true;
       // ReadUnreadMessages();
     }
-    readSms();
+    // readSms();
+    salengGSM.smsMachine();
   }
   else
   {
