@@ -459,11 +459,11 @@ void loop()
       }
     }
     // delay(1000);
-  readSms();
+    readSms();
     // readSms();
     getWind();
     // readSms();
-  readSms();
+    readSms();
     if (getWind() > 20)
     {
       if (winderror)
@@ -488,7 +488,7 @@ void loop()
       // ReadUnreadMessages();
     }
     // readSms();
-  readSms();
+    readSms();
   }
   else
   {
