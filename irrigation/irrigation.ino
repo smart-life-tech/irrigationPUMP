@@ -341,6 +341,7 @@ void loop()
   }
   if (done)
   {
+     /*
     delay(500);
     wheel = collectWheel;
     DisplayPSI(); // pressure and battery measurement
@@ -416,7 +417,7 @@ void loop()
     // currentDistance = half_revolutions * metra;
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
-    /*
+   
         if (almostDone)
         {
           sendAlmostDone();
