@@ -351,7 +351,7 @@ void loop()
       lcd.print("dar:");      // this prints whats in between the quotes
       lcd.print(getPsi(), 1); // this prints whats in between the quotes
       lcd.print(" wi:");      // this clears the display field so anything left is deleted
-      lcd.print(winding);/*
+      lcd.print(winding);
       lcd.print(" ");
       if (now.hour() < 10)
       {
@@ -482,7 +482,7 @@ void loop()
         lcd.noBacklight();
         ends = true;
         // ReadUnreadMessages();
-      }*/
+      }
   }
   else
   {
