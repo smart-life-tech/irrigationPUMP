@@ -416,57 +416,57 @@ void loop()
     // currentDistance = half_revolutions * metra;
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
+    /*
+        if (almostDone)
+        {
+          sendAlmostDone();
+          almostDone = false;
+        }
+        monitorStopage++;
 
-    if (almostDone)
-    {
-      sendAlmostDone();
-      almostDone = false;
-    }
-    monitorStopage++;
+        if (currentDistance < total_len && monitorStopage > 100)
+        {
+          if (stopped)
+          {
+            sendStopSms();
+            stopped = false;
+          }
+        }
+        else
+        {
+          stopped = true;
+        }
 
-    if (currentDistance < total_len && monitorStopage > 100)
-    {
-      if (stopped)
-      {
-        sendStopSms();
-        stopped = false;
-      }
-    }
-    else
-    {
-      stopped = true;
-    }
+        if (deviation > 15 && velocity > 0)
+        {
+          if (devonce)
+          {
+            errorDeviation();
+            devonce = false;
+          }
+        }
+        else
+        {
+          devonce = true;
+        }
+        if (half_revolutions <= 0)
+        {
+          if (stopWatering)
+          {
+            errorStopWatering();
+            stopWatering = false;
+          }
+        }
+        // delay(1000);
 
-    if (deviation > 15 && velocity > 0)
-    {
-      if (devonce)
-      {
-        errorDeviation();
-        devonce = false;
-      }
-    }
-    else
-    {
-      devonce = true;
-    }
-    if (half_revolutions <= 0)
-    {
-      if (stopWatering)
-      {
-        errorStopWatering();
-        stopWatering = false;
-      }
-    }
-    // delay(1000);
-
-    if (getWind() > 20)
-    {
-      if (winderror)
-      {
-        errorWind();
-        winderror = false;
-      }
-    }
+        if (getWind() > 20)
+        {
+          if (winderror)
+          {
+            errorWind();
+            winderror = false;
+          }
+        }*/
     unsigned long timeNow = millis();
     if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
     {
