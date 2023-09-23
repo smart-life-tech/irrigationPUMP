@@ -283,7 +283,7 @@ void loop()
   {
     voltage = true;
   }
-  // readSms();
+  readSms();
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
@@ -383,7 +383,7 @@ void loop()
     lcd.print(int(half_revolutions * wheel));
     lcd.print(" m/h.");
     lcd.print(int(velocity));
-
+    readSms();
     // the lines below is the 15 percent deviation message sensding line
     deviation = setSpeed / velocity;
     deviation = 100 * deviation; // result will be in percentage
@@ -468,6 +468,7 @@ void loop()
         winderror = false;
       }
     }
+    readSms();
     unsigned long timeNow = millis();
     if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
     {
@@ -488,7 +489,7 @@ void loop()
   {
     // lcd.clear();
     // reads();
-    readSms();
+    // readSms();
     delay(500);
     lcd.setCursor(0, 0);
     lcd.print("hose is releasing..."); // this prints whats in between the quotes
