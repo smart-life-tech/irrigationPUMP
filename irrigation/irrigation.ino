@@ -577,39 +577,42 @@ void magnet_detect() // This function is called whenever a magnet/interrupt is d
 
 void readSms()
 {
-  while (1)
-  {
 
-    salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
-    if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
-    {
-      execute = false;
-      delay(500);
-      salengGSM.readSMS(); // updates the read flag
-      delay(500);
-      Serial.print("Senderv3=");
-      Serial.println(salengGSM.smsSender);
-      Serial.print("Whole Message=");
-      Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
-      String receivedMessage = salengGSM.smsRxMsg;
-      Serial.print("Whole Message in string =");
-      Serial.println(receivedMessage);
-      if (receivedMessage.indexOf("info") > 0)
+  salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
+  if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
+  {
+    while (1)
+    { salengGSM.smsMachine();
+      if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
       {
-        Serial.println("requesting machine information info");
-        infoMessage(salengGSM.smsSender);
+       
+        execute = false;
+        delay(500);
+        salengGSM.readSMS(); // updates the read flag
+        delay(500);
+        Serial.print("Senderv3=");
+        Serial.println(salengGSM.smsSender);
+        Serial.print("Whole Message=");
+        Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
+        String receivedMessage = salengGSM.smsRxMsg;
+        Serial.print("Whole Message in string =");
+        Serial.println(receivedMessage);
+        if (receivedMessage.indexOf("info") > 0)
+        {
+          Serial.println("requesting machine information info");
+          infoMessage(salengGSM.smsSender);
+        }
+        processData(receivedMessage);
       }
-      processData(receivedMessage);
-    }
-    timingss++;
-    if (timingss > 35000)
-    {
-      timingss = 0;
-      break;
+      timingss++;
+      if (timingss > 30000)
+      {
+        timingss = 0;
+        break;
+      }
     }
   }
 }
-
 void DisplayPSI() // main display
 {
   // this section monitors the live psi and turns the compressor run bit on or off based off setpoints
