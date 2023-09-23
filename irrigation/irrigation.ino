@@ -270,7 +270,6 @@ void loop()
   Second = now.second();
   // getSpeed();
   //  getSpeeding(); // this controls the motor retraction
-  readSms();
 
   if (!digitalRead(buttonOk))
   {
@@ -327,7 +326,7 @@ void loop()
       }
     }
   }
-/*
+
   if (done)
   {
 
@@ -507,7 +506,8 @@ void loop()
     // Serial.print("velocity ::: ");
     // Serial.println(velocity);
   }
-*/
+
+  readSms();
 }
 
 void updateSerial()
