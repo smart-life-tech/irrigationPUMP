@@ -505,7 +505,7 @@ void loop()
       lcd.setCursor(8, 3);
       lcd.print(" hall : "); // this prints the tag value
       lcd.print((half_revolutions * wheel), 1);
-      Serial.print("revolutions in loop");
+      // Serial.print("revolutions in loop");
       // Serial.println(half_revolutions);
       // Serial.print("velocity ::: ");
       // Serial.println(velocity);
@@ -579,12 +579,7 @@ void readSms()
 {
   while (1)
   {
-    timingss++;
-    if (timingss > 15000)
-    {
-      timingss = 0;
-      break;
-    }
+
     salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
     if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
     {
@@ -592,7 +587,7 @@ void readSms()
       delay(500);
       salengGSM.readSMS(); // updates the read flag
       delay(500);
-      Serial.print("Sender=");
+      Serial.print("Senderv3=");
       Serial.println(salengGSM.smsSender);
       Serial.print("Whole Message=");
       Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
@@ -605,6 +600,12 @@ void readSms()
         infoMessage(salengGSM.smsSender);
       }
       processData(receivedMessage);
+    }
+    timingss++;
+    if (timingss > 35000)
+    {
+      timingss = 0;
+      break;
     }
   }
 }
