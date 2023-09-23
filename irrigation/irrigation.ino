@@ -139,8 +139,10 @@ bool stopped = true;
 String modifiedTime = "";
 bool devonce = true;
 bool winderror = true;
+bool execute = true;
 // this section declares the minutecount variable and sets its initial values
 volatile unsigned long secondCount = 0; // use volatile for shared variables
+int timingss = 0;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -270,6 +272,7 @@ void loop()
   Second = now.second();
   // getSpeed();
   //  getSpeeding(); // this controls the motor retraction
+  readSms();
 
   if (!digitalRead(buttonOk))
   {
@@ -326,188 +329,190 @@ void loop()
       }
     }
   }
-
-  if (done)
+  if (execute)
   {
-
-    delay(500);
-    wheel = collectWheel;
-    DisplayPSI(); // pressure and battery measurement
-    lcd.setCursor(0, 1);
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("dar:");      // this prints whats in between the quotes
-    lcd.print(getPsi(), 1); // this prints whats in between the quotes
-    lcd.print(" wi:");      // this clears the display field so anything left is deleted
-    lcd.print(winding);
-    lcd.print(" ");
-    if (now.hour() < 10)
+    if (done)
     {
-      lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
+
+      delay(500);
+      wheel = collectWheel;
+      DisplayPSI(); // pressure and battery measurement
+      lcd.setCursor(0, 1);
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("dar:");      // this prints whats in between the quotes
+      lcd.print(getPsi(), 1); // this prints whats in between the quotes
+      lcd.print(" wi:");      // this clears the display field so anything left is deleted
+      lcd.print(winding);
+      lcd.print(" ");
+      if (now.hour() < 10)
+      {
+        lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
+      }
+      else
+      {
+        lcd.print(now.hour());
+      }
+      lcd.print(":");
+      Minute = now.minute();
+      Minutes = String(Minute);
+      if (Minute < 10)
+        Minutes = "0" + String(Minute);
+      lcd.print(Minutes);
+
+      lcd.setCursor(0, 1);
+      lcd.print("volt:");
+      lcd.print(getVoltage(), 0);
+      lcd.print(" watt:");
+      int percent = (outputValue / 12.0) * 100.0;
+      if (percent != newp)
+        newp = percent;
+      lcd.print(percent);
+      lcd.print("%");
+      // reads();
+      lcd.setCursor(0, 2);
+      lcd.print("dist:");
+      lcd.print(int(half_revolutions * wheel));
+      lcd.print(" m/h.");
+      lcd.print(int(velocity));
+      readSms();
+      // the lines below is the 15 percent deviation message sensding line
+      deviation = setSpeed / velocity;
+      deviation = 100 * deviation; // result will be in percentage
+      deviation = 100 - deviation; // left speed;
+      deviation = deviation * 100;
+      Serial.print("deviation : ");
+      Serial.println(deviation);
+
+      lcd.print(" H:");
+      lcd.print(getHum());
+
+      // int simSpeed = map(analogRead(A2), 0, 1024, 10, 200);
+      // simSpeed = map(simSpeed, 60, 90, 10, 200);
+      controlMotor(velocity);
+
+      currentDistance = half_revolutions * wheel;
+      timeLeft = currentDistance / (velocity); // meters/ m/hr
+
+      lcd.setCursor(0, 3);
+      lcd.print("Time(min):");
+      //  lcd.print(int(timeLeft * 60));
+      modifiedTime = addMinutesToCurrentTime(timeLeft * 60);
+      Serial.println(modifiedTime);
+      lcd.print(timeLeft);
+      lcd.print(" C:");
+      lcd.print(getTemp());
+      Serial.print("Time left(min):");
+      Serial.println(int(timeLeft));
+      Serial.print("current distance :");
+      Serial.println(int(currentDistance));
+      // currentDistance = half_revolutions * metra;
+      //  total_len = total_len * metra;
+      //  float gets = getSpeed();
+
+      if (almostDone)
+      {
+        sendAlmostDone();
+        almostDone = false;
+      }
+      monitorStopage++;
+
+      if (currentDistance < total_len && monitorStopage > 100)
+      {
+        if (stopped)
+        {
+          sendStopSms();
+          stopped = false;
+        }
+      }
+      else
+      {
+        stopped = true;
+      }
+
+      if (deviation > 15 && velocity > 0)
+      {
+        if (devonce)
+        {
+          errorDeviation();
+          devonce = false;
+        }
+      }
+      else
+      {
+        devonce = true;
+      }
+      if (half_revolutions <= 0)
+      {
+        if (stopWatering)
+        {
+          errorStopWatering();
+          stopWatering = false;
+        }
+      }
+      // delay(1000);
+
+      if (getWind() > 20)
+      {
+        if (winderror)
+        {
+          errorWind();
+          winderror = false;
+        }
+      }
+      if (getVoltage() < 9) // should be 11 .5
+      {
+        if (voltage)
+        {
+          errorVoltage();
+          voltage = false;
+        }
+      }
+      else if (getVoltage() > 10)
+      {
+        voltage = true;
+      }
+      readSms();
+      unsigned long timeNow = millis();
+      if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
+      {
+        lcd.backlight();
+        prev = millis();
+      }
+      if (timeNow - prev > 10000)
+      {
+        prev = timeNow;
+        // Serial.println("lcd cleared");
+        // lcd.clear();
+        lcd.noBacklight();
+        ends = true;
+        // ReadUnreadMessages();
+      }
     }
+
     else
     {
-      lcd.print(now.hour());
-    }
-    lcd.print(":");
-    Minute = now.minute();
-    Minutes = String(Minute);
-    if (Minute < 10)
-      Minutes = "0" + String(Minute);
-    lcd.print(Minutes);
-
-    lcd.setCursor(0, 1);
-    lcd.print("volt:");
-    lcd.print(getVoltage(), 0);
-    lcd.print(" watt:");
-    int percent = (outputValue / 12.0) * 100.0;
-    if (percent != newp)
-      newp = percent;
-    lcd.print(percent);
-    lcd.print("%");
-    // reads();
-    lcd.setCursor(0, 2);
-    lcd.print("dist:");
-    lcd.print(int(half_revolutions * wheel));
-    lcd.print(" m/h.");
-    lcd.print(int(velocity));
-    readSms();
-    // the lines below is the 15 percent deviation message sensding line
-    deviation = setSpeed / velocity;
-    deviation = 100 * deviation; // result will be in percentage
-    deviation = 100 - deviation; // left speed;
-    deviation = deviation * 100;
-    Serial.print("deviation : ");
-    Serial.println(deviation);
-
-    lcd.print(" H:");
-    lcd.print(getHum());
-
-    // int simSpeed = map(analogRead(A2), 0, 1024, 10, 200);
-    // simSpeed = map(simSpeed, 60, 90, 10, 200);
-    controlMotor(velocity);
-
-    currentDistance = half_revolutions * wheel;
-    timeLeft = currentDistance / (velocity); // meters/ m/hr
-
-    lcd.setCursor(0, 3);
-    lcd.print("Time(min):");
-    //  lcd.print(int(timeLeft * 60));
-    modifiedTime = addMinutesToCurrentTime(timeLeft * 60);
-    Serial.println(modifiedTime);
-    lcd.print(timeLeft);
-    lcd.print(" C:");
-    lcd.print(getTemp());
-    Serial.print("Time left(min):");
-    Serial.println(int(timeLeft));
-    Serial.print("current distance :");
-    Serial.println(int(currentDistance));
-    // currentDistance = half_revolutions * metra;
-    //  total_len = total_len * metra;
-    //  float gets = getSpeed();
-
-    if (almostDone)
-    {
-      sendAlmostDone();
-      almostDone = false;
-    }
-    monitorStopage++;
-
-    if (currentDistance < total_len && monitorStopage > 100)
-    {
-      if (stopped)
-      {
-        sendStopSms();
-        stopped = false;
-      }
-    }
-    else
-    {
-      stopped = true;
-    }
-
-    if (deviation > 15 && velocity > 0)
-    {
-      if (devonce)
-      {
-        errorDeviation();
-        devonce = false;
-      }
-    }
-    else
-    {
-      devonce = true;
-    }
-    if (half_revolutions <= 0)
-    {
-      if (stopWatering)
-      {
-        errorStopWatering();
-        stopWatering = false;
-      }
-    }
-    // delay(1000);
-
-    if (getWind() > 20)
-    {
-      if (winderror)
-      {
-        errorWind();
-        winderror = false;
-      }
-    }
-    if (getVoltage() < 9) // should be 11 .5
-    {
-      if (voltage)
-      {
-        errorVoltage();
-        voltage = false;
-      }
-    }
-    else if (getVoltage() > 10)
-    {
-      voltage = true;
-    }
-    readSms();
-    unsigned long timeNow = millis();
-    if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
-    {
-      lcd.backlight();
-      prev = millis();
-    }
-    if (timeNow - prev > 10000)
-    {
-      prev = timeNow;
-      // Serial.println("lcd cleared");
-      // lcd.clear();
-      lcd.noBacklight();
-      ends = true;
-      // ReadUnreadMessages();
+      delay(500);
+      lcd.setCursor(0, 0);
+      lcd.print("hose is releasing..."); // this prints whats in between the quotes
+      lcd.setCursor(0, 1);
+      lcd.print("press the ok button"); // this prints the tag value
+      lcd.setCursor(0, 2);
+      lcd.print("for watering start ");
+      lcd.setCursor(0, 3);
+      lcd.print("km/h:");       // this prints whats in between the quotes
+      lcd.print((velocity), 1); // this prints the tag value
+      lcd.setCursor(8, 3);
+      lcd.print(" hall : "); // this prints the tag value
+      lcd.print((half_revolutions * wheel), 1);
+      Serial.print("revolutions in loop");
+      // Serial.println(half_revolutions);
+      // Serial.print("velocity ::: ");
+      // Serial.println(velocity);
     }
   }
-
-  else
-  {
-    delay(500);
-    lcd.setCursor(0, 0);
-    lcd.print("hose is releasing..."); // this prints whats in between the quotes
-    lcd.setCursor(0, 1);
-    lcd.print("press the ok button"); // this prints the tag value
-    lcd.setCursor(0, 2);
-    lcd.print("for watering start ");
-    lcd.setCursor(0, 3);
-    lcd.print("km/h:");       // this prints whats in between the quotes
-    lcd.print((velocity), 1); // this prints the tag value
-    lcd.setCursor(8, 3);
-    lcd.print(" hall : "); // this prints the tag value
-    lcd.print((half_revolutions * wheel), 1);
-    Serial.print("revolutions in loop");
-    // Serial.println(half_revolutions);
-    // Serial.print("velocity ::: ");
-    // Serial.println(velocity);
-  }
-
-  readSms();
+  // readSms();
+  execute = true;
 }
 
 void updateSerial()
@@ -572,25 +577,35 @@ void magnet_detect() // This function is called whenever a magnet/interrupt is d
 
 void readSms()
 {
-  salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
-  if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
+  while (1)
   {
-    delay(500);
-    salengGSM.readSMS(); // updates the read flag
-    delay(500);
-    Serial.print("Sender=");
-    Serial.println(salengGSM.smsSender);
-    Serial.print("Whole Message=");
-    Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
-    String receivedMessage = salengGSM.smsRxMsg;
-    Serial.print("Whole Message in string =");
-    Serial.println(receivedMessage);
-    if (receivedMessage.indexOf("info") > 0)
+    timingss++;
+    if (timingss > 15000)
     {
-      Serial.println("requesting machine information info");
-      infoMessage(salengGSM.smsSender);
+      timingss = 0;
+      break;
     }
-    processData(receivedMessage);
+    salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
+    if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
+    {
+      execute = false;
+      delay(500);
+      salengGSM.readSMS(); // updates the read flag
+      delay(500);
+      Serial.print("Sender=");
+      Serial.println(salengGSM.smsSender);
+      Serial.print("Whole Message=");
+      Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
+      String receivedMessage = salengGSM.smsRxMsg;
+      Serial.print("Whole Message in string =");
+      Serial.println(receivedMessage);
+      if (receivedMessage.indexOf("info") > 0)
+      {
+        Serial.println("requesting machine information info");
+        infoMessage(salengGSM.smsSender);
+      }
+      processData(receivedMessage);
+    }
   }
 }
 
