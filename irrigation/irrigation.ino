@@ -327,7 +327,7 @@ void loop()
       }
     }
   }
-
+/*
   if (done)
   {
 
@@ -507,6 +507,7 @@ void loop()
     // Serial.print("velocity ::: ");
     // Serial.println(velocity);
   }
+*/
 }
 
 void updateSerial()
