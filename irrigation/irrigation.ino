@@ -578,40 +578,34 @@ void magnet_detect() // This function is called whenever a magnet/interrupt is d
 void readSms()
 {
   salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
-  if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
+  while (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
   {
-    while (1)
+    execute = false;
+    // delay(500);
+    salengGSM.readSMS(); // updates the read flag
+    // delay(500);
+    Serial.print("Senderv3=");
+    Serial.println(salengGSM.smsSender);
+    Serial.print("Whole Message=");
+    Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
+    String receivedMessage = salengGSM.smsRxMsg;
+    Serial.print("Whole Message in string =");
+    Serial.println(receivedMessage);
+    if (receivedMessage.indexOf("info") > 0)
     {
-      salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
-      if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
-      {
-        execute = false;
-        delay(500);
-        salengGSM.readSMS(); // updates the read flag
-        delay(500);
-        Serial.print("Senderv3=");
-        Serial.println(salengGSM.smsSender);
-        Serial.print("Whole Message=");
-        Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
-        String receivedMessage = salengGSM.smsRxMsg;
-        Serial.print("Whole Message in string =");
-        Serial.println(receivedMessage);
-        if (receivedMessage.indexOf("info") > 0)
-        {
-          Serial.println("requesting machine information info");
-          infoMessage(salengGSM.smsSender);
-        }
-        processData(receivedMessage);
-      }
-      timingss++;
-      if (timingss > 35000)
-      {
-        timingss = 0;
-        break;
-      }
+      Serial.println("requesting machine information info");
+      infoMessage(salengGSM.smsSender);
     }
+    processData(receivedMessage);
   }
+  /*timingss++;
+   if (timingss > 35000)
+   {
+     timingss = 0;
+     break;
+   }*/
 }
+
 
 void DisplayPSI() // main display
 {
