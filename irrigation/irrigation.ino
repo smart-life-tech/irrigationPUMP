@@ -15,7 +15,7 @@ dht DHT;
 // dht1wire DHT(DHT22_PIN, dht::DHT22);
 //  Constants
 #define MAX_LENGTH 50
-
+#define DEBUG_DISPLAY_ALL_RESPONSE
 void writeToEEPROM(int address, const String &data);
 String readFromEEPROM(int address);
 int address = 0;
