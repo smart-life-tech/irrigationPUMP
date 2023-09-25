@@ -329,6 +329,7 @@ void loop()
       }
     }
   }
+  /*
   if (execute)
   {
     if (done)
@@ -511,6 +512,7 @@ void loop()
       // Serial.println(velocity);
     }
   }
+  */
   // readSms();
   execute = true;
 }
