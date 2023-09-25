@@ -276,8 +276,6 @@ void loop()
   //  getSpeeding(); // this controls the motor retraction
   if (Serial1.available())
     execute = false;
-  else
-    execute = true;
   readSms();
 
   if (!digitalRead(buttonOk))
@@ -603,6 +601,7 @@ void readSms()
     }
     processData(receivedMessage);
   }
+  execute = true;
   /*timingss++;
    if (timingss > 35000)
    {
