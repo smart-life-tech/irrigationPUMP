@@ -263,6 +263,7 @@ void setup()
   // 6 inches
   metra = 0.95;
   lcd.backlight();
+  delay(2000);
 }
 
 void loop()
