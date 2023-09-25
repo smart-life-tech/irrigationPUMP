@@ -515,9 +515,10 @@ void loop()
       // Serial.print("velocity ::: ");
       // Serial.println(velocity);
     }
+   execute = true;
   }
 
-  execute = true;
+ 
 }
 
 void updateSerial()
@@ -1075,7 +1076,8 @@ void getSpeeding()
 
 void speedInt()
 {
-  Serial.println("hall sensor active");
+ // Serial.println("hall sensor active");
+  salengGSM.smsMachine();  
   monitorStopage = 0;
   speedCounter++;
   if (speedCounter > 4)
