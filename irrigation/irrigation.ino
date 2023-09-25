@@ -276,6 +276,8 @@ void loop()
   //  getSpeeding(); // this controls the motor retraction
   if (Serial1.available())
     execute = false;
+  else
+    execute = true;
   readSms();
 
   if (!digitalRead(buttonOk))
@@ -515,10 +517,7 @@ void loop()
       // Serial.print("velocity ::: ");
       // Serial.println(velocity);
     }
-   execute = true;
   }
-
- 
 }
 
 void updateSerial()
@@ -1076,8 +1075,8 @@ void getSpeeding()
 
 void speedInt()
 {
- // Serial.println("hall sensor active");
-  salengGSM.smsMachine();  
+  // Serial.println("hall sensor active");
+  salengGSM.smsMachine();
   monitorStopage = 0;
   speedCounter++;
   if (speedCounter > 4)
