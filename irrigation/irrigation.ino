@@ -16,6 +16,7 @@ dht DHT;
 //  Constants
 #define MAX_LENGTH 50
 #define DEBUG_DISPLAY_ALL_RESPONSE
+#define DEBUG_PRINT_TO_MONITOR
 void writeToEEPROM(int address, const String &data);
 String readFromEEPROM(int address);
 int address = 0;
@@ -272,6 +273,8 @@ void loop()
   Second = now.second();
   // getSpeed();
   //  getSpeeding(); // this controls the motor retraction
+  if (Serial1.available())
+    execute = false;
   readSms();
 
   if (!digitalRead(buttonOk))
@@ -329,7 +332,7 @@ void loop()
       }
     }
   }
-  /*
+
   if (execute)
   {
     if (done)
@@ -512,8 +515,7 @@ void loop()
       // Serial.println(velocity);
     }
   }
-  */
-  // readSms();
+
   execute = true;
 }
 
@@ -579,7 +581,7 @@ void magnet_detect() // This function is called whenever a magnet/interrupt is d
 
 void readSms()
 {
-  salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
+  salengGSM.smsMachine();            // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
   while (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
   {
     execute = false;
@@ -607,7 +609,6 @@ void readSms()
      break;
    }*/
 }
-
 
 void DisplayPSI() // main display
 {
