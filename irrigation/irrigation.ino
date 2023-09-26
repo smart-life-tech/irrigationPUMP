@@ -278,7 +278,7 @@ void loop()
   //  getSpeeding(); // this controls the motor retraction
   if (Serial1.available())
   {
-    Serial.println(Serial.readStringUntil('e'));
+    Serial.println(Serial1.readStringUntil('\n'));
     unsigned i = 50000;
     while (i > 0)
     {
