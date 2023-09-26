@@ -278,7 +278,7 @@ void loop()
   //  getSpeeding(); // this controls the motor retraction
   if (Serial1.available())
   {
-    int i = 0;
+    unsigned  i = 0;
     while (sms)
     {
       i++;
