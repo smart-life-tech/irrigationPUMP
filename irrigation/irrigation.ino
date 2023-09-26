@@ -276,10 +276,13 @@ void loop()
   //  getSpeeding(); // this controls the motor retraction
   if (Serial1.available())
   {
+    int i = 0;
     while (1)
     {
+      i++;
       readSms();
-      break;
+      if (i > 9000)
+        break;
     }
   }
   execute = true;
