@@ -278,17 +278,12 @@ void loop()
   //  getSpeeding(); // this controls the motor retraction
   if (Serial1.available())
   {
-    Serial.println(Serial.readStringUntil('\n'));
-    unsigned i = 0;
-    while (sms)
+    Serial.println(Serial.readStringUntil('e'));
+    unsigned i = 50000;
+    while (i > 0)
     {
-      i++;
+      i--;
       readSms();
-      if (i > 50000)
-      {
-        sms = false;
-        break;
-      }
     }
   }
   execute = true;
