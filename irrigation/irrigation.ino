@@ -281,7 +281,7 @@ void loop()
     {
       i++;
       readSms();
-      if (i > 9000)
+      if (i > 90000)
         break;
     }
   }
