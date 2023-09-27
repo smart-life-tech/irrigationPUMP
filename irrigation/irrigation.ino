@@ -289,7 +289,7 @@ void loop()
     Serial.print(millis());
     Serial.println("  done reading sms");
   }
-  execute = true;
+  execute = false;
 
   if (!digitalRead(buttonOk))
   {
@@ -347,8 +347,8 @@ void loop()
     }
   }
 
-  // if (execute)
-  //{
+   if (execute)
+  {
   if (done)
   {
 
@@ -528,7 +528,7 @@ void loop()
     // Serial.print("velocity ::: ");
     // Serial.println(velocity);
   }
-  //}
+  }
   sms = true;
 }
 
