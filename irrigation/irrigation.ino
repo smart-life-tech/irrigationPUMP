@@ -283,7 +283,6 @@ void loop()
     execute = false;
     Serial.print("receved from serial 1");
     Serial.println(millis());
-    unsigned int i = 100000;
     readSms();
     Serial.print(millis());
     Serial.println("  done reading sms");
@@ -344,7 +343,7 @@ void loop()
       }
     }
   }
-  if (millis() - smsTimer > 5000)
+  if (millis() - smsTimer > 15000)
   {
     execute = true;
   }
