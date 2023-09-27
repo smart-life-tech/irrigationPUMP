@@ -620,7 +620,6 @@ void readSms()
     }
     processData(receivedMessage);
   }
-  execute = true;
   /*timingss++;
    if (timingss > 35000)
    {
