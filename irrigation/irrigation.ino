@@ -346,7 +346,7 @@ void loop()
     }
   }
   
-  if (millis() - smsTimer > 15000)
+  if (millis() - smsTimer > 35000)
   {
     execute = true;
   }
