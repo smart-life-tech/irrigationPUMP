@@ -145,7 +145,7 @@ bool execute = true;
 volatile unsigned long secondCount = 0; // use volatile for shared variables
 int timingss = 0;
 bool sms = true;
-
+unsigned long smsTimer = 0;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -270,6 +270,10 @@ void setup()
 
 void loop()
 {
+  if (millis() - smsTimer > 5000)
+  {
+    execute = true;
+  }
   DateTime now = rtc.now();
   Minute = now.minute();
   Hour = now.hour();
@@ -278,6 +282,8 @@ void loop()
   //  getSpeeding(); // this controls the motor retraction
   if (Serial1.available())
   {
+    smsTimer = millis();
+     execute = false;
     Serial.print("receved from serial 1");
     Serial.println(millis());
     unsigned int i = 100000;
@@ -289,7 +295,7 @@ void loop()
     Serial.print(millis());
     Serial.println("  done reading sms");
   }
-  execute = false;
+ 
 
   if (!digitalRead(buttonOk))
   {
@@ -347,187 +353,187 @@ void loop()
     }
   }
 
-   if (execute)
+  if (execute)
   {
-  if (done)
-  {
-
-    delay(500);
-    wheel = collectWheel;
-    DisplayPSI(); // pressure and battery measurement
-    lcd.setCursor(0, 1);
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("dar:");      // this prints whats in between the quotes
-    lcd.print(getPsi(), 1); // this prints whats in between the quotes
-    lcd.print(" wi:");      // this clears the display field so anything left is deleted
-    lcd.print(winding);
-    lcd.print(" ");
-    if (now.hour() < 10)
+    if (done)
     {
-      lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
+
+      delay(500);
+      wheel = collectWheel;
+      DisplayPSI(); // pressure and battery measurement
+      lcd.setCursor(0, 1);
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("dar:");      // this prints whats in between the quotes
+      lcd.print(getPsi(), 1); // this prints whats in between the quotes
+      lcd.print(" wi:");      // this clears the display field so anything left is deleted
+      lcd.print(winding);
+      lcd.print(" ");
+      if (now.hour() < 10)
+      {
+        lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
+      }
+      else
+      {
+        lcd.print(now.hour());
+      }
+      lcd.print(":");
+      Minute = now.minute();
+      Minutes = String(Minute);
+      if (Minute < 10)
+        Minutes = "0" + String(Minute);
+      lcd.print(Minutes);
+
+      lcd.setCursor(0, 1);
+      lcd.print("volt:");
+      lcd.print(getVoltage(), 0);
+      lcd.print(" watt:");
+      int percent = (outputValue / 12.0) * 100.0;
+      if (percent != newp)
+        newp = percent;
+      lcd.print(percent);
+      lcd.print("%");
+      // reads();
+      lcd.setCursor(0, 2);
+      lcd.print("dist:");
+      lcd.print(int(half_revolutions * wheel));
+      lcd.print(" m/h.");
+      lcd.print(int(velocity));
+      readSms();
+      // the lines below is the 15 percent deviation message sensding line
+      deviation = setSpeed / velocity;
+      deviation = 100 * deviation; // result will be in percentage
+      deviation = 100 - deviation; // left speed;
+      deviation = deviation * 100;
+      Serial.print("deviation : ");
+      Serial.println(deviation);
+
+      lcd.print(" H:");
+      lcd.print(getHum());
+
+      // int simSpeed = map(analogRead(A2), 0, 1024, 10, 200);
+      // simSpeed = map(simSpeed, 60, 90, 10, 200);
+      controlMotor(velocity);
+
+      currentDistance = half_revolutions * wheel;
+      timeLeft = currentDistance / (velocity); // meters/ m/hr
+
+      lcd.setCursor(0, 3);
+      lcd.print("Time(min):");
+      //  lcd.print(int(timeLeft * 60));
+      modifiedTime = addMinutesToCurrentTime(timeLeft * 60);
+      Serial.println(modifiedTime);
+      lcd.print(timeLeft);
+      lcd.print(" C:");
+      lcd.print(getTemp());
+      Serial.print("Time left(min):");
+      Serial.println(int(timeLeft));
+      Serial.print("current distance :");
+      Serial.println(int(currentDistance));
+      // currentDistance = half_revolutions * metra;
+      //  total_len = total_len * metra;
+      //  float gets = getSpeed();
+
+      if (almostDone)
+      {
+        sendAlmostDone();
+        almostDone = false;
+      }
+      monitorStopage++;
+
+      if (currentDistance < total_len && monitorStopage > 100)
+      {
+        if (stopped)
+        {
+          sendStopSms();
+          stopped = false;
+        }
+      }
+      else
+      {
+        stopped = true;
+      }
+
+      if (deviation > 15 && velocity > 0)
+      {
+        if (devonce)
+        {
+          errorDeviation();
+          devonce = false;
+        }
+      }
+      else
+      {
+        devonce = true;
+      }
+      if (half_revolutions <= 0)
+      {
+        if (stopWatering)
+        {
+          errorStopWatering();
+          stopWatering = false;
+        }
+      }
+      // delay(1000);
+
+      if (getWind() > 20)
+      {
+        if (winderror)
+        {
+          errorWind();
+          winderror = false;
+        }
+      }
+      if (getVoltage() < 9) // should be 11 .5
+      {
+        if (voltage)
+        {
+          errorVoltage();
+          voltage = false;
+        }
+      }
+      else if (getVoltage() > 10)
+      {
+        voltage = true;
+      }
+      readSms();
+      unsigned long timeNow = millis();
+      if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
+      {
+        lcd.backlight();
+        prev = millis();
+      }
+      if (timeNow - prev > 10000)
+      {
+        prev = timeNow;
+        // Serial.println("lcd cleared");
+        // lcd.clear();
+        lcd.noBacklight();
+        ends = true;
+        // ReadUnreadMessages();
+      }
     }
+
     else
     {
-      lcd.print(now.hour());
+      delay(500);
+      lcd.setCursor(0, 0);
+      lcd.print("hose is releasing..."); // this prints whats in between the quotes
+      lcd.setCursor(0, 1);
+      lcd.print("press the ok button"); // this prints the tag value
+      lcd.setCursor(0, 2);
+      lcd.print("for watering start ");
+      lcd.setCursor(0, 3);
+      lcd.print("km/h:");       // this prints whats in between the quotes
+      lcd.print((velocity), 1); // this prints the tag value
+      lcd.setCursor(8, 3);
+      lcd.print(" hall : "); // this prints the tag value
+      lcd.print((half_revolutions * wheel), 1);
+      // Serial.print("revolutions in loop");
+      // Serial.println(half_revolutions);
+      // Serial.print("velocity ::: ");
+      // Serial.println(velocity);
     }
-    lcd.print(":");
-    Minute = now.minute();
-    Minutes = String(Minute);
-    if (Minute < 10)
-      Minutes = "0" + String(Minute);
-    lcd.print(Minutes);
-
-    lcd.setCursor(0, 1);
-    lcd.print("volt:");
-    lcd.print(getVoltage(), 0);
-    lcd.print(" watt:");
-    int percent = (outputValue / 12.0) * 100.0;
-    if (percent != newp)
-      newp = percent;
-    lcd.print(percent);
-    lcd.print("%");
-    // reads();
-    lcd.setCursor(0, 2);
-    lcd.print("dist:");
-    lcd.print(int(half_revolutions * wheel));
-    lcd.print(" m/h.");
-    lcd.print(int(velocity));
-    readSms();
-    // the lines below is the 15 percent deviation message sensding line
-    deviation = setSpeed / velocity;
-    deviation = 100 * deviation; // result will be in percentage
-    deviation = 100 - deviation; // left speed;
-    deviation = deviation * 100;
-    Serial.print("deviation : ");
-    Serial.println(deviation);
-
-    lcd.print(" H:");
-    lcd.print(getHum());
-
-    // int simSpeed = map(analogRead(A2), 0, 1024, 10, 200);
-    // simSpeed = map(simSpeed, 60, 90, 10, 200);
-    controlMotor(velocity);
-
-    currentDistance = half_revolutions * wheel;
-    timeLeft = currentDistance / (velocity); // meters/ m/hr
-
-    lcd.setCursor(0, 3);
-    lcd.print("Time(min):");
-    //  lcd.print(int(timeLeft * 60));
-    modifiedTime = addMinutesToCurrentTime(timeLeft * 60);
-    Serial.println(modifiedTime);
-    lcd.print(timeLeft);
-    lcd.print(" C:");
-    lcd.print(getTemp());
-    Serial.print("Time left(min):");
-    Serial.println(int(timeLeft));
-    Serial.print("current distance :");
-    Serial.println(int(currentDistance));
-    // currentDistance = half_revolutions * metra;
-    //  total_len = total_len * metra;
-    //  float gets = getSpeed();
-
-    if (almostDone)
-    {
-      sendAlmostDone();
-      almostDone = false;
-    }
-    monitorStopage++;
-
-    if (currentDistance < total_len && monitorStopage > 100)
-    {
-      if (stopped)
-      {
-        sendStopSms();
-        stopped = false;
-      }
-    }
-    else
-    {
-      stopped = true;
-    }
-
-    if (deviation > 15 && velocity > 0)
-    {
-      if (devonce)
-      {
-        errorDeviation();
-        devonce = false;
-      }
-    }
-    else
-    {
-      devonce = true;
-    }
-    if (half_revolutions <= 0)
-    {
-      if (stopWatering)
-      {
-        errorStopWatering();
-        stopWatering = false;
-      }
-    }
-    // delay(1000);
-
-    if (getWind() > 20)
-    {
-      if (winderror)
-      {
-        errorWind();
-        winderror = false;
-      }
-    }
-    if (getVoltage() < 9) // should be 11 .5
-    {
-      if (voltage)
-      {
-        errorVoltage();
-        voltage = false;
-      }
-    }
-    else if (getVoltage() > 10)
-    {
-      voltage = true;
-    }
-    readSms();
-    unsigned long timeNow = millis();
-    if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
-    {
-      lcd.backlight();
-      prev = millis();
-    }
-    if (timeNow - prev > 10000)
-    {
-      prev = timeNow;
-      // Serial.println("lcd cleared");
-      // lcd.clear();
-      lcd.noBacklight();
-      ends = true;
-      // ReadUnreadMessages();
-    }
-  }
-
-  else
-  {
-    delay(500);
-    lcd.setCursor(0, 0);
-    lcd.print("hose is releasing..."); // this prints whats in between the quotes
-    lcd.setCursor(0, 1);
-    lcd.print("press the ok button"); // this prints the tag value
-    lcd.setCursor(0, 2);
-    lcd.print("for watering start ");
-    lcd.setCursor(0, 3);
-    lcd.print("km/h:");       // this prints whats in between the quotes
-    lcd.print((velocity), 1); // this prints the tag value
-    lcd.setCursor(8, 3);
-    lcd.print(" hall : "); // this prints the tag value
-    lcd.print((half_revolutions * wheel), 1);
-    // Serial.print("revolutions in loop");
-    // Serial.println(half_revolutions);
-    // Serial.print("velocity ::: ");
-    // Serial.println(velocity);
-  }
   }
   sms = true;
 }
