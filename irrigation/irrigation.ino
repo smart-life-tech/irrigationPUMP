@@ -597,7 +597,8 @@ void readSms()
   salengGSM.smsMachine();            // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
   while (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
   {
-
+    smsTimer = millis();
+    execute = false;
     // delay(500);
     salengGSM.readSMS(); // updates the read flag
     // delay(500);
