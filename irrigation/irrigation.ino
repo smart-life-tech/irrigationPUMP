@@ -279,14 +279,15 @@ void loop()
   if (Serial1.available())
   {
     Serial.print("receved from serial 1");
-    Serial.println(Serial1.readStringUntil('\n'));
-    unsigned int i = 50000;
+    Serial.println(millis());
+    unsigned int i = 100000;
     while (i > 10)
     {
       i--;
       readSms();
     }
-    Serial.println("done reading sms");
+    Serial.print(millis());
+    Serial.println("  done reading sms");
   }
   execute = true;
 
