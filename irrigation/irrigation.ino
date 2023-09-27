@@ -280,12 +280,13 @@ void loop()
   {
     Serial.print("receved from serial 1");
     Serial.println(Serial1.readStringUntil('\n'));
-    unsigned i = 50000;
+    unsigned int i = 50000;
     while (i > 10)
     {
       i--;
       readSms();
     }
+    Serial.println("done reading sms");
   }
   execute = true;
 
