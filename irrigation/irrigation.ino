@@ -341,12 +341,13 @@ void loop()
         setMet = false;
         releasing = false;
         almostDone = false;
+        execute=true;
         break;
       }
     }
   }
   
-  if (millis() - smsTimer > 35000)
+  if (millis() - smsTimer > 15000)
   {
     execute = true;
   }
