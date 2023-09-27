@@ -281,7 +281,7 @@ void loop()
   {
     smsTimer = millis();
     execute = false;
-    Serial.print("receved from serial 1");
+    Serial.print("receved from serial 1 : ");
     Serial.println(smsTimer);
     readSms();
     Serial.print(millis());
@@ -341,15 +341,15 @@ void loop()
         setMet = false;
         releasing = false;
         almostDone = false;
-        execute=true;
+        execute = true;
         break;
       }
     }
   }
-  
+
   if (millis() - smsTimer > 15000)
   {
-    execute = true;
+   // execute = true;
   }
   if (execute)
   {
@@ -619,6 +619,7 @@ void readSms()
       infoMessage(salengGSM.smsSender);
     }
     processData(receivedMessage);
+    execute = true;
   }
   /*timingss++;
    if (timingss > 35000)
