@@ -282,9 +282,11 @@ void loop()
     smsTimer = millis();
     execute = false;
     Serial.print("receved from serial 1");
-    Serial.println(millis());
+    Serial.println(smsTimer);
     readSms();
     Serial.print(millis());
+    smsTimer = millis();
+    execute = false;
     Serial.println("  done reading sms");
   }
 
@@ -343,6 +345,7 @@ void loop()
       }
     }
   }
+  
   if (millis() - smsTimer > 15000)
   {
     execute = true;
