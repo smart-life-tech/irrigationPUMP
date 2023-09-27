@@ -270,10 +270,7 @@ void setup()
 
 void loop()
 {
-  if (millis() - smsTimer > 5000)
-  {
-    execute = true;
-  }
+
   DateTime now = rtc.now();
   Minute = now.minute();
   Hour = now.hour();
@@ -283,19 +280,14 @@ void loop()
   if (Serial1.available())
   {
     smsTimer = millis();
-     execute = false;
+    execute = false;
     Serial.print("receved from serial 1");
     Serial.println(millis());
     unsigned int i = 100000;
-    while (i > 10)
-    {
-      i--;
-      readSms();
-    }
+    readSms();
     Serial.print(millis());
     Serial.println("  done reading sms");
   }
- 
 
   if (!digitalRead(buttonOk))
   {
@@ -352,7 +344,10 @@ void loop()
       }
     }
   }
-
+  if (millis() - smsTimer > 5000)
+  {
+    execute = true;
+  }
   if (execute)
   {
     if (done)
