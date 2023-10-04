@@ -15,8 +15,7 @@ dht DHT;
 // dht1wire DHT(DHT22_PIN, dht::DHT22);
 //  Constants
 #define MAX_LENGTH 50
-#define DEBUG_DISPLAY_ALL_RESPONSE
-#define DEBUG_PRINT_TO_MONITOR
+
 void writeToEEPROM(int address, const String &data);
 String readFromEEPROM(int address);
 int address = 0;
@@ -59,7 +58,7 @@ int IR1 = 2;
 int IR2 = 3;
 unsigned long t1 = 0;
 unsigned long t2 = 0;
-float setSpeed = 123.00;
+float setSpeed = 1.00;
 float velocity = 0.00;
 bool read = false;
 // int vkmh = (100*3600)/1000;
@@ -78,9 +77,9 @@ float speed = 0.00;
 const int button[] = {7, 8, 9};
 int countering = 0;
 int counter = 0;
-int ButtonState[] = {0, 0, 0, 0};
-int lastButtonState[] = {1, 1, 1, 1};
-int password[] = {0, 1, 2, 2};
+// int ButtonState[] = {0, 0, 0, 0};
+// int lastButtonState[] = {1, 1, 1, 1};
+// int password[] = {0, 1, 2, 2};
 int level = 0;
 int green = 7;
 int red = 8;
@@ -140,12 +139,9 @@ bool stopped = true;
 String modifiedTime = "";
 bool devonce = true;
 bool winderror = true;
-bool execute = true;
+bool errorPressure_bar = true;
 // this section declares the minutecount variable and sets its initial values
 volatile unsigned long secondCount = 0; // use volatile for shared variables
-int timingss = 0;
-bool sms = true;
-unsigned long smsTimer = 0;
 void setup()
 {
   Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
@@ -208,43 +204,45 @@ void setup()
   pinMode(downButton, INPUT_PULLUP);
   pinMode(select, INPUT_PULLUP);
   // set values of variables
-  /*lcd.print("Enter password:");
-    lcd.setCursor(6, 1);
-    lcd.print("0000");
-    lcd.cursor();
-    lcd.noBlink();
-    lcd.setCursor(6, 1);
-    cursorPos = 0;
-    for (int i = 0; i <= 3; i++)
-    {
+  lcd.print("Enter password:");
+  lcd.setCursor(6, 1);
+  lcd.print("0000");
+  lcd.cursor();
+  lcd.noBlink();
+  lcd.setCursor(6, 1);
+  cursorPos = 0;
+  for (int i = 0; i <= 3; i++)
+  {
     dig[i] = 0;
-    }
+  }
 
-    while (1)
-    {
+  while (1)
+  {
     passwordStart();
     if (countering == 100)
       break;
-    }
-    lcd.noCursor();
-    // This line sets the RTC with an explicit date & time, for example to set
-    Serial.println("Initializing gsm ...");
+  }
+  lcd.noCursor();
+  // This line sets the RTC with an explicit date & time, for example to set
+  Serial.println("Initializing gsm ...");
 
-    Serial1.println("AT"); // Once the handshake test is successful, it will back to OK
-    updateSerial();
-    Serial1.println("AT+CMGF=1"); // Configuring TEXT mode
-    updateSerial();
-    delay(100);
-    Serial1.println("AT+CNMI=1,2,0,0,0"); // Decides how newly arrived SMS messages should be handled
-    updateSerial();
-  */
+  Serial1.println("AT"); // Once the handshake test is successful, it will back to OK
+  updateSerial();
+  Serial1.println("AT+CMGF=1"); // Configuring TEXT mode
+  updateSerial();
+  delay(100);
+  Serial1.println("AT+CNMI=1,2,0,0,0"); // Decides how newly arrived SMS messages should be handled
+  updateSerial();
+
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("hose is releasing..."); // this prints whats in between the quotes
+  lcd.print("====Agro_Petsas===="); // this prints whats in between the quotes
   lcd.setCursor(0, 1);
   lcd.print("ok press when done"); // this prints the tag value
   lcd.setCursor(0, 2);
   lcd.print("for watering start "); // this prints the tag value
+  lcd.setCursor(0, 3);
+  lcd.print("   Tel:6973991989");
 
   metra = EEPROM.read(metraAdd);
   if (metra == 255)
@@ -265,31 +263,31 @@ void setup()
   // 6 inches
   metra = 0.95;
   lcd.backlight();
-  delay(2000);
 }
 
 void loop()
 {
-
   DateTime now = rtc.now();
   Minute = now.minute();
   Hour = now.hour();
   Second = now.second();
   // getSpeed();
   //  getSpeeding(); // this controls the motor retraction
-  if (Serial1.available())
+  readSms();
+  if (getVoltage() < 9) // should be 11 .5
   {
-    smsTimer = millis();
-    execute = false;
-    Serial.print("receved from serial 1 : ");
-    Serial.println(smsTimer);
-    readSms();
-    Serial.print(millis());
-    smsTimer = millis();
-    execute = false;
-    Serial.println("  done reading sms");
+    if (voltage)
+    {
+      errorVoltage();
+      voltage = false;
+    }
+  }
+  if (getVoltage() > 10)
+  {
+    voltage = true;
   }
 
+  readSms();
   if (!digitalRead(buttonOk))
   {
     Serial.println("ok button pressed");
@@ -301,11 +299,13 @@ void loop()
       // if (digitalRead(hall1))count = true;
       //  if (!digitalRead(hall1))magnet_detect();
       lcd.setCursor(0, 0);
-      lcd.print("set speed"); // this prints whats in between the quotes
+      lcd.print("====Agro_Petsas===="); // this prints whats in between the quotes
       lcd.setCursor(0, 1);
       lcd.print("press up/down button"); // this prints the tag value
       lcd.setCursor(0, 2);
       lcd.print("meter/h adjust ");
+      lcd.setCursor(0, 3);
+      lcd.print("to start watering");
       lcd.setCursor(15, 2);
       lcd.print(speedSet);
       delay(500);
@@ -345,190 +345,177 @@ void loop()
       }
     }
   }
-
-  if (execute)
+  if (done)
   {
-    if (done)
+    readSms();
+    wheel = collectWheel;
+    DisplayPSI(); // pressure and battery measurement
+    lcd.setCursor(0, 1);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("bar:");      // this prints whats in between the quotes
+    lcd.print(getPsi(), 1); // this prints whats in between the quotes
+    lcd.print(" wi:");      // this clears the display field so anything left is deleted
+    lcd.print(winding);
+    lcd.print(" ");
+    if (now.hour() < 10)
     {
-
-      delay(500);
-      wheel = collectWheel;
-      DisplayPSI(); // pressure and battery measurement
-      lcd.setCursor(0, 1);
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("dar:");      // this prints whats in between the quotes
-      lcd.print(getPsi(), 1); // this prints whats in between the quotes
-      lcd.print(" wi:");      // this clears the display field so anything left is deleted
-      lcd.print(winding);
-      lcd.print(" ");
-      if (now.hour() < 10)
-      {
-        lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
-      }
-      else
-      {
-        lcd.print(now.hour());
-      }
-      lcd.print(":");
-      Minute = now.minute();
-      Minutes = String(Minute);
-      if (Minute < 10)
-        Minutes = "0" + String(Minute);
-      lcd.print(Minutes);
-
-      lcd.setCursor(0, 1);
-      lcd.print("volt:");
-      lcd.print(getVoltage(), 0);
-      lcd.print(" watt:");
-      int percent = (outputValue / 12.0) * 100.0;
-      if (percent != newp)
-        newp = percent;
-      lcd.print(percent);
-      lcd.print("%");
-      // reads();
-      lcd.setCursor(0, 2);
-      lcd.print("dist:");
-      lcd.print(int(half_revolutions * wheel));
-      lcd.print(" m/h.");
-      lcd.print(int(velocity));
-      readSms();
-      // the lines below is the 15 percent deviation message sensding line
-      deviation = setSpeed / velocity;
-      deviation = 100 * deviation; // result will be in percentage
-      deviation = 100 - deviation; // left speed;
-      deviation = deviation * 100;
-      Serial.print("deviation : ");
-      Serial.println(deviation);
-
-      lcd.print(" H:");
-      lcd.print(getHum());
-
-      // int simSpeed = map(analogRead(A2), 0, 1024, 10, 200);
-      // simSpeed = map(simSpeed, 60, 90, 10, 200);
-      controlMotor(velocity);
-
-      currentDistance = half_revolutions * wheel;
-      timeLeft = currentDistance / (velocity); // meters/ m/hr
-
-      lcd.setCursor(0, 3);
-      lcd.print("Time(min):");
-      //  lcd.print(int(timeLeft * 60));
-      modifiedTime = addMinutesToCurrentTime(timeLeft * 60);
-      Serial.println(modifiedTime);
-      lcd.print(timeLeft);
-      lcd.print(" C:");
-      lcd.print(getTemp());
-      Serial.print("Time left(min):");
-      Serial.println(int(timeLeft));
-      Serial.print("current distance :");
-      Serial.println(int(currentDistance));
-      // currentDistance = half_revolutions * metra;
-      //  total_len = total_len * metra;
-      //  float gets = getSpeed();
-
-      if (almostDone)
-      {
-        sendAlmostDone();
-        almostDone = false;
-      }
-      monitorStopage++;
-
-      if (currentDistance < total_len && monitorStopage > 100)
-      {
-        if (stopped)
-        {
-          sendStopSms();
-          stopped = false;
-        }
-      }
-      else
-      {
-        stopped = true;
-      }
-
-      if (deviation > 15 && velocity > 0)
-      {
-        if (devonce)
-        {
-          errorDeviation();
-          devonce = false;
-        }
-      }
-      else
-      {
-        devonce = true;
-      }
-      if (half_revolutions <= 0)
-      {
-        if (stopWatering)
-        {
-          errorStopWatering();
-          stopWatering = false;
-        }
-      }
-      // delay(1000);
-
-      if (getWind() > 20)
-      {
-        if (winderror)
-        {
-          errorWind();
-          winderror = false;
-        }
-      }
-      if (getVoltage() < 9) // should be 11 .5
-      {
-        if (voltage)
-        {
-          errorVoltage();
-          voltage = false;
-        }
-      }
-      else if (getVoltage() > 10)
-      {
-        voltage = true;
-      }
-      readSms();
-      unsigned long timeNow = millis();
-      if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
-      {
-        lcd.backlight();
-        prev = millis();
-      }
-      if (timeNow - prev > 10000)
-      {
-        prev = timeNow;
-        // Serial.println("lcd cleared");
-        // lcd.clear();
-        lcd.noBacklight();
-        ends = true;
-        // ReadUnreadMessages();
-      }
+      lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
     }
-
     else
     {
-      delay(500);
-      lcd.setCursor(0, 0);
-      lcd.print("hose is releasing..."); // this prints whats in between the quotes
-      lcd.setCursor(0, 1);
-      lcd.print("press the ok button"); // this prints the tag value
-      lcd.setCursor(0, 2);
-      lcd.print("for watering start ");
-      lcd.setCursor(0, 3);
-      lcd.print("km/h:");       // this prints whats in between the quotes
-      lcd.print((velocity), 1); // this prints the tag value
-      lcd.setCursor(8, 3);
-      lcd.print(" hall : "); // this prints the tag value
-      lcd.print((half_revolutions * wheel), 1);
-      // Serial.print("revolutions in loop");
-      // Serial.println(half_revolutions);
-      // Serial.print("velocity ::: ");
-      // Serial.println(velocity);
+      lcd.print(now.hour());
     }
+    lcd.print(":");
+    Minute = now.minute();
+    Minutes = String(Minute);
+    if (Minute < 10)
+      Minutes = "0" + String(Minute);
+    lcd.print(Minutes);
+
+    lcd.setCursor(0, 1);
+    lcd.print("volt:");
+    lcd.print(getVoltage(), 0);
+    lcd.print(" watt:");
+    int percent = (outputValue / 12.0) * 100.0;
+    if (percent != newp)
+      newp = percent;
+    lcd.print(percent);
+    lcd.print("%");
+    // reads();
+    lcd.setCursor(0, 2);
+    lcd.print("dist:");
+    lcd.print(int(half_revolutions * wheel));
+    lcd.print(" m/h.");
+    lcd.print(String(velocity));
+
+    // the lines below is the 15 percent deviation message sensding line
+    deviation = setSpeed / velocity;
+    deviation = 100 * deviation; // result will be in percentage
+    deviation = 100 - deviation; // left speed;
+    deviation = deviation * 100;
+    Serial.print("deviation : ");
+    Serial.println(deviation);
+
+    lcd.print(" H:");
+    lcd.print(getHum());
+
+    // int simSpeed = map(analogRead(A2), 0, 1024, 10, 200);
+    // simSpeed = map(simSpeed, 60, 90, 10, 200);
+    controlMotor(velocity);
+
+    currentDistance = half_revolutions * wheel;
+    timeLeft = currentDistance / (velocity); // meters/ m/hr
+
+    lcd.setCursor(0, 3);
+    lcd.print("Timeleft:");
+    //  lcd.print(int(timeLeft * 60));
+    modifiedTime = addMinutesToCurrentTime(timeLeft * 60);
+    Serial.println(modifiedTime);
+    lcd.print(timeLeft);
+    lcd.print(" C:");
+    lcd.print(getTemp());
+    Serial.print("Time left(min):");
+    Serial.println(int(timeLeft));
+    Serial.print("current distance :");
+    Serial.println(int(currentDistance));
+    // currentDistance = half_revolutions * metra;
+    //  total_len = total_len * metra;
+    //  float gets = getSpeed();
+    readSms();
+
+    if (almostDone)
+    {
+      sendAlmostDone();
+      almostDone = false;
+    }
+    monitorStopage++;
+
+    if (currentDistance < total_len && monitorStopage > 100)
+    {
+      if (stopped)
+      {
+        sendStopSms();
+        stopped = false;
+      }
+    }
+    else
+    {
+      stopped = true;
+    }
+
+    if (deviation > 15 && velocity > 0)
+    {
+      if (devonce)
+      {
+        errorDeviation();
+        devonce = false;
+      }
+    }
+    else
+    {
+      devonce = true;
+    }
+    if (half_revolutions <= 0)
+    {
+      if (stopWatering)
+      {
+        errorStopWatering();
+        stopWatering = false;
+      }
+    }
+    // delay(1000);
+    readSms();
+    getWind();
+    readSms();
+    if (getWind() > 20)
+    {
+      if (winderror)
+      {
+        errorWind();
+        winderror = false;
+      }
+    }
+
+    unsigned long timeNow = millis();
+    if (!digitalRead(buttonUp) || !digitalRead(buttonDown))
+    {
+      lcd.backlight();
+      prev = millis();
+    }
+    if (timeNow - prev > 10000)
+    {
+      prev = timeNow;
+      // Serial.println("lcd cleared");
+      // lcd.clear();
+      lcd.noBacklight();
+      ends = true;
+      // ReadUnreadMessages();
+    }
+    readSms();
   }
-  sms = true;
+  else
+  {
+    // lcd.clear();
+    // reads();
+    lcd.setCursor(0, 0);
+    lcd.print("====Agro_Petsas===="); // this prints whats in between the quotes
+    lcd.setCursor(0, 1);
+    lcd.print("Press the ok button"); // this prints the tag value
+    lcd.setCursor(0, 2);
+    lcd.print("for watering start ");
+    lcd.setCursor(0, 3);
+    // lcd.print("km/h:");       // this prints whats in between the quotes
+    // lcd.print((velocity), 1); // this prints the tag value
+    // lcd.setCursor(8, 3);
+    // lcd.print(" hall : "); // this prints the tag value
+    lcd.print("   Tel:6973991989");
+    // lcd.print((half_revolutions * wheel), 1);
+    //  Serial.print("revolutions in loop");
+    //  Serial.println(half_revolutions);
+    //  Serial.print("velocity ::: ");
+    //  Serial.println(velocity);
+  }
 }
 
 void updateSerial()
@@ -593,15 +580,11 @@ void magnet_detect() // This function is called whenever a magnet/interrupt is d
 
 void readSms()
 {
-  salengGSM.smsMachine();            // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
-  while (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
+  salengGSM.smsMachine();         // we need to pass here as fast as we can. this allows for non-blocking SMS transmission
+  if (salengGSM.isSMSavailable()) // we also need to pass here as frequent as possible to check for incoming messages
   {
-    smsTimer = millis();
-    execute = false;
-    // delay(500);
     salengGSM.readSMS(); // updates the read flag
-    // delay(500);
-    Serial.print("Senderv3=");
+    Serial.print("Sender=");
     Serial.println(salengGSM.smsSender);
     Serial.print("Whole Message=");
     Serial.println(salengGSM.smsRxMsg); // if we receive an SMS, print the contents of the receive buffer
@@ -614,16 +597,8 @@ void readSms()
       infoMessage(salengGSM.smsSender);
     }
     processData(receivedMessage);
-    execute = true;
   }
-  /*timingss++;
-   if (timingss > 35000)
-   {
-     timingss = 0;
-     break;
-   }*/
 }
-
 void DisplayPSI() // main display
 {
   // this section monitors the live psi and turns the compressor run bit on or off based off setpoints
@@ -639,7 +614,7 @@ void DisplayPSI() // main display
   // Serial.print(voltage);
 
   float pressure_pascal = (3.0 * ((float)voltage - 0.47)) * 1000000.0;
-  pressure_bar = pressure_pascal / 10e5;
+  float pressure_bar = pressure_pascal / 10e5;
   // Serial.print("Pressure = ");
   // Serial.print(pressure_bar);
   // Serial.println(" bars");
@@ -659,13 +634,7 @@ void DisplayPSI() // main display
   // outputValue=constrain(outputValue,0,12);
   //   Serial.print("raw battery value : ");
   //   Serial.println(sensorValue);
-  /*lcd.clear();
-   lcd.setCursor(0, 0);
-   lcd.print("BA:"); // this prints whats in between the quotes
-   lcd.print(pressure_bar);
-   // lcd.print(" VOLT:");  // this prints whats in between the quotes
-   //  lcd.print(outputValue);             // this prints the tag value
-   lcd.print("  batt:");*/
+
   percent = (outputValue / 12.5) * 100.0;
   if (percent != newp)
     // lcd.clear();
@@ -1033,27 +1002,12 @@ void countup()
 
 int getTemp()
 {
-  /* //int chk = DHT.read22(DHT22_PIN);
-     dht::ReadStatus chk = DHT.read();
-    // Read data and store it to variables hum and temp
-    hum = DHT.getHumidity();
-    temp = DHT.getTemperature();
-    // Print temp and humidity values to serial monitor
-    Serial.print("Humidity: ");
-    Serial.print(hum);
-    Serial.print(" %, Temp: ");
-    Serial.print(temp);
-    Serial.println(" Celsius");*/
+
   int chk = DHT.read22(DHT22_PIN);
   // Read data and store it to variables hum and temp
   hum = DHT.humidity;
   temp = DHT.temperature;
   // Print temp and humidity values to serial monitor
-  /*Serial.print("Humidity: ");
-    Serial.print(hum);
-    Serial.print(" %, Temp: ");
-    Serial.print(temp);
-    Serial.println(" Celsius");*/
   // delay(2000); // Delay 2 sec.
   return temp;
 }
@@ -1088,8 +1042,7 @@ void getSpeeding()
 
 void speedInt()
 {
-  // Serial.println("hall sensor active");
-  salengGSM.smsMachine();
+  Serial.println("hall sensor active");
   monitorStopage = 0;
   speedCounter++;
   if (speedCounter > 4)
@@ -1266,7 +1219,7 @@ void errorStopWatering()
   Serial1.println("AT+CMGS=\"+306973991989\"\r");
   // Replace x with mobile number
   delay(500);
-  Serial1.println(" watering has stopped"); // SMS Text
+  Serial1.println(" watering has finished"); // SMS Text
   delay(200);
   Serial1.println((char)26); // ASCII code of CTRL+Z
   delay(1000);
@@ -1285,7 +1238,7 @@ void errorDeviation()
   Serial1.println("AT+CMGS=\"+306973991989\"\r");
   // Replace x with mobile number
   delay(500);
-  Serial1.println(" speed deviation from set by 15%"); // SMS Text
+  Serial1.println(" 15% speed deviation"); // SMS Text
   delay(200);
   Serial1.println((char)26); // ASCII code of CTRL+Z
   delay(1000);
@@ -1294,6 +1247,26 @@ void errorDeviation()
   delay(200);
   Serial1.println("AT+CMGF=1\r");
 }
+/*
+void errorPressure_bar()
+{
+  Serial.println("Setting the GSM in text mode");
+  Serial1.println("AT+CMGF=1\r");
+  delay(200);
+  Serial.println("Sending SMS to the desired phone number!");
+  Serial1.println("AT+CMGS=\"+306973991989\"\r");
+  // Replace x with mobile number
+  delay(500);
+  Serial1.println(" low pressure!!"); // SMS Text
+  delay(200);
+  Serial1.println((char)26); // ASCII code of CTRL+Z
+  delay(1000);
+  Serial1.println();
+  Serial1.println("AT");
+  delay(200);
+  Serial1.println("AT+CMGF=1\r");
+}
+*/
 
 void errorVoltage()
 {
@@ -1342,7 +1315,7 @@ void sendAlmostDone()
   Serial1.println("AT+CMGS=\"+306973991989\"\r");
   // Replace x with mobile number
   delay(500);
-  Serial1.println(" 30 minutes left to the ending of the watering "); // SMS Text
+  Serial1.println(" 30 minutes left"); // SMS Text
   delay(200);
   Serial1.println((char)26); // ASCII code of CTRL+Z
   delay(1000);
@@ -1361,7 +1334,7 @@ void sendStopSms()
   Serial1.println("AT+CMGS=\"+306973991989\"\r");
   // Replace x with mobile number
   delay(500);
-  Serial1.println(" wheel has stopped, watering isnt over yet, fault detected "); // SMS Text
+  Serial1.println(" The reel has stopped!!"); // SMS Text
   delay(200);
   Serial1.println((char)26); // ASCII code of CTRL+Z
   delay(1000);
@@ -1387,7 +1360,7 @@ void infoMessage(String number)
 
   if (number == readFromEEPROM(0))
   {
-    Serial.print("number in use  number 1:");
+    Serial.print("number in use  number :");
     Serial.println(readFromEEPROM(0));
     command = "AT+CMGS=\"" + readFromEEPROM(0) + "\"\r";
   }
@@ -1410,7 +1383,7 @@ void infoMessage(String number)
   if (command.length() > 0)
   {
     timeLeft = currentDistance / velocity;
-    String data = "current distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) /*modifiedTime*/ + "\ncollection m/h: " + String(velocity) + "\n bars: " + String(ps);
+    String data = "distance: " + String(currentDistance) + "\nTime left: " + String(timeLeft) /*modifiedTime*/ + "\ncollect m/h: " + String(velocity) + "\n bars: " + String(ps);
     data += "\n volt: " + String(int(getVoltage())) + "\n watt: " + String(int((getVoltage() / 13) * 100)) + " %" + "\n time: " + getTime() + "\n date: " + getDate() + "\n hygro: " + String(getHum()) + "\n celsius: " + String(getTemp());
     data += "\n wind Km/h: " + String(winding);
     Serial.println("Setting the GSM in text mode");
