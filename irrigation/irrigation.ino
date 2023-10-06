@@ -1227,6 +1227,20 @@ void errorStopWatering()
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
+
+  char buf[50];
+  char *message = " watering has finished";
+  readFromEEPROM(0).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(20).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(40).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
 }
 
 void errorDeviation()
@@ -1246,6 +1260,20 @@ void errorDeviation()
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
+
+  char buf[50];
+  char *message = " 15% speed deviation";
+  readFromEEPROM(0).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(20).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(40).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
 }
 /*
 void errorPressure_bar()
@@ -1285,6 +1313,20 @@ void errorVoltage()
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
+
+  char buf[50];
+  char *message = " battery is low";
+  readFromEEPROM(0).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(20).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(40).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
 }
 
 void errorWind()
@@ -1304,6 +1346,20 @@ void errorWind()
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
+
+  char buf[50];
+  char *message = " wind is greater than 20 Km/h";
+  readFromEEPROM(0).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(20).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(40).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
 }
 
 void sendAlmostDone()
@@ -1323,6 +1379,20 @@ void sendAlmostDone()
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
+
+  char buf[50];
+  char *message = " 30 minutes left";
+  readFromEEPROM(0).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(20).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(40).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
 }
 
 void sendStopSms()
@@ -1337,11 +1407,24 @@ void sendStopSms()
   Serial1.println(" The reel has stopped!!"); // SMS Text
   delay(200);
   Serial1.println((char)26); // ASCII code of CTRL+Z
-  delay(1000);
+  delay(200);
   Serial1.println();
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
+  char buf[50];
+  char *message = " The reel has stopped!!";
+  readFromEEPROM(0).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(20).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
+  buf[50];
+  readFromEEPROM(40).toCharArray(buf, 50);
+  salengGSM.sendSMS(buf, message);
+  delay(500);
 }
 
 void infoMessage(String number)
@@ -1449,7 +1532,7 @@ float wateringEnd(float distance, float speed)
 
 void writeToEEPROM(int address, const String &data)
 {
-  int length = data.length();
+  int lengths = datas.length();
   for (int i = 0; i < length; i++)
   {
     EEPROM.write(address + i, data[i]);
