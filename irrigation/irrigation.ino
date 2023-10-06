@@ -1532,7 +1532,7 @@ float wateringEnd(float distance, float speed)
 
 void writeToEEPROM(int address, const String &data)
 {
-  int lengths = datas.length();
+  int length = data.length();
   for (int i = 0; i < length; i++)
   {
     EEPROM.write(address + i, data[i]);
