@@ -1213,7 +1213,7 @@ void controlMotor(float speed)
 void errorStopWatering()
 {
   Serial.println("Setting the GSM in text mode");
-  Serial1.println("AT+CMGF=1\r");
+  /*Serial1.println("AT+CMGF=1\r");
   delay(200);
   Serial.println("Sending SMS to the desired phone number!");
   Serial1.println("AT+CMGS=\"+306973991989\"\r");
@@ -1227,25 +1227,28 @@ void errorStopWatering()
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
-
+*/
   char buf[50];
   char *message = " watering has finished";
   readFromEEPROM(0).toCharArray(buf, 50);
+  Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(20).toCharArray(buf, 50);
+  Serial.println("number2 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(40).toCharArray(buf, 50);
+  Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
 }
 
 void errorDeviation()
 {
-  Serial.println("Setting the GSM in text mode");
+  /*Serial.println("Setting the GSM in text mode");
   Serial1.println("AT+CMGF=1\r");
   delay(200);
   Serial.println("Sending SMS to the desired phone number!");
@@ -1260,20 +1263,23 @@ void errorDeviation()
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
-
+*/
   char buf[50];
   char *message = " 15% speed deviation";
   readFromEEPROM(0).toCharArray(buf, 50);
+  Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(20).toCharArray(buf, 50);
+  Serial.println("number2 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(40).toCharArray(buf, 50);
+  Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
 }
 /*
 void errorPressure_bar()
@@ -1299,7 +1305,7 @@ void errorPressure_bar()
 void errorVoltage()
 {
   Serial.println("Setting the GSM in text mode");
-  Serial1.println("AT+CMGF=1\r");
+  /*Serial1.println("AT+CMGF=1\r");
   delay(200);
   Serial.println("Sending SMS to the desired phone number!");
   Serial1.println("AT+CMGS=\"+306973991989\"\r");
@@ -1313,26 +1319,29 @@ void errorVoltage()
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
-
+*/
   char buf[50];
   char *message = " battery is low";
   readFromEEPROM(0).toCharArray(buf, 50);
+  Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(20).toCharArray(buf, 50);
+  Serial.println("number2 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(40).toCharArray(buf, 50);
+  Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
 }
 
 void errorWind()
 {
   Serial.println("Setting the GSM in text mode");
-  Serial1.println("AT+CMGF=1\r");
+  /*Serial1.println("AT+CMGF=1\r");
   delay(200);
   Serial.println("Sending SMS to the desired phone number!");
   Serial1.println("AT+CMGS=\"+306973991989\"\r");
@@ -1346,59 +1355,65 @@ void errorWind()
   Serial1.println("AT");
   delay(200);
   Serial1.println("AT+CMGF=1\r");
-
+*/
   char buf[50];
   char *message = " wind is greater than 20 Km/h";
   readFromEEPROM(0).toCharArray(buf, 50);
+  Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(20).toCharArray(buf, 50);
+  Serial.println("number2 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(40).toCharArray(buf, 50);
+  Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
 }
 
 void sendAlmostDone()
 {
   Serial.println("Setting the GSM in text mode");
-  Serial1.println("AT+CMGF=1\r");
-  delay(200);
-  Serial.println("Sending SMS to the desired phone number!");
-  Serial1.println("AT+CMGS=\"+306973991989\"\r");
-  // Replace x with mobile number
-  delay(500);
-  Serial1.println(" 30 minutes left"); // SMS Text
-  delay(200);
-  Serial1.println((char)26); // ASCII code of CTRL+Z
-  delay(1000);
-  Serial1.println();
-  Serial1.println("AT");
-  delay(200);
-  Serial1.println("AT+CMGF=1\r");
-
+  /* Serial1.println("AT+CMGF=1\r");
+   delay(200);
+   Serial.println("Sending SMS to the desired phone number!");
+   Serial1.println("AT+CMGS=\"+306973991989\"\r");
+   // Replace x with mobile number
+   delay(500);
+   Serial1.println(" 30 minutes left"); // SMS Text
+   delay(200);
+   Serial1.println((char)26); // ASCII code of CTRL+Z
+   delay(1000);
+   Serial1.println();
+   Serial1.println("AT");
+   delay(200);
+   Serial1.println("AT+CMGF=1\r");
+ */
   char buf[50];
   char *message = " 30 minutes left";
   readFromEEPROM(0).toCharArray(buf, 50);
+  Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(20).toCharArray(buf, 50);
+  Serial.println("number2 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(40).toCharArray(buf, 50);
+  Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
 }
 
 void sendStopSms()
 {
   Serial.println("Setting the GSM in text mode");
-  Serial1.println("AT+CMGF=1\r");
+  /*Serial1.println("AT+CMGF=1\r");
   delay(200);
   Serial.println("Sending SMS to the desired phone number!");
   Serial1.println("AT+CMGS=\"+306973991989\"\r");
@@ -1411,20 +1426,23 @@ void sendStopSms()
   Serial1.println();
   Serial1.println("AT");
   delay(200);
-  Serial1.println("AT+CMGF=1\r");
+  Serial1.println("AT+CMGF=1\r");*/
   char buf[50];
   char *message = " The reel has stopped!!";
   readFromEEPROM(0).toCharArray(buf, 50);
+  Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(20).toCharArray(buf, 50);
+  Serial.println("number2 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
   buf[50];
   readFromEEPROM(40).toCharArray(buf, 50);
+  Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
-  delay(500);
+  delay(1000);
 }
 
 void infoMessage(String number)
