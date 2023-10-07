@@ -539,6 +539,7 @@ void updateSerial()
   }
   inputstring = "";
 }
+
 void magnet_detect() // This function is called whenever a magnet/interrupt is detected by the arduino
 {                    // lcd.clear();
   if (count)
@@ -599,6 +600,7 @@ void readSms()
     processData(receivedMessage);
   }
 }
+
 void DisplayPSI() // main display
 {
   // this section monitors the live psi and turns the compressor run bit on or off based off setpoints
@@ -1230,7 +1232,7 @@ void errorStopWatering()
 */
   char buf[50];
   char *message = " watering has finished";
-  readFromEEPROM(0).toCharArray(buf, 50);
+  readFromEEPROM(40).toCharArray(buf, 50);
   Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1240,7 +1242,7 @@ void errorStopWatering()
   salengGSM.sendSMS(buf, message);
   delay(1000);
   buf[50];
-  readFromEEPROM(40).toCharArray(buf, 50);
+  readFromEEPROM(0).toCharArray(buf, 50);
   Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1266,7 +1268,7 @@ void errorDeviation()
 */
   char buf[50];
   char *message = " 15% speed deviation";
-  readFromEEPROM(0).toCharArray(buf, 50);
+  readFromEEPROM(40).toCharArray(buf, 50);
   Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1276,7 +1278,7 @@ void errorDeviation()
   salengGSM.sendSMS(buf, message);
   delay(1000);
   buf[50];
-  readFromEEPROM(40).toCharArray(buf, 50);
+  readFromEEPROM(0).toCharArray(buf, 50);
   Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1322,7 +1324,7 @@ void errorVoltage()
 */
   char buf[50];
   char *message = " battery is low";
-  readFromEEPROM(0).toCharArray(buf, 50);
+  readFromEEPROM(40).toCharArray(buf, 50);
   Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1332,7 +1334,7 @@ void errorVoltage()
   salengGSM.sendSMS(buf, message);
   delay(1000);
   buf[50];
-  readFromEEPROM(40).toCharArray(buf, 50);
+  readFromEEPROM(0).toCharArray(buf, 50);
   Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1358,7 +1360,7 @@ void errorWind()
 */
   char buf[50];
   char *message = " wind is greater than 20 Km/h";
-  readFromEEPROM(0).toCharArray(buf, 50);
+  readFromEEPROM(40).toCharArray(buf, 50);
   Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1368,7 +1370,7 @@ void errorWind()
   salengGSM.sendSMS(buf, message);
   delay(1000);
   buf[50];
-  readFromEEPROM(40).toCharArray(buf, 50);
+  readFromEEPROM(0).toCharArray(buf, 50);
   Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1394,7 +1396,7 @@ void sendAlmostDone()
  */
   char buf[50];
   char *message = " 30 minutes left";
-  readFromEEPROM(0).toCharArray(buf, 50);
+  readFromEEPROM(40).toCharArray(buf, 50);
   Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1404,7 +1406,7 @@ void sendAlmostDone()
   salengGSM.sendSMS(buf, message);
   delay(1000);
   buf[50];
-  readFromEEPROM(40).toCharArray(buf, 50);
+  readFromEEPROM(0).toCharArray(buf, 50);
   Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1429,7 +1431,7 @@ void sendStopSms()
   Serial1.println("AT+CMGF=1\r");*/
   char buf[50];
   char *message = " The reel has stopped!!";
-  readFromEEPROM(0).toCharArray(buf, 50);
+  readFromEEPROM(40).toCharArray(buf, 50);
   Serial.println("number1 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
@@ -1439,7 +1441,7 @@ void sendStopSms()
   salengGSM.sendSMS(buf, message);
   delay(1000);
   buf[50];
-  readFromEEPROM(40).toCharArray(buf, 50);
+  readFromEEPROM(0).toCharArray(buf, 50);
   Serial.println("number3 = " + String(buf));
   salengGSM.sendSMS(buf, message);
   delay(1000);
