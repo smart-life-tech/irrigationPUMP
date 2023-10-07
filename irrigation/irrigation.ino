@@ -263,6 +263,7 @@ void setup()
   // 6 inches
   metra = 0.95;
   lcd.backlight();
+  errorVoltage();
 }
 
 void loop()
@@ -1326,17 +1327,20 @@ void errorVoltage()
   char *message = " battery is low";
   readFromEEPROM(40).toCharArray(buf, 50);
   Serial.println("number1 = " + String(buf));
-  salengGSM.sendSMS(buf, message);
+  // salengGSM.sendSMS(buf, message);
+  sendMessage(readFromEEPROM(40), message);
   delay(1000);
   buf[50];
   readFromEEPROM(20).toCharArray(buf, 50);
   Serial.println("number2 = " + String(buf));
-  salengGSM.sendSMS(buf, message);
+  // salengGSM.sendSMS(buf, message);
+  sendMessage(readFromEEPROM(20), message);
   delay(1000);
   buf[50];
   readFromEEPROM(0).toCharArray(buf, 50);
   Serial.println("number3 = " + String(buf));
-  salengGSM.sendSMS(buf, message);
+  sendMessage(readFromEEPROM(0), message);
+  // salengGSM.sendSMS(buf, message);
   delay(1000);
 }
 
@@ -1594,4 +1598,24 @@ String addMinutesToCurrentTime(long minutesToAdd)
 
   return formattedTime;
 }
+
+void sendMessage(String mess, String message)
+{
+  Serial1.println("AT+CMGF=1\r");
+  delay(200);
+  Serial.println("Sending SMS to the desired phone number!");
+  String command = "AT+CMGS=\"" + mess + "\"\r";
+  Serial1.println(mess);
+  // Replace x with mobile number
+  delay(500);
+  Serial1.println(message); // SMS Text
+  delay(200);
+  Serial1.println((char)26); // ASCII code of CTRL+Z
+  delay(1000);
+  Serial1.println();
+  Serial1.println("AT");
+  delay(200);
+  Serial1.println("AT+CMGF=1\r");
+}
+
 // version 10.12
