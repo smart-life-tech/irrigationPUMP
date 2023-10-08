@@ -15,6 +15,7 @@ dht DHT;
 // dht1wire DHT(DHT22_PIN, dht::DHT22);
 //  Constants
 #define MAX_LENGTH 50
+String phoneNumbers[] = {"+306973991989", "+1234567890", "+9876543210"}; // Add the phone numbers you want to send the SMS to
 
 void writeToEEPROM(int address, const String &data);
 String readFromEEPROM(int address);
@@ -1308,40 +1309,13 @@ void errorPressure_bar()
 void errorVoltage()
 {
   Serial.println("Setting the GSM in text mode");
-  /*Serial1.println("AT+CMGF=1\r");
-  delay(200);
-  Serial.println("Sending SMS to the desired phone number!");
-  Serial1.println("AT+CMGS=\"+306973991989\"\r");
-  // Replace x with mobile number
-  delay(500);
-  Serial1.println(" battery is low"); // SMS Text
-  delay(200);
-  Serial1.println((char)26); // ASCII code of CTRL+Z
-  delay(1000);
-  Serial1.println();
-  Serial1.println("AT");
-  delay(200);
-  Serial1.println("AT+CMGF=1\r");
-*/
-  char buf[50];
-  char *message = " battery is low";
-  readFromEEPROM(40).toCharArray(buf, 50);
-  Serial.println("number1 = " + String(buf));
-  // salengGSM.sendSMS(buf, message);
-  sendMessage(readFromEEPROM(40), message);
-  delay(1000);
-  buf[50];
-  readFromEEPROM(20).toCharArray(buf, 50);
-  Serial.println("number2 = " + String(buf));
-  // salengGSM.sendSMS(buf, message);
-  sendMessage(readFromEEPROM(20), message);
-  delay(1000);
-  buf[50];
-  readFromEEPROM(0).toCharArray(buf, 50);
-  Serial.println("number3 = " + String(buf));
-  sendMessage(readFromEEPROM(0), message);
-  // salengGSM.sendSMS(buf, message);
-  delay(1000);
+  phoneNumbers[0]=readFromEEPROM(0);
+  phoneNumbers[1]=readFromEEPROM(20);
+  phoneNumbers[2]=readFromEEPROM(40);
+  for (int i = 0; i < sizeof(phoneNumbers) / sizeof(phoneNumbers[0]); i++) {
+    sendSMS(phoneNumbers[i], "15% speed deviation");
+    delay(5000);  // Add a delay between sending SMS to each number (in milliseconds)
+  }
 }
 
 void errorWind()
@@ -1607,6 +1581,25 @@ void sendMessage(String mess, String message)
   String command = "AT+CMGS=\"" + mess + "\"\r";
   Serial1.println(mess);
   // Replace x with mobile number
+  delay(500);
+  Serial1.println(message); // SMS Text
+  delay(200);
+  Serial1.println((char)26); // ASCII code of CTRL+Z
+  delay(1000);
+  Serial1.println();
+  Serial1.println("AT");
+  delay(200);
+  Serial1.println("AT+CMGF=1\r");
+}
+
+void sendSMS(String phoneNumber, String message) {
+  Serial.println("Setting the GSM in text mode");
+  Serial1.println("AT+CMGF=1\r");
+  delay(200);
+  Serial.println("Sending SMS to the desired phone number!");
+  Serial1.print("AT+CMGS=\"");
+  Serial1.print(phoneNumber);
+  Serial1.println("\"\r");
   delay(500);
   Serial1.println(message); // SMS Text
   delay(200);
