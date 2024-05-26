@@ -1,5 +1,5 @@
 {
     "configuration": "cpu=atmega2560",
     "board": "arduino:avr:mega",
-    "sketch": "irrigation\\irrigation.ino"
+    "sketch": "teleyteo_11_10\\teleyteo_11_10.ino"
 }

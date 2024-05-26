@@ -52,7 +52,7 @@ String inputString = "";
 String phoneNum = "";
 String wheelDia = "";
 String progstep = "";
-
+bool low_pressure = true;
 RTC_DS3231 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}; // days
 int Hour, Minute, Second = 0;
@@ -425,10 +425,13 @@ void loop()
     //  total_len = total_len * metra;
     //  float gets = getSpeed();
     readSms();
-    if (getPsi() < 5) // send error message if pressure is less than 5 psi
+    if (getPsi() < 5 && low_pressure) // send error message if pressure is less than 5 psi
     {
       errorpressure();
+      low_pressure = false;
     }
+    else if (getPsi() > 7)
+      low_pressure = true;
     if (almostDone)
     {
       sendAlmostDone();
