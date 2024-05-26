@@ -1007,7 +1007,7 @@ float getWind()
       wind = false;
     }
   }
-  else
+  else if (WindSpeed < 14)
   {
     wind = true;
   }
