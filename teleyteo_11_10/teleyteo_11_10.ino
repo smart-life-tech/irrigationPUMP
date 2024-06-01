@@ -479,7 +479,7 @@ void loop()
     getWind();
     readSms();
     windCounter++;
-    if (getWind() > 20 && windCounter > 10)
+    if (getWind() > 20 && windCounter > 60)
     {
       winderror = true;
       windCounter = 0;
@@ -1003,7 +1003,7 @@ float getWind()
   {
     if (wind)
     {
-      errorWind();
+     // errorWind();
       wind = false;
     }
   }
