@@ -460,7 +460,7 @@ void loop()
         devonce = false;
       }
     }
-    else
+    else  if (deviation < 5 )
     {
       devonce = true;
     }
@@ -1181,7 +1181,7 @@ float getSpeed()
     Serial.println(timeLeft);
     if (timeLeft < 30 && almostDone2 == false) // 30 mites, should be less than 30 meyers < 30 npt > 300
     {
-      almostDone = true;
+      //almostDone = true;
       almostDone2 = true;
     }
     else if (timeLeft > 30)
