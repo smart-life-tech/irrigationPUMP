@@ -562,7 +562,7 @@ void updateSerial()
 }
 
 void magnet_detect() // This function is called whenever a magnet/interrupt is detected by the arduino
-{                    // lcd.clear();
+{                    // lcd.clear(); time per trn is used alongside the wheel size
   if (count)
   {
     turnStart = millis();
