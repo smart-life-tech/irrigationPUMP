@@ -9,7 +9,7 @@ low pressure!
 #include <Wire.h>                   // Wire library
 #include <LiquidCrystal_I2C.h>      // Liquid Crystal I2C library
 LiquidCrystal_I2C lcd(0x27, 20, 4); // Display address 0x27, I2C 20 x 4
-#include "RTClib.h"
+// #include "RTClib.h"
 #include <EEPROM.h>
 #include "dht.h"
 #include <LayadCircuits_SalengGSM.h>
@@ -53,7 +53,7 @@ String phoneNum = "";
 String wheelDia = "";
 String progstep = "";
 bool low_pressure = true;
-RTC_DS3231 rtc;
+// RTC_DS3231 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}; // days
 int Hour, Minute, Second = 0;
 String Seconds = "";
@@ -178,24 +178,24 @@ void setup()
   lcd.backlight(); // turn on the lcd backlight
   lcd.clear();     // clear the cld screen
   Wire.begin();
-  if (!rtc.begin())
-  {
-    Serial.println("Couldn't find RTC");
-    Serial.flush();
-    while (1)
-      delay(10);
-  }
+  // if (!rtc.begin())
+  // {
+  //   Serial.println("Couldn't find RTC");
+  //   Serial.flush();
+  //   while (1)
+  //     delay(10);
+  // }
 
-  if (rtc.lostPower())
-  {
-    Serial.println("RTC lost power, let's set the time!");
-    // When time needs to be set on a new device, or after a power loss, the
-    // following line sets the RTC to the date & time this sketch was compiled
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    // This line sets the RTC with an explicit date & time, for example to set
-    // January 21, 2014 at 3am you would call:
-    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
-  }
+  // if (rtc.lostPower())
+  // {
+  //   Serial.println("RTC lost power, let's set the time!");
+  //   // When time needs to be set on a new device, or after a power loss, the
+  //   // following line sets the RTC to the date & time this sketch was compiled
+  // //  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  //   // This line sets the RTC with an explicit date & time, for example to set
+  //   // January 21, 2014 at 3am you would call:
+  //   // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
+  // }
   // When time needs to be re-set on a previously configured device, the
   // following line sets the RTC to the date & time this sketch was compiled
   // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
@@ -269,10 +269,10 @@ void setup()
 
 void loop()
 {
-  DateTime now = rtc.now();
-  Minute = now.minute();
-  Hour = now.hour();
-  Second = now.second();
+  // DateTime now = rtc.now();
+  // Minute = now.minute();
+  // Hour = now.hour();
+  // Second = now.second();
   // getSpeed();
   //  getSpeeding(); // this controls the motor retraction
   readSms();
@@ -360,20 +360,20 @@ void loop()
     lcd.print(" wi:");      // this clears the display field so anything left is deleted
     lcd.print(winding);
     lcd.print(" ");
-    if (now.hour() < 10)
-    {
-      lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
-    }
-    else
-    {
-      lcd.print(now.hour());
-    }
-    lcd.print(":");
-    Minute = now.minute();
-    Minutes = String(Minute);
-    if (Minute < 10)
-      Minutes = "0" + String(Minute);
-    lcd.print(Minutes);
+    // if (now.hour() < 10)
+    // {
+    //   lcd.print("0" + String(now.hour())); // this prints whats in between the quotes
+    // }
+    // else
+    // {
+    //   lcd.print(now.hour());
+    // }
+    // lcd.print(":");
+    // Minute = now.minute();
+    // Minutes = String(Minute);
+    // if (Minute < 10)
+    //   Minutes = "0" + String(Minute);
+    // lcd.print(Minutes);
 
     lcd.setCursor(0, 1);
     lcd.print("volt:");
@@ -460,7 +460,7 @@ void loop()
         devonce = false;
       }
     }
-    else  if (deviation < 5 )
+    else if (deviation < 5)
     {
       devonce = true;
     }
@@ -1101,8 +1101,8 @@ float getPsi()
 String getTime()
 {
   char buf1[20];
-  DateTime now = rtc.now();
-  sprintf(buf1, "%02d:%02d:%02d", now.hour(), now.minute(), now.second());
+  //// DateTime now = rtc.now();
+  //  sprintf(buf1, "%02d:%02d:%02d", now.hour(), now.minute(), now.second());
   // Serial.print(F("Date/Time: "));
   // Serial.println(buf1);
   return buf1;
@@ -1111,10 +1111,10 @@ String getTime()
 String getDate()
 {
   char buf1[20];
-  DateTime now = rtc.now();
-  sprintf(buf1, " %02d/%02d/%02d", now.day(), now.month(), now.year());
-  // Serial.print(F("Date/Time: "));
-  // Serial.println(buf1);
+  // DateTime now = rtc.now();
+  // sprintf(buf1, " %02d/%02d/%02d", now.day(), now.month(), now.year());
+  //  Serial.print(F("Date/Time: "));
+  //  Serial.println(buf1);
   return buf1;
 }
 // reteuns current velocity
@@ -1181,7 +1181,7 @@ float getSpeed()
     Serial.println(timeLeft);
     if (timeLeft < 30 && almostDone2 == false) // 30 mites, should be less than 30 meyers < 30 npt > 300
     {
-      //almostDone = true;
+       almostDone = true;
       almostDone2 = true;
     }
     else if (timeLeft > 30)
