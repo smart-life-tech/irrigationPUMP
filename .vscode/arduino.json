@@ -1,5 +1,5 @@
 {
     "configuration": "cpu=atmega2560",
     "board": "arduino:avr:mega",
-    "sketch": "teleyteo_11_10\\teleyteo_11_10.ino"
+    "sketch": "password\\password_only\\password_only.ino"
 }
